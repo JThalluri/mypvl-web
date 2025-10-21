@@ -23,7 +23,6 @@ jobs:
         run: |
           mkdir public
           cp index.html public/
-          cp -r assets/ public/  # Optional: include other folders if needed
 
       - name: List public contents (debug)
         run: ls -la public
