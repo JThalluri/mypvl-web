@@ -118,90 +118,60 @@ class TestimonialCarousel {
     }
 }
 
-// Implementation Carousel
-class ImplementationCarousel {
-    constructor(container) {
-        this.container = container;
-        this.track = container.querySelector('.implementation-track');
-        this.slides = container.querySelectorAll('.implementation-slide');
-        this.dots = container.querySelectorAll('.carousel-dot');
-        this.prevBtn = container.querySelector('.carousel-btn.prev');
-        this.nextBtn = container.querySelector('.carousel-btn.next');
-        
-        this.currentIndex = 0;
-        this.slideCount = this.slides.length;
-        
-        this.init();
+// Implementation Carousel - FINAL WORKING VERSION
+document.addEventListener('DOMContentLoaded', function() {
+    const carouselContainer = document.querySelector('.implementation-carousel-container');
+    if (!carouselContainer) {
+        console.error('Carousel container not found!');
+        return;
     }
-    
-    init() {
-        this.prevBtn.addEventListener('click', () => this.prev());
-        this.nextBtn.addEventListener('click', () => this.next());
-        
-        this.dots.forEach((dot, index) => {
-            dot.addEventListener('click', () => this.goToSlide(index));
-        });
-        
-        // Auto-advance every 6 seconds
-        this.autoAdvance = setInterval(() => this.next(), 6000);
-        
-        // Pause auto-advance on hover
-        this.container.addEventListener('mouseenter', () => {
-            clearInterval(this.autoAdvance);
-        });
-        
-        this.container.addEventListener('mouseleave', () => {
-            this.autoAdvance = setInterval(() => this.next(), 6000);
-        });
-        
-        this.updateCarousel();
-    }
-    
-    prev() {
-        this.currentIndex = (this.currentIndex - 1 + this.slideCount) % this.slideCount;
-        this.updateCarousel();
-    }
-    
-    next() {
-        this.currentIndex = (this.currentIndex + 1) % this.slideCount;
-        this.updateCarousel();
-    }
-    
-    goToSlide(index) {
-        this.currentIndex = index;
-        this.updateCarousel();
-    }
-    
-    updateCarousel() {
-        const translateX = -this.currentIndex * 100;
-        this.track.style.transform = `translateX(${translateX}%)`;
+
+    const track = carouselContainer.querySelector('.implementation-track');
+    const slides = carouselContainer.querySelectorAll('.implementation-slide');
+    const dots = carouselContainer.querySelectorAll('.carousel-dot');
+    const prevBtn = carouselContainer.querySelector('.carousel-btn.prev');
+    const nextBtn = carouselContainer.querySelector('.carousel-btn.next');
+
+    let currentIndex = 0;
+    const slideCount = slides.length;
+
+    console.log(`Found ${slideCount} slides and ${dots.length} dots`);
+
+    function updateCarousel() {
+        // Move track to show current slide
+        track.style.transform = `translateX(-${currentIndex * 100}%)`;
         
         // Update dots
-        this.dots.forEach((dot, index) => {
-            dot.classList.toggle('active', index === this.currentIndex);
+        dots.forEach((dot, index) => {
+            dot.classList.toggle('active', index === currentIndex);
         });
         
-        // Update button states
-        this.prevBtn.disabled = false;
-        this.nextBtn.disabled = false;
+        console.log(`Now showing slide ${currentIndex + 1} of ${slideCount}`);
     }
-}
 
-// Initialize carousels when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize testimonial carousel
-    const testimonialContainer = document.querySelector('.testimonials-container');
-    if (testimonialContainer) {
-        new TestimonialCarousel(testimonialContainer);
-    }
-    
-    // Initialize implementation carousel
-    const implementationContainer = document.querySelector('.implementation-carousel-container');
-    if (implementationContainer) {
-        new ImplementationCarousel(implementationContainer);
-    }
+    // Previous button click
+    prevBtn.addEventListener('click', () => {
+        currentIndex = currentIndex > 0 ? currentIndex - 1 : slideCount - 1;
+        updateCarousel();
+    });
+
+    // Next button click
+    nextBtn.addEventListener('click', () => {
+        currentIndex = currentIndex < slideCount - 1 ? currentIndex + 1 : 0;
+        updateCarousel();
+    });
+
+    // Dot clicks
+    dots.forEach((dot, index) => {
+        dot.addEventListener('click', () => {
+            currentIndex = index;
+            updateCarousel();
+        });
+    });
+
+    // Initialize
+    updateCarousel();
 });
-
 
 // ===== MOBILE NAVIGATION =====
 class MobileNavigation {
