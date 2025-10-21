@@ -10,11 +10,23 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Ensures full history for gh-pages push
+          persist-credentials: true  # Required for peaceiris action
+
+      - name: Set Git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Build site
         run: |
           mkdir public
           cp index.html public/
+          cp -r assets/ public/  # Optional: include other folders if needed
+
+      - name: List public contents (debug)
+        run: ls -la public
 
       - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v3
