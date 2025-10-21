@@ -1222,6 +1222,211 @@ section {
     }
 
 }
+
+
+
+
+
+
+
+
+.feature-highlight {
+  background: var(--surface-dark);
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+  border-radius: var(--border-radius);
+  border-left: 4px solid var(--primary-color);
+}
+
+.feature-highlight h3 {
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.feature-highlight h3 i {
+  font-size: 1.1em;
+  width: 1.5em;
+  text-align: center;
+}
+
+.feature-highlight p strong {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.value-proposition {
+  background: var(--surface-color);
+  padding: 2rem;
+  border-radius: var(--border-radius);
+  margin: 2rem 0;
+  border: 1px solid var(--border-color);
+}
+
+.value-proposition h3 {
+  color: var(--primary-color);
+  margin-bottom: 1.5rem;
+  text-align: center;
+  font-size: 1.3rem;
+}
+
+.value-proposition ul {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.25rem;
+}
+
+.value-proposition li {
+  padding: 0;
+  background: var(--surface-dark);
+  border-radius: var(--border-radius);
+  transition: all 0.3s ease;
+  border: 1px solid var(--border-color);
+}
+
+.value-proposition li:hover {
+  background: var(--surface-light);
+  transform: translateY(-3px);
+  border-color: var(--primary-color);
+  box-shadow: 0 5px 15px rgba(247, 156, 25, 0.1);
+}
+
+.benefit-item {
+  padding: 1.5rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  height: 100%;
+}
+
+.benefit-item i {
+  color: var(--primary-color);
+  font-size: 1.2em;
+  margin-top: 0.25rem;
+  flex-shrink: 0;
+  width: 24px;
+  text-align: center;
+}
+
+.benefit-content h4 {
+  color: var(--primary-color);
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.benefit-content p {
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.5;
+  font-size: 0.95rem;
+}
+
+.closing-statement {
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-align: center;
+  color: var(--primary-color);
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 2px solid var(--border-color);
+}
+
+/* Video Placeholder Styles */
+.video-placeholder {
+  background: var(--surface-color);
+  padding: 2rem;
+  border-radius: var(--border-radius);
+  margin: 2rem 0;
+  text-align: center;
+}
+
+.video-placeholder h3 {
+  color: var(--primary-color);
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.video-container {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.video-thumbnail {
+  background: var(--surface-dark);
+  border: 2px dashed var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 3rem 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.video-thumbnail:hover {
+  border-color: var(--primary-color);
+  background: var(--surface-light);
+}
+
+.video-thumbnail i {
+  font-size: 3rem;
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.video-thumbnail p {
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .value-proposition ul {
+    grid-template-columns: 1fr;
+  }
+  
+  .benefit-item {
+    padding: 1.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .value-proposition {
+    padding: 1.5rem;
+  }
+  
+  .benefit-item {
+    padding: 1rem;
+    gap: 0.75rem;
+  }
+  
+  .benefit-content h4 {
+    font-size: 1rem;
+  }
+  
+  .benefit-content p {
+    font-size: 0.9rem;
+  }
+}
+
+.feature-highlight p {
+  margin-bottom: 1rem;
+}
+
+.feature-highlight p:last-child {
+  margin-bottom: 0;
+}
     </style>
 </head>
 <body>
@@ -1253,11 +1458,92 @@ section {
 </nav>
     
     <main>
-        <!-- About Section -->
-<section id="about" class="section">
-    <h2 class="section-title">About My PVL</h2>
-    <p>Welcome to your Personal Video Library - the ultimate solution for organizing and accessing all your favorite YouTube content in one centralized location.</p>
-    <p>No more searching through endless playlists or forgetting which videos you wanted to watch. My PVL helps you categorize, search, and manage your video collection with ease.</p>
+        <section id="about" class="section">
+  <h2 class="section-title">Organize Your Video Content with Ease</h2>
+  
+  <p><strong>My PVL (Personal Video Library)</strong> is an intuitive platform that helps you organize, categorize, and share your video content in a beautiful, searchable library.</p>
+  
+  <div class="feature-highlight">
+    <h3><i class="fas fa-bullseye"></i> Smart Video Organization</h3>
+    <p>Stop wasting time searching through scattered videos. Create custom categories and tags to build a structured library that makes sense for your content and workflow.</p>
+  </div>
+  
+<div class="feature-highlight">
+  <h3><i class="fas fa-rocket"></i> Perfect For Content Creators & Individuals</h3>
+  <p><strong><i class="fas fa-film"></i> YouTube Creators:</strong> Transform your channel into an organized website. Group tutorials, vlogs, and series into easy-to-navigate categories.</p>
+  <p><strong><i class="fas fa-graduation-cap"></i> Educators & Coaches:</strong> Create learning paths and course materials. Perfect for online teachers, fitness instructors, and workshop leaders.</p>
+  <p><strong><i class="fas fa-users"></i> Personal Users:</strong> Organize family videos, travel memories, or hobby content in a private, beautifully organized library.</p>
+</div>
+  
+  <div class="feature-highlight">
+    <h3><i class="fas fa-mobile-alt"></i> Access Anywhere</h3>
+    <p>Your video library works perfectly on all devices—desktop, tablet, or mobile. Share your content with others or keep it private for personal use.</p>
+  </div>
+  
+<div class="value-proposition">
+  <h3>Why You'll Love My PVL</h3>
+  <ul>
+    <li>
+      <div class="benefit-item">
+        <i class="fas fa-check"></i>
+        <div class="benefit-content">
+          <h4>Easy Setup</h4>
+          <p>Get started in minutes, no technical skills needed</p>
+        </div>
+      </div>
+    </li>
+    <li>
+      <div class="benefit-item">
+        <i class="fas fa-check"></i>
+        <div class="benefit-content">
+          <h4>Custom Categories</h4>
+          <p>Organize videos your way with flexible tagging</p>
+        </div>
+      </div>
+    </li>
+    <li>
+      <div class="benefit-item">
+        <i class="fas fa-check"></i>
+        <div class="benefit-content">
+          <h4>Fast Search</h4>
+          <p>Find any video instantly with powerful search</p>
+        </div>
+      </div>
+    </li>
+    <li>
+      <div class="benefit-item">
+        <i class="fas fa-check"></i>
+        <div class="benefit-content">
+          <h4>Mobile Friendly</h4>
+          <p>Works perfectly on all your devices</p>
+        </div>
+      </div>
+    </li>
+    <li>
+      <div class="benefit-item">
+        <i class="fas fa-check"></i>
+        <div class="benefit-content">
+          <h4>Simple Sharing</h4>
+          <p>Share your entire library or specific categories</p>
+        </div>
+      </div>
+    </li>
+  </ul>
+</div>
+  
+  <div class="video-placeholder">
+    <h3><i class="fas fa-play-circle"></i> See How It Works</h3>
+    <div class="video-container">
+      <div class="video-thumbnail">
+        <i class="fas fa-play"></i>
+        <p>Video demo coming soon: See how to transform your YouTube channel into an organized video library</p>
+      </div>
+    </div>
+  </div>
+  
+  <p class="closing-statement">
+    Ready to stop searching and start organizing? Create your personalized video library today.
+  </p>
 </section>
         <!-- Features Section -->
 <section id="features" class="section">
