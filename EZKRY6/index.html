@@ -200,7 +200,6 @@ header img {
     height: 52px;
     width: auto;
     max-width: 52px;
-    border-radius: 8px;
     transition: all 0.3s ease;
     filter: brightness(1.1) contrast(1.1);
     display: block;
@@ -437,7 +436,17 @@ header img {
     color: var(--primary-color);
     border-color: rgba(247, 156, 25, 0.3);
 }
-
+/* ensure chevron icon is clickable */
+.category-header, .subcategory-item, .subsubcategory-item {
+  position: relative; /* allows children positioning */
+}
+.category-header .fa-chevron-down,
+.subcategory-item .fa-chevron-down,
+.subsubcategory-item .fa-chevron-down {
+  pointer-events: auto;
+  z-index: 2;
+  touch-action: manipulation; /* improve touch responsiveness */
+}
 .subcategory-list, .subsubcategory-list {
     max-height: 0;
     overflow: hidden;
@@ -856,12 +865,12 @@ button:focus-visible,
         align-items: flex-start;   		
 	}
     header img {
-        width: 25%;                
+        width: 35%;                
         height: auto;              
         max-height: auto;           
         object-fit: contain;       
         position: absolute;        
-        top: 8px;                  
+        top: 6px;                  
         left: 4px;                 
     }	
     .header-controls { bottom: 10px; left: 15px; gap: 10px; }
@@ -1140,7 +1149,7 @@ button:focus-visible,
     
     .brand-logo {
         height: 16px;
-        max-width: 16px;
+        max-width: 18px;
     }
 
     .grid {
@@ -1221,16 +1230,16 @@ button:focus-visible,
     .brand-logo-container a {
         padding: 2px 4px;
         gap: 3px;
-        height: 24px;
+        height: 25px;
         width: 70px;
     }
     
     .powered-by {
-        font-size: 6px;
+        font-size: 5px;
     }
     
     .brand-logo {
-        height: 24px!important;
+        height: 25px!important;
         width: auto;
         max-height: fit-content;
         top: auto;
@@ -1298,9 +1307,9 @@ button:focus-visible,
 /* Mobile-only clear button */
 @media (max-width: 576px) {
     header img { 
-        top: 4px; 
+        top: 10px; 
         left: 4px; 
-        width: 35%;
+        width: 40%;
     }    
     .clear-filters-btn:not(.mobile-only) {
         display: none;
@@ -1351,18 +1360,6 @@ button:focus-visible,
         width: 200px;
         justify-content: center;
     }
-}
-
-/* ensure chevron icon is clickable */
-.category-header, .subcategory-item, .subsubcategory-item {
-  position: relative; /* allows children positioning */
-}
-.category-header .fa-chevron-down,
-.subcategory-item .fa-chevron-down,
-.subsubcategory-item .fa-chevron-down {
-  pointer-events: auto;
-  z-index: 2;
-  touch-action: manipulation; /* improve touch responsiveness */
 }
         </style>
     </head>
