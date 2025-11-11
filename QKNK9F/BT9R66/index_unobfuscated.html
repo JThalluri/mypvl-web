@@ -200,7 +200,6 @@ header img {
     height: 52px;
     width: auto;
     max-width: 52px;
-    border-radius: 8px;
     transition: all 0.3s ease;
     filter: brightness(1.1) contrast(1.1);
     display: block;
@@ -437,7 +436,17 @@ header img {
     color: var(--primary-color);
     border-color: rgba(247, 156, 25, 0.3);
 }
-
+/* ensure chevron icon is clickable */
+.category-header, .subcategory-item, .subsubcategory-item {
+  position: relative; /* allows children positioning */
+}
+.category-header .fa-chevron-down,
+.subcategory-item .fa-chevron-down,
+.subsubcategory-item .fa-chevron-down {
+  pointer-events: auto;
+  z-index: 2;
+  touch-action: manipulation; /* improve touch responsiveness */
+}
 .subcategory-list, .subsubcategory-list {
     max-height: 0;
     overflow: hidden;
@@ -856,12 +865,12 @@ button:focus-visible,
         align-items: flex-start;   		
 	}
     header img {
-        width: 25%;                
+        width: 35%;                
         height: auto;              
         max-height: auto;           
         object-fit: contain;       
         position: absolute;        
-        top: 8px;                  
+        top: 6px;                  
         left: 4px;                 
     }	
     .header-controls { bottom: 10px; left: 15px; gap: 10px; }
@@ -1140,7 +1149,7 @@ button:focus-visible,
     
     .brand-logo {
         height: 16px;
-        max-width: 16px;
+        max-width: 18px;
     }
 
     .grid {
@@ -1221,16 +1230,16 @@ button:focus-visible,
     .brand-logo-container a {
         padding: 2px 4px;
         gap: 3px;
-        height: 24px;
+        height: 25px;
         width: 70px;
     }
     
     .powered-by {
-        font-size: 6px;
+        font-size: 5px;
     }
     
     .brand-logo {
-        height: 24px!important;
+        height: 25px!important;
         width: auto;
         max-height: fit-content;
         top: auto;
@@ -1298,9 +1307,9 @@ button:focus-visible,
 /* Mobile-only clear button */
 @media (max-width: 576px) {
     header img { 
-        top: 4px; 
+        top: 10px; 
         left: 4px; 
-        width: 35%;
+        width: 40%;
     }    
     .clear-filters-btn:not(.mobile-only) {
         display: none;
@@ -1353,16 +1362,37 @@ button:focus-visible,
     }
 }
 
-/* ensure chevron icon is clickable */
-.category-header, .subcategory-item, .subsubcategory-item {
-  position: relative; /* allows children positioning */
+/* Ensure chevron pseudo-elements do NOT capture pointer events and keep chevrons above neighbors */
+.category-header .chevron-container::before,
+.category-header .chevron-container::after,
+.subcategory-item .chevron-container::before,
+.subcategory-item .chevron-container::after {
+  content: "";
+  position: absolute;
+  top: -8px;
+  bottom: -8px;
+  left: -8px;
+  right: -8px;
+  background: transparent;
+  pointer-events: none; /* important: do not swallow clicks */
 }
-.category-header .fa-chevron-down,
-.subcategory-item .fa-chevron-down,
-.subsubcategory-item .fa-chevron-down {
+
+/* Keep the chevron container and icon above siblings/overlays and ensure pointer events */
+.category-header .chevron-container,
+.subcategory-item .chevron-container {
+  position: relative;
+  z-index: 6;
   pointer-events: auto;
-  z-index: 2;
-  touch-action: manipulation; /* improve touch responsiveness */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+
+/* Ensure the icon itself is topmost */
+.category-header .fa-chevron-down,
+.subcategory-item .fa-chevron-down {
+  position: relative;
+  z-index: 7;
+  pointer-events: auto;
 }
         </style>
     </head>
@@ -1411,127 +1441,25 @@ button:focus-visible,
                         Clear All Filters
                     </button>
                     <div id="categoryList">
-                    <div class="category-header" data-category="సంగీతం" data-level="0" tabindex="0" role="button" aria-expanded="false">
+                    <div class="category-header" data-category="హోమియోపతి" data-level="0" tabindex="0" role="button" aria-expanded="false">
                         <div class="category-content">
                             <div class="category-text">
-                                <i class="fas fa-folder"></i>
-                                <span>సంగీతం</span>
-                                <span class="video-count" id="count-సంగీతం">24</span>
+                                <i class="fas fa-pills"></i>
+                                <span>హోమియోపతి</span>
+                                <span class="video-count" id="count-హోమియోపతి">8</span>
                             </div>
                         </div>
                         <div class="chevron-container">
                             <i class="fas fa-chevron-down"></i>
                         </div>
                     </div>
-                    <div class="subcategory-list" id="subcat-సంగీతం">
-                        <div class="subcategory-item" data-category="సంగీతం|జలతరంగం" data-level="1" tabindex="0" role="button" aria-expanded="false">
+                    <div class="subcategory-list" id="subcat-హోమియోపతి">
+                        <div class="subcategory-item" data-category="హోమియోపతి|మెటీరియా మెడికా" data-level="1" tabindex="0" role="button" aria-expanded="false">
                             <div class="subcategory-content">
                                 <div class="category-text">
                                     <i class="fas fa-circle"></i>
-                                    <span>జలతరంగం</span>
-                                    <span class="video-count" id="count-సంగీతం-జలతరంగం">2</span>
-                                </div>
-                            </div>
-                            
-                    <div class="chevron-container"></div>
-                        </div>
-                        <div class="subcategory-item" data-category="సంగీతం|అన్నమాచార్య కీర్తనలు" data-level="1" tabindex="0" role="button" aria-expanded="false">
-                            <div class="subcategory-content">
-                                <div class="category-text">
-                                    <i class="fas fa-circle"></i>
-                                    <span>అన్నమాచార్య కీర్తనలు</span>
-                                    <span class="video-count" id="count-సంగీతం-అన్నమాచార్య కీర్తనలు">7</span>
-                                </div>
-                            </div>
-                            
-                    <div class="chevron-container"></div>
-                        </div>
-                        <div class="subcategory-item" data-category="సంగీతం|మాండోలిన్" data-level="1" tabindex="0" role="button" aria-expanded="false">
-                            <div class="subcategory-content">
-                                <div class="category-text">
-                                    <i class="fas fa-circle"></i>
-                                    <span>మాండోలిన్</span>
-                                    <span class="video-count" id="count-సంగీతం-మాండోలిన్">1</span>
-                                </div>
-                            </div>
-                            
-                    <div class="chevron-container"></div>
-                        </div>
-                        <div class="subcategory-item" data-category="సంగీతం|వయోలిన్" data-level="1" tabindex="0" role="button" aria-expanded="false">
-                            <div class="subcategory-content">
-                                <div class="category-text">
-                                    <i class="fas fa-circle"></i>
-                                    <span>వయోలిన్</span>
-                                    <span class="video-count" id="count-సంగీతం-వయోలిన్">2</span>
-                                </div>
-                            </div>
-                            
-                    <div class="chevron-container"></div>
-                        </div>
-                        <div class="subcategory-item" data-category="సంగీతం|వీణ" data-level="1" tabindex="0" role="button" aria-expanded="false">
-                            <div class="subcategory-content">
-                                <div class="category-text">
-                                    <i class="fas fa-circle"></i>
-                                    <span>వీణ</span>
-                                    <span class="video-count" id="count-సంగీతం-వీణ">1</span>
-                                </div>
-                            </div>
-                            
-                    <div class="chevron-container"></div>
-                        </div>
-                        <div class="subcategory-item" data-category="సంగీతం|సాక్సోఫోన్" data-level="1" tabindex="0" role="button" aria-expanded="false">
-                            <div class="subcategory-content">
-                                <div class="category-text">
-                                    <i class="fas fa-circle"></i>
-                                    <span>సాక్సోఫోన్</span>
-                                    <span class="video-count" id="count-సంగీతం-సాక్సోఫోన్">3</span>
-                                </div>
-                            </div>
-                            
-                    <div class="chevron-container"></div>
-                        </div>
-                        <div class="subcategory-item" data-category="సంగీతం|త్యాగరాయ కీర్తనలు" data-level="1" tabindex="0" role="button" aria-expanded="false">
-                            <div class="subcategory-content">
-                                <div class="category-text">
-                                    <i class="fas fa-circle"></i>
-                                    <span>త్యాగరాయ కీర్తనలు</span>
-                                    <span class="video-count" id="count-సంగీతం-త్యాగరాయ కీర్తనలు">1</span>
-                                </div>
-                            </div>
-                            
-                    <div class="chevron-container"></div>
-                        </div>
-                        <div class="subcategory-item" data-category="సంగీతం|కర్నాటక" data-level="1" tabindex="0" role="button" aria-expanded="false">
-                            <div class="subcategory-content">
-                                <div class="category-text">
-                                    <i class="fas fa-circle"></i>
-                                    <span>కర్నాటక</span>
-                                    <span class="video-count" id="count-సంగీతం-కర్నాటక">6</span>
-                                </div>
-                            </div>
-                            
-                    <div class="chevron-container"></div>
-                        </div>
-                    </div>
-                    <div class="category-header" data-category="భక్తి" data-level="0" tabindex="0" role="button" aria-expanded="false">
-                        <div class="category-content">
-                            <div class="category-text">
-                                <i class="fas fa-film"></i>
-                                <span>భక్తి</span>
-                                <span class="video-count" id="count-భక్తి">1</span>
-                            </div>
-                        </div>
-                        <div class="chevron-container">
-                            <i class="fas fa-chevron-down"></i>
-                        </div>
-                    </div>
-                    <div class="subcategory-list" id="subcat-భక్తి">
-                        <div class="subcategory-item" data-category="భక్తి|సంస్కృతం" data-level="1" tabindex="0" role="button" aria-expanded="false">
-                            <div class="subcategory-content">
-                                <div class="category-text">
-                                    <i class="fas fa-circle"></i>
-                                    <span>సంస్కృతం</span>
-                                    <span class="video-count" id="count-భక్తి-సంస్కృతం">0</span>
+                                    <span>మెటీరియా మెడికా</span>
+                                    <span class="video-count" id="count-హోమియోపతి-మెటీరియా మెడికా">4</span>
                                 </div>
                             </div>
                             
@@ -1539,35 +1467,35 @@ button:focus-visible,
                         <i class="fas fa-chevron-down"></i>
                     </div>
                         </div>
-                        <div class="subsubcategory-list" id="subsubcat-భక్తి-సంస్కృతం">
-                            <div class="subsubcategory-item" data-category="భక్తి|సంస్కృతం|శ్లోకాలు" data-level="2" tabindex="0" role="button">
+                        <div class="subsubcategory-list" id="subsubcat-హోమియోపతి-మెటీరియా మెడికా">
+                            <div class="subsubcategory-item" data-category="హోమియోపతి|మెటీరియా మెడికా|అనకార్డియం" data-level="2" tabindex="0" role="button">
                                 <div class="category-text">
                                     <i class="fas fa-circle"></i>
-                                    <span>శ్లోకాలు</span>
-                                    <span class="video-count" id="count-భక్తి-సంస్కృతం-శ్లోకాలు">0</span>
+                                    <span>అనకార్డియం</span>
+                                    <span class="video-count" id="count-హోమియోపతి-మెటీరియా మెడికా-అనకార్డియం">1</span>
                                 </div>
                             </div>
-                            <div class="subsubcategory-item" data-category="భక్తి|సంస్కృతం|మంత్రాలు" data-level="2" tabindex="0" role="button">
+                            <div class="subsubcategory-item" data-category="హోమియోపతి|మెటీరియా మెడికా|లైకోపోడియం" data-level="2" tabindex="0" role="button">
                                 <div class="category-text">
                                     <i class="fas fa-circle"></i>
-                                    <span>మంత్రాలు</span>
-                                    <span class="video-count" id="count-భక్తి-సంస్కృతం-మంత్రాలు">0</span>
+                                    <span>లైకోపోడియం</span>
+                                    <span class="video-count" id="count-హోమియోపతి-మెటీరియా మెడికా-లైకోపోడియం">2</span>
                                 </div>
                             </div>
-                            <div class="subsubcategory-item" data-category="భక్తి|సంస్కృతం|ఇతరత్రా" data-level="2" tabindex="0" role="button">
+                            <div class="subsubcategory-item" data-category="హోమియోపతి|మెటీరియా మెడికా|హైయోస్యామస్" data-level="2" tabindex="0" role="button">
                                 <div class="category-text">
                                     <i class="fas fa-circle"></i>
-                                    <span>ఇతరత్రా</span>
-                                    <span class="video-count" id="count-భక్తి-సంస్కృతం-ఇతరత్రా">0</span>
+                                    <span>హైయోస్యామస్</span>
+                                    <span class="video-count" id="count-హోమియోపతి-మెటీరియా మెడికా-హైయోస్యామస్">1</span>
                                 </div>
                             </div>
                         </div>
-                        <div class="subcategory-item" data-category="భక్తి|తెలుగు" data-level="1" tabindex="0" role="button" aria-expanded="false">
+                        <div class="subcategory-item" data-category="హోమియోపతి|డ్రగ్ పిక్చర్" data-level="1" tabindex="0" role="button" aria-expanded="false">
                             <div class="subcategory-content">
                                 <div class="category-text">
                                     <i class="fas fa-circle"></i>
-                                    <span>తెలుగు</span>
-                                    <span class="video-count" id="count-భక్తి-తెలుగు">1</span>
+                                    <span>డ్రగ్ పిక్చర్</span>
+                                    <span class="video-count" id="count-హోమియోపతి-డ్రగ్ పిక్చర్">2</span>
                                 </div>
                             </div>
                             
@@ -1575,53 +1503,28 @@ button:focus-visible,
                         <i class="fas fa-chevron-down"></i>
                     </div>
                         </div>
-                        <div class="subsubcategory-list" id="subsubcat-భక్తి-తెలుగు">
-                            <div class="subsubcategory-item" data-category="భక్తి|తెలుగు|పాటలు" data-level="2" tabindex="0" role="button">
+                        <div class="subsubcategory-list" id="subsubcat-హోమియోపతి-డ్రగ్ పిక్చర్">
+                            <div class="subsubcategory-item" data-category="హోమియోపతి|డ్రగ్ పిక్చర్|అనకార్డియం" data-level="2" tabindex="0" role="button">
                                 <div class="category-text">
                                     <i class="fas fa-circle"></i>
-                                    <span>పాటలు</span>
-                                    <span class="video-count" id="count-భక్తి-తెలుగు-పాటలు">0</span>
+                                    <span>అనకార్డియం</span>
+                                    <span class="video-count" id="count-హోమియోపతి-డ్రగ్ పిక్చర్-అనకార్డియం">1</span>
                                 </div>
                             </div>
-                            <div class="subsubcategory-item" data-category="భక్తి|తెలుగు|దండకాలు" data-level="2" tabindex="0" role="button">
+                            <div class="subsubcategory-item" data-category="హోమియోపతి|డ్రగ్ పిక్చర్|లైకోపోడియం" data-level="2" tabindex="0" role="button">
                                 <div class="category-text">
                                     <i class="fas fa-circle"></i>
-                                    <span>దండకాలు</span>
-                                    <span class="video-count" id="count-భక్తి-తెలుగు-దండకాలు">0</span>
+                                    <span>లైకోపోడియం</span>
+                                    <span class="video-count" id="count-హోమియోపతి-డ్రగ్ పిక్చర్-లైకోపోడియం">0</span>
                                 </div>
                             </div>
                         </div>
-                        <div class="subcategory-item" data-category="భక్తి|ఇతర భాషలు" data-level="1" tabindex="0" role="button" aria-expanded="false">
+                        <div class="subcategory-item" data-category="హోమియోపతి|డిస్పెన్సింగ్" data-level="1" tabindex="0" role="button" aria-expanded="false">
                             <div class="subcategory-content">
                                 <div class="category-text">
                                     <i class="fas fa-circle"></i>
-                                    <span>ఇతర భాషలు</span>
-                                    <span class="video-count" id="count-భక్తి-ఇతర భాషలు">0</span>
-                                </div>
-                            </div>
-                            
-                    <div class="chevron-container"></div>
-                        </div>
-                    </div>
-                    <div class="category-header" data-category="బహుళభాగాలు" data-level="0" tabindex="0" role="button" aria-expanded="false">
-                        <div class="category-content">
-                            <div class="category-text">
-                                <i class="fas fa-layer-group"></i>
-                                <span>బహుళభాగాలు</span>
-                                <span class="video-count" id="count-బహుళభాగాలు">0</span>
-                            </div>
-                        </div>
-                        <div class="chevron-container">
-                            <i class="fas fa-chevron-down"></i>
-                        </div>
-                    </div>
-                    <div class="subcategory-list" id="subcat-బహుళభాగాలు">
-                        <div class="subcategory-item" data-category="బహుళభాగాలు|భక్తి" data-level="1" tabindex="0" role="button" aria-expanded="false">
-                            <div class="subcategory-content">
-                                <div class="category-text">
-                                    <i class="fas fa-circle"></i>
-                                    <span>భక్తి</span>
-                                    <span class="video-count" id="count-బహుళభాగాలు-భక్తి">0</span>
+                                    <span>డిస్పెన్సింగ్</span>
+                                    <span class="video-count" id="count-హోమియోపతి-డిస్పెన్సింగ్">1</span>
                                 </div>
                             </div>
                             
@@ -1629,19 +1532,12 @@ button:focus-visible,
                         <i class="fas fa-chevron-down"></i>
                     </div>
                         </div>
-                        <div class="subsubcategory-list" id="subsubcat-బహుళభాగాలు-భక్తి">
-                            <div class="subsubcategory-item" data-category="బహుళభాగాలు|భక్తి|శివతాండవస్తోత్రం" data-level="2" tabindex="0" role="button">
+                        <div class="subsubcategory-list" id="subsubcat-హోమియోపతి-డిస్పెన్సింగ్">
+                            <div class="subsubcategory-item" data-category="హోమియోపతి|డిస్పెన్సింగ్|సింగిల్ డోస్" data-level="2" tabindex="0" role="button">
                                 <div class="category-text">
                                     <i class="fas fa-circle"></i>
-                                    <span>శివతాండవస్తోత్రం</span>
-                                    <span class="video-count" id="count-బహుళభాగాలు-భక్తి-శివతాండవస్తోత్రం">0</span>
-                                </div>
-                            </div>
-                            <div class="subsubcategory-item" data-category="బహుళభాగాలు|భక్తి|లలితాసహస్రనామం" data-level="2" tabindex="0" role="button">
-                                <div class="category-text">
-                                    <i class="fas fa-circle"></i>
-                                    <span>లలితాసహస్రనామం</span>
-                                    <span class="video-count" id="count-బహుళభాగాలు-భక్తి-లలితాసహస్రనామం">0</span>
+                                    <span>సింగిల్ డోస్</span>
+                                    <span class="video-count" id="count-హోమియోపతి-డిస్పెన్సింగ్-సింగిల్ డోస్">1</span>
                                 </div>
                             </div>
                         </div>
@@ -1651,7 +1547,7 @@ button:focus-visible,
                             <div class="category-text">
                                 <i class="fas fa-star"></i>
                                 <span>ఇతర వీడియోలు</span>
-                                <span class="video-count" id="count-ఇతర వీడియోలు">0</span>
+                                <span class="video-count" id="count-ఇతర వీడియోలు">1</span>
                             </div>
                         </div>
                         
@@ -1666,268 +1562,92 @@ button:focus-visible,
                         <p>Try adjusting your search or filter criteria</p>
                     </div>
                     <div class="grid" id="videoGrid">
-                        <div class="card" data-categories="సంగీతం;సాక్సోఫోన్" data-keywords="సంగీతం సాక్సోఫోన్" data-tags="" data-title="Bharo Krishnaiah | Kadri Gopalnath | Carnatic Instrumental Saxophone" data-videoid="MtG8jHMf9MA">
+                        <div class="card" data-categories="హోమియోపతి;డ్రగ్ పిక్చర్;కాలీ బైక్" data-keywords="హోమియోపతి డ్రగ్ పిక్చర్ కాలీ బైక్" data-tags="" data-title="IMPORTANCE OF KALI CARB IN HOMOEO PRACTICE" data-videoid="205K1K-ruM0">
                             <div class="card-thumbnail-container">
-                                <img src="https://img.youtube.com/vi/MtG8jHMf9MA/hqdefault.jpg" alt="Thumbnail for Bharo Krishnaiah | Kadri Gopalnath | Carnatic Instrumental Saxophone" loading="lazy" class="video-thumbnail" onerror="handleImageError(this)">
+                                <img src="https://img.youtube.com/vi/205K1K-ruM0/hqdefault.jpg" alt="Thumbnail for IMPORTANCE OF KALI CARB IN HOMOEO PRACTICE" loading="lazy" class="video-thumbnail" onerror="handleImageError(this)">
                                 <div class="play-overlay">
                                     <i class="fas fa-play"></i>
                                 </div>
                             </div>
                             <div class="card-title">
-                                <a href="https://www.youtube.com/watch?v=MtG8jHMf9MA" target="_blank" rel="noopener">Bharo Krishnaiah | Kadri Gopalnath | Carnatic Instrumental Saxophone</a>
+                                <a href="https://www.youtube.com/watch?v=205K1K-ruM0" target="_blank" rel="noopener">IMPORTANCE OF KALI CARB IN HOMOEO PRACTICE</a>
                             </div>
                         </div>
-                        <div class="card" data-categories="సంగీతం;వయోలిన్" data-keywords="సంగీతం వయోలిన్" data-tags="" data-title="pancharathna Krithis || Kunnakudi Vaidyanathan || Instrumental Violin" data-videoid="km5xdTKRjU0">
+                        <div class="card" data-categories="హోమియోపతి;మెటీరియా మెడికా;అనకార్డియం" data-keywords="హోమియోపతి మెటీరియా మెడికా అనకార్డియం" data-tags="" data-title="Anacardium Homeopathic Medicine | Increase Brain Power | Symptoms | How to use|" data-videoid="4MxeBiRPsqc">
                             <div class="card-thumbnail-container">
-                                <img src="https://img.youtube.com/vi/km5xdTKRjU0/hqdefault.jpg" alt="Thumbnail for pancharathna Krithis || Kunnakudi Vaidyanathan || Instrumental Violin" loading="lazy" class="video-thumbnail" onerror="handleImageError(this)">
+                                <img src="https://img.youtube.com/vi/4MxeBiRPsqc/hqdefault.jpg" alt="Thumbnail for Anacardium Homeopathic Medicine | Increase Brain Power | Symptoms | How to use|" loading="lazy" class="video-thumbnail" onerror="handleImageError(this)">
                                 <div class="play-overlay">
                                     <i class="fas fa-play"></i>
                                 </div>
                             </div>
                             <div class="card-title">
-                                <a href="https://www.youtube.com/watch?v=km5xdTKRjU0" target="_blank" rel="noopener">pancharathna Krithis || Kunnakudi Vaidyanathan || Instrumental Violin</a>
+                                <a href="https://www.youtube.com/watch?v=4MxeBiRPsqc" target="_blank" rel="noopener">Anacardium Homeopathic Medicine | Increase Brain Power | Symptoms | How to use|</a>
                             </div>
                         </div>
-                        <div class="card" data-categories="సంగీతం;కర్నాటక" data-keywords="సంగీతం కర్నాటక" data-tags="music" data-title="Kuzhaloodhi Manamellam || Carnatic Devotional || Bombay Sisters songs" data-videoid="YiiWeox2_r4">
+                        <div class="card" data-categories="హోమియోపతి;డిస్పెన్సింగ్;సింగిల్ డోస్" data-keywords="హోమియోపతి డిస్పెన్సింగ్ సింగిల్ డోస్" data-tags="" data-title="Simple Classical Practical Dispensing of Homoeopathic Remedies!" data-videoid="IJkF76eNrzc">
                             <div class="card-thumbnail-container">
-                                <img src="https://img.youtube.com/vi/YiiWeox2_r4/hqdefault.jpg" alt="Thumbnail for Kuzhaloodhi Manamellam || Carnatic Devotional || Bombay Sisters songs" loading="lazy" class="video-thumbnail" onerror="handleImageError(this)">
+                                <img src="https://img.youtube.com/vi/IJkF76eNrzc/hqdefault.jpg" alt="Thumbnail for Simple Classical Practical Dispensing of Homoeopathic Remedies!" loading="lazy" class="video-thumbnail" onerror="handleImageError(this)">
                                 <div class="play-overlay">
                                     <i class="fas fa-play"></i>
                                 </div>
                             </div>
                             <div class="card-title">
-                                <a href="https://www.youtube.com/watch?v=YiiWeox2_r4" target="_blank" rel="noopener">Kuzhaloodhi Manamellam || Carnatic Devotional || Bombay Sisters songs</a>
+                                <a href="https://www.youtube.com/watch?v=IJkF76eNrzc" target="_blank" rel="noopener">Simple Classical Practical Dispensing of Homoeopathic Remedies!</a>
                             </div>
                         </div>
-                        <div class="card" data-categories="సంగీతం;సాక్సోఫోన్" data-keywords="సంగీతం సాక్సోఫోన్" data-tags="music;test" data-title="Kadri Gopalnath - Saxophone - Classical Instrumental - Jukebox" data-videoid="tKkcbGM0pg0">
+                        <div class="card" data-categories="హోమియోపతి;మెటీరియా మెడికా;హైయోస్యామస్" data-keywords="హోమియోపతి మెటీరియా మెడికా హైయోస్యామస్" data-tags="" data-title="Materia Medica Series #31 Hyoscyamus" data-videoid="0y5QB3Lax-0">
                             <div class="card-thumbnail-container">
-                                <img src="https://img.youtube.com/vi/tKkcbGM0pg0/hqdefault.jpg" alt="Thumbnail for Kadri Gopalnath - Saxophone - Classical Instrumental - Jukebox" loading="lazy" class="video-thumbnail" onerror="handleImageError(this)">
+                                <img src="https://img.youtube.com/vi/0y5QB3Lax-0/hqdefault.jpg" alt="Thumbnail for Materia Medica Series #31 Hyoscyamus" loading="lazy" class="video-thumbnail" onerror="handleImageError(this)">
                                 <div class="play-overlay">
                                     <i class="fas fa-play"></i>
                                 </div>
                             </div>
                             <div class="card-title">
-                                <a href="https://www.youtube.com/watch?v=tKkcbGM0pg0" target="_blank" rel="noopener">Kadri Gopalnath - Saxophone - Classical Instrumental - Jukebox</a>
+                                <a href="https://www.youtube.com/watch?v=0y5QB3Lax-0" target="_blank" rel="noopener">Materia Medica Series #31 Hyoscyamus</a>
                             </div>
                         </div>
-                        <div class="card" data-categories="సంగీతం;సాక్సోఫోన్" data-keywords="సంగీతం సాక్సోఫోన్" data-tags="music" data-title="Kadri Gopalnath - Saxophone - Carnatic Classical Instrumental - Audio Jukebox" data-videoid="z42AFZzhR6w">
+                        <div class="card" data-categories="హోమియోపతి;మెటీరియా మెడికా;లైకోపోడియం" data-keywords="హోమియోపతి మెటీరియా మెడికా లైకోపోడియం" data-tags="" data-title="Learning The Materia Medica Lycopodium from Essence of MM By Vithoulkas" data-videoid="nqjGOyaDEbg">
                             <div class="card-thumbnail-container">
-                                <img src="https://img.youtube.com/vi/z42AFZzhR6w/hqdefault.jpg" alt="Thumbnail for Kadri Gopalnath - Saxophone - Carnatic Classical Instrumental - Audio Jukebox" loading="lazy" class="video-thumbnail" onerror="handleImageError(this)">
+                                <img src="https://img.youtube.com/vi/nqjGOyaDEbg/hqdefault.jpg" alt="Thumbnail for Learning The Materia Medica Lycopodium from Essence of MM By Vithoulkas" loading="lazy" class="video-thumbnail" onerror="handleImageError(this)">
                                 <div class="play-overlay">
                                     <i class="fas fa-play"></i>
                                 </div>
                             </div>
                             <div class="card-title">
-                                <a href="https://www.youtube.com/watch?v=z42AFZzhR6w" target="_blank" rel="noopener">Kadri Gopalnath - Saxophone - Carnatic Classical Instrumental - Audio Jukebox</a>
+                                <a href="https://www.youtube.com/watch?v=nqjGOyaDEbg" target="_blank" rel="noopener">Learning The Materia Medica Lycopodium from Essence of MM By Vithoulkas</a>
                             </div>
                         </div>
-                        <div class="card" data-categories="సంగీతం;కర్నాటక" data-keywords="సంగీతం కర్నాటక" data-tags="music" data-title="Top 50 Songs of MS Subbulakshmi | Srimannarayan (Raga Bhowli) | Brahma Kadigina | Carnatic Music" data-videoid="TqAsVni3KII">
+                        <div class="card" data-categories="హోమియోపతి;మెటీరియా మెడికా;లైకోపోడియం" data-keywords="హోమియోపతి మెటీరియా మెడికా లైకోపోడియం" data-tags="" data-title="Evolutionary Materia Medica of Lycopodium Homeopathy Remedy" data-videoid="9mx8frWdPFk">
                             <div class="card-thumbnail-container">
-                                <img src="https://img.youtube.com/vi/TqAsVni3KII/hqdefault.jpg" alt="Thumbnail for Top 50 Songs of MS Subbulakshmi | Srimannarayan (Raga Bhowli) | Brahma Kadigina | Carnatic Music" loading="lazy" class="video-thumbnail" onerror="handleImageError(this)">
+                                <img src="https://img.youtube.com/vi/9mx8frWdPFk/hqdefault.jpg" alt="Thumbnail for Evolutionary Materia Medica of Lycopodium Homeopathy Remedy" loading="lazy" class="video-thumbnail" onerror="handleImageError(this)">
                                 <div class="play-overlay">
                                     <i class="fas fa-play"></i>
                                 </div>
                             </div>
                             <div class="card-title">
-                                <a href="https://www.youtube.com/watch?v=TqAsVni3KII" target="_blank" rel="noopener">Top 50 Songs of MS Subbulakshmi | Srimannarayan (Raga Bhowli) | Brahma Kadigina | Carnatic Music</a>
+                                <a href="https://www.youtube.com/watch?v=9mx8frWdPFk" target="_blank" rel="noopener">Evolutionary Materia Medica of Lycopodium Homeopathy Remedy</a>
                             </div>
                         </div>
-                        <div class="card" data-categories="సంగీతం;కర్నాటక" data-keywords="సంగీతం కర్నాటక" data-tags="music" data-title="Top 25 Songs of M.L. Vasanthakumari | Baro Krishnayya | Ugabhoga Aaneyakaredare | Carnatic Music" data-videoid="4P2i8aahZMo">
+                        <div class="card" data-categories="హోమియోపతి;డ్రగ్ పిక్చర్;అనకార్డియం" data-keywords="హోమియోపతి డ్రగ్ పిక్చర్ అనకార్డియం" data-tags="" data-title="ANACARDIUM ORIENTALE REMEDY | Homeopathic medicine | Drug Picture |Hindi Explanation" data-videoid="QEtzSItTtsw">
                             <div class="card-thumbnail-container">
-                                <img src="https://img.youtube.com/vi/4P2i8aahZMo/hqdefault.jpg" alt="Thumbnail for Top 25 Songs of M.L. Vasanthakumari | Baro Krishnayya | Ugabhoga Aaneyakaredare | Carnatic Music" loading="lazy" class="video-thumbnail" onerror="handleImageError(this)">
+                                <img src="https://img.youtube.com/vi/QEtzSItTtsw/hqdefault.jpg" alt="Thumbnail for ANACARDIUM ORIENTALE REMEDY | Homeopathic medicine | Drug Picture |Hindi Explanation" loading="lazy" class="video-thumbnail" onerror="handleImageError(this)">
                                 <div class="play-overlay">
                                     <i class="fas fa-play"></i>
                                 </div>
                             </div>
                             <div class="card-title">
-                                <a href="https://www.youtube.com/watch?v=4P2i8aahZMo" target="_blank" rel="noopener">Top 25 Songs of M.L. Vasanthakumari | Baro Krishnayya | Ugabhoga Aaneyakaredare | Carnatic Music</a>
+                                <a href="https://www.youtube.com/watch?v=QEtzSItTtsw" target="_blank" rel="noopener">ANACARDIUM ORIENTALE REMEDY | Homeopathic medicine | Drug Picture |Hindi Explanation</a>
                             </div>
                         </div>
-                        <div class="card" data-categories="సంగీతం;అన్నమాచార్య కీర్తనలు" data-keywords="సంగీతం అన్నమాచార్య కీర్తనలు" data-tags="" data-title="G. Balakrishnaprasad Hit Songs | Annamayya Madhura Gaanam | Venkateswara Songs | Jukebox" data-videoid="DPftohjAJlo">
+                        <div class="card" data-categories="హోమియోపతి;ఇతర వీడియోలు" data-keywords="హోమియోపతి ఇతర వీడియోలు" data-tags="Single dose" data-title="Power of Single Remedy by Dr Sanjay" data-videoid="Lp2wiDZL6LA">
                             <div class="card-thumbnail-container">
-                                <img src="https://img.youtube.com/vi/DPftohjAJlo/hqdefault.jpg" alt="Thumbnail for G. Balakrishnaprasad Hit Songs | Annamayya Madhura Gaanam | Venkateswara Songs | Jukebox" loading="lazy" class="video-thumbnail" onerror="handleImageError(this)">
+                                <img src="https://img.youtube.com/vi/Lp2wiDZL6LA/hqdefault.jpg" alt="Thumbnail for Power of Single Remedy by Dr Sanjay" loading="lazy" class="video-thumbnail" onerror="handleImageError(this)">
                                 <div class="play-overlay">
                                     <i class="fas fa-play"></i>
                                 </div>
                             </div>
                             <div class="card-title">
-                                <a href="https://www.youtube.com/watch?v=DPftohjAJlo" target="_blank" rel="noopener">G. Balakrishnaprasad Hit Songs | Annamayya Madhura Gaanam | Venkateswara Songs | Jukebox</a>
-                            </div>
-                        </div>
-                        <div class="card" data-categories="సంగీతం;అన్నమాచార్య కీర్తనలు" data-keywords="సంగీతం అన్నమాచార్య కీర్తనలు" data-tags="music" data-title="గరిమెళ్ళ బాలకృష్ణ ప్రసాద్ గారి అన్నమాచార్య సంకీర్తనలు|| Devotional Songs Jukebox || Aditya Bhakthi" data-videoid="Wk-N_gwLoEU">
-                            <div class="card-thumbnail-container">
-                                <img src="https://img.youtube.com/vi/Wk-N_gwLoEU/hqdefault.jpg" alt="Thumbnail for గరిమెళ్ళ బాలకృష్ణ ప్రసాద్ గారి అన్నమాచార్య సంకీర్తనలు|| Devotional Songs Jukebox || Aditya Bhakthi" loading="lazy" class="video-thumbnail" onerror="handleImageError(this)">
-                                <div class="play-overlay">
-                                    <i class="fas fa-play"></i>
-                                </div>
-                            </div>
-                            <div class="card-title">
-                                <a href="https://www.youtube.com/watch?v=Wk-N_gwLoEU" target="_blank" rel="noopener">గరిమెళ్ళ బాలకృష్ణ ప్రసాద్ గారి అన్నమాచార్య సంకీర్తనలు|| Devotional Songs Jukebox || Aditya Bhakthi</a>
-                            </div>
-                        </div>
-                        <div class="card" data-categories="సంగీతం;భక్తి;తెలుగు;ఇతరత్రా" data-keywords="సంగీతం భక్తి తెలుగు ఇతరత్రా" data-tags="ప్రియ సిస్టర్స్" data-title="Narayana Narayana by Priya Sisters - Leo Music" data-videoid="L9BVwGqu9xQ">
-                            <div class="card-thumbnail-container">
-                                <img src="https://img.youtube.com/vi/L9BVwGqu9xQ/hqdefault.jpg" alt="Thumbnail for Narayana Narayana by Priya Sisters - Leo Music" loading="lazy" class="video-thumbnail" onerror="handleImageError(this)">
-                                <div class="play-overlay">
-                                    <i class="fas fa-play"></i>
-                                </div>
-                            </div>
-                            <div class="card-title">
-                                <a href="https://www.youtube.com/watch?v=L9BVwGqu9xQ" target="_blank" rel="noopener">Narayana Narayana by Priya Sisters - Leo Music</a>
-                            </div>
-                        </div>
-                        <div class="card" data-categories="సంగీతం;త్యాగరాయ కీర్తనలు" data-keywords="సంగీతం త్యాగరాయ కీర్తనలు" data-tags="music" data-title="D.K. Pattammal - The Nightingale of Carnatic Music | Enchanting Vocals | Thyagaraja Classical Songs" data-videoid="5QjwxtTQ02g">
-                            <div class="card-thumbnail-container">
-                                <img src="https://img.youtube.com/vi/5QjwxtTQ02g/hqdefault.jpg" alt="Thumbnail for D.K. Pattammal - The Nightingale of Carnatic Music | Enchanting Vocals | Thyagaraja Classical Songs" loading="lazy" class="video-thumbnail" onerror="handleImageError(this)">
-                                <div class="play-overlay">
-                                    <i class="fas fa-play"></i>
-                                </div>
-                            </div>
-                            <div class="card-title">
-                                <a href="https://www.youtube.com/watch?v=5QjwxtTQ02g" target="_blank" rel="noopener">D.K. Pattammal - The Nightingale of Carnatic Music | Enchanting Vocals | Thyagaraja Classical Songs</a>
-                            </div>
-                        </div>
-                        <div class="card" data-categories="సంగీతం;మాండోలిన్" data-keywords="సంగీతం మాండోలిన్" data-tags="musicచ" data-title="Best of Mandolin U Srinivas Vol 1 | Carnatic Classical Instrumental" data-videoid="5JkPsWsq3E8">
-                            <div class="card-thumbnail-container">
-                                <img src="https://img.youtube.com/vi/5JkPsWsq3E8/hqdefault.jpg" alt="Thumbnail for Best of Mandolin U Srinivas Vol 1 | Carnatic Classical Instrumental" loading="lazy" class="video-thumbnail" onerror="handleImageError(this)">
-                                <div class="play-overlay">
-                                    <i class="fas fa-play"></i>
-                                </div>
-                            </div>
-                            <div class="card-title">
-                                <a href="https://www.youtube.com/watch?v=5JkPsWsq3E8" target="_blank" rel="noopener">Best of Mandolin U Srinivas Vol 1 | Carnatic Classical Instrumental</a>
-                            </div>
-                        </div>
-                        <div class="card" data-categories="సంగీతం;జలతరంగం" data-keywords="సంగీతం జలతరంగం" data-tags="music" data-title="Anayampatti.S.Ganesan Jalatharangam - Anayampatti Venkatasubramaniam - Thanjavur kumar" data-videoid="i59OWbxcMGQ">
-                            <div class="card-thumbnail-container">
-                                <img src="https://img.youtube.com/vi/i59OWbxcMGQ/hqdefault.jpg" alt="Thumbnail for Anayampatti.S.Ganesan Jalatharangam - Anayampatti Venkatasubramaniam - Thanjavur kumar" loading="lazy" class="video-thumbnail" onerror="handleImageError(this)">
-                                <div class="play-overlay">
-                                    <i class="fas fa-play"></i>
-                                </div>
-                            </div>
-                            <div class="card-title">
-                                <a href="https://www.youtube.com/watch?v=i59OWbxcMGQ" target="_blank" rel="noopener">Anayampatti.S.Ganesan Jalatharangam - Anayampatti Venkatasubramaniam - Thanjavur kumar</a>
-                            </div>
-                        </div>
-                        <div class="card" data-categories="సంగీతం;వీణ" data-keywords="సంగీతం వీణ" data-tags="moved to top" data-title="Veena Vandhanam | E.Gayathri | 1 Hour of Veena Instrumental Music for Relaxation &amp; Stress Relief |" data-videoid="NW21j6X3tgA">
-                            <div class="card-thumbnail-container">
-                                <img src="https://img.youtube.com/vi/NW21j6X3tgA/hqdefault.jpg" alt="Thumbnail for Veena Vandhanam | E.Gayathri | 1 Hour of Veena Instrumental Music for Relaxation &amp; Stress Relief |" loading="lazy" class="video-thumbnail" onerror="handleImageError(this)">
-                                <div class="play-overlay">
-                                    <i class="fas fa-play"></i>
-                                </div>
-                            </div>
-                            <div class="card-title">
-                                <a href="https://www.youtube.com/watch?v=NW21j6X3tgA" target="_blank" rel="noopener">Veena Vandhanam | E.Gayathri | 1 Hour of Veena Instrumental Music for Relaxation &amp; Stress Relief |</a>
-                            </div>
-                        </div>
-                        <div class="card" data-categories="సంగీతం;జలతరంగం" data-keywords="సంగీతం జలతరంగం" data-tags="music;Jalataranam" data-title="Jalatarangam - Nemani Somayajulu classical instrumental Music." data-videoid="KIFkCSYsJ34">
-                            <div class="card-thumbnail-container">
-                                <img src="https://img.youtube.com/vi/KIFkCSYsJ34/hqdefault.jpg" alt="Thumbnail for Jalatarangam - Nemani Somayajulu classical instrumental Music." loading="lazy" class="video-thumbnail" onerror="handleImageError(this)">
-                                <div class="play-overlay">
-                                    <i class="fas fa-play"></i>
-                                </div>
-                            </div>
-                            <div class="card-title">
-                                <a href="https://www.youtube.com/watch?v=KIFkCSYsJ34" target="_blank" rel="noopener">Jalatarangam - Nemani Somayajulu classical instrumental Music.</a>
-                            </div>
-                        </div>
-                        <div class="card" data-categories="సంగీతం;కర్నాటక" data-keywords="సంగీతం కర్నాటక" data-tags="music" data-title="A Flute Carnatic Classical concert by A.K. Raghunadhan | Shyama Hare Jukebox" data-videoid="u8w0oxr0If0">
-                            <div class="card-thumbnail-container">
-                                <img src="https://img.youtube.com/vi/u8w0oxr0If0/hqdefault.jpg" alt="Thumbnail for A Flute Carnatic Classical concert by A.K. Raghunadhan | Shyama Hare Jukebox" loading="lazy" class="video-thumbnail" onerror="handleImageError(this)">
-                                <div class="play-overlay">
-                                    <i class="fas fa-play"></i>
-                                </div>
-                            </div>
-                            <div class="card-title">
-                                <a href="https://www.youtube.com/watch?v=u8w0oxr0If0" target="_blank" rel="noopener">A Flute Carnatic Classical concert by A.K. Raghunadhan | Shyama Hare Jukebox</a>
-                            </div>
-                        </div>
-                        <div class="card" data-categories="సంగీతం;అన్నమాచార్య కీర్తనలు" data-keywords="సంగీతం అన్నమాచార్య కీర్తనలు" data-tags="music" data-title="Annamayya Sankeerthana Madhuri - Vol 2 || Jukebox || G Balakrishna Prasad" data-videoid="qz4Q3tUUgs0">
-                            <div class="card-thumbnail-container">
-                                <img src="https://img.youtube.com/vi/qz4Q3tUUgs0/hqdefault.jpg" alt="Thumbnail for Annamayya Sankeerthana Madhuri - Vol 2 || Jukebox || G Balakrishna Prasad" loading="lazy" class="video-thumbnail" onerror="handleImageError(this)">
-                                <div class="play-overlay">
-                                    <i class="fas fa-play"></i>
-                                </div>
-                            </div>
-                            <div class="card-title">
-                                <a href="https://www.youtube.com/watch?v=qz4Q3tUUgs0" target="_blank" rel="noopener">Annamayya Sankeerthana Madhuri - Vol 2 || Jukebox || G Balakrishna Prasad</a>
-                            </div>
-                        </div>
-                        <div class="card" data-categories="సంగీతం;అన్నమాచార్య కీర్తనలు" data-keywords="సంగీతం అన్నమాచార్య కీర్తనలు" data-tags="" data-title="Sri Annamacharya Nitya Sankeerthana | Nitya Santhoshini | Telugu Devotional Songs #bhaktisongs" data-videoid="IgK59MseEps">
-                            <div class="card-thumbnail-container">
-                                <img src="https://img.youtube.com/vi/IgK59MseEps/hqdefault.jpg" alt="Thumbnail for Sri Annamacharya Nitya Sankeerthana | Nitya Santhoshini | Telugu Devotional Songs #bhaktisongs" loading="lazy" class="video-thumbnail" onerror="handleImageError(this)">
-                                <div class="play-overlay">
-                                    <i class="fas fa-play"></i>
-                                </div>
-                            </div>
-                            <div class="card-title">
-                                <a href="https://www.youtube.com/watch?v=IgK59MseEps" target="_blank" rel="noopener">Sri Annamacharya Nitya Sankeerthana | Nitya Santhoshini | Telugu Devotional Songs #bhaktisongs</a>
-                            </div>
-                        </div>
-                        <div class="card" data-categories="సంగీతం;అన్నమాచార్య కీర్తనలు" data-keywords="సంగీతం అన్నమాచార్య కీర్తనలు" data-tags="" data-title="Annamacharya Nityasankerthana Vol 5 | Nitya Santoshini | Telugu Devotional Songs | #bhakthisongs" data-videoid="IyTIDF0mGUA">
-                            <div class="card-thumbnail-container">
-                                <img src="https://img.youtube.com/vi/IyTIDF0mGUA/hqdefault.jpg" alt="Thumbnail for Annamacharya Nityasankerthana Vol 5 | Nitya Santoshini | Telugu Devotional Songs | #bhakthisongs" loading="lazy" class="video-thumbnail" onerror="handleImageError(this)">
-                                <div class="play-overlay">
-                                    <i class="fas fa-play"></i>
-                                </div>
-                            </div>
-                            <div class="card-title">
-                                <a href="https://www.youtube.com/watch?v=IyTIDF0mGUA" target="_blank" rel="noopener">Annamacharya Nityasankerthana Vol 5 | Nitya Santoshini | Telugu Devotional Songs | #bhakthisongs</a>
-                            </div>
-                        </div>
-                        <div class="card" data-categories="సంగీతం;అన్నమాచార్య కీర్తనలు" data-keywords="సంగీతం అన్నమాచార్య కీర్తనలు" data-tags="" data-title="Annamayya Alivelmanga Vybhavam Jukebox | G.Balakrishna Prasad |Telugu Devotional Songs| #bhaktisong" data-videoid="k4F9sQCnH-Q">
-                            <div class="card-thumbnail-container">
-                                <img src="https://img.youtube.com/vi/k4F9sQCnH-Q/hqdefault.jpg" alt="Thumbnail for Annamayya Alivelmanga Vybhavam Jukebox | G.Balakrishna Prasad |Telugu Devotional Songs| #bhaktisong" loading="lazy" class="video-thumbnail" onerror="handleImageError(this)">
-                                <div class="play-overlay">
-                                    <i class="fas fa-play"></i>
-                                </div>
-                            </div>
-                            <div class="card-title">
-                                <a href="https://www.youtube.com/watch?v=k4F9sQCnH-Q" target="_blank" rel="noopener">Annamayya Alivelmanga Vybhavam Jukebox | G.Balakrishna Prasad |Telugu Devotional Songs| #bhaktisong</a>
-                            </div>
-                        </div>
-                        <div class="card" data-categories="సంగీతం;వయోలిన్" data-keywords="సంగీతం వయోలిన్" data-tags="removed tag" data-title="MS.Gopalakrishnan &quot;The Violin Magician&quot; Concert @Dasara Sangeetha Mahotsav. [90th Birth Anniversary]" data-videoid="u7Qed5NFXkc">
-                            <div class="card-thumbnail-container">
-                                <img src="https://img.youtube.com/vi/u7Qed5NFXkc/hqdefault.jpg" alt="Thumbnail for MS.Gopalakrishnan &quot;The Violin Magician&quot; Concert @Dasara Sangeetha Mahotsav. [90th Birth Anniversary]" loading="lazy" class="video-thumbnail" onerror="handleImageError(this)">
-                                <div class="play-overlay">
-                                    <i class="fas fa-play"></i>
-                                </div>
-                            </div>
-                            <div class="card-title">
-                                <a href="https://www.youtube.com/watch?v=u7Qed5NFXkc" target="_blank" rel="noopener">MS.Gopalakrishnan &quot;The Violin Magician&quot; Concert @Dasara Sangeetha Mahotsav. [90th Birth Anniversary]</a>
-                            </div>
-                        </div>
-                        <div class="card" data-categories="సంగీతం;అన్నమాచార్య కీర్తనలు" data-keywords="సంగీతం అన్నమాచార్య కీర్తనలు" data-tags="" data-title="అన్నమయ్య పద తియ్యదనం | G.BALAKRISHNA PRASAD | Annamacharya Sankeerthanalu | Bhakthi Songs" data-videoid="4Nw0--4C6qw">
-                            <div class="card-thumbnail-container">
-                                <img src="https://img.youtube.com/vi/4Nw0--4C6qw/hqdefault.jpg" alt="Thumbnail for అన్నమయ్య పద తియ్యదనం | G.BALAKRISHNA PRASAD | Annamacharya Sankeerthanalu | Bhakthi Songs" loading="lazy" class="video-thumbnail" onerror="handleImageError(this)">
-                                <div class="play-overlay">
-                                    <i class="fas fa-play"></i>
-                                </div>
-                            </div>
-                            <div class="card-title">
-                                <a href="https://www.youtube.com/watch?v=4Nw0--4C6qw" target="_blank" rel="noopener">అన్నమయ్య పద తియ్యదనం | G.BALAKRISHNA PRASAD | Annamacharya Sankeerthanalu | Bhakthi Songs</a>
-                            </div>
-                        </div>
-                        <div class="card" data-categories="సంగీతం;కర్నాటక" data-keywords="సంగీతం కర్నాటక" data-tags="" data-title="Vibrant Violin || Kunnakudi Vaidyanathan || Carnatic Classical Instrumental Music" data-videoid="Fo7QxAVWaLw">
-                            <div class="card-thumbnail-container">
-                                <img src="https://img.youtube.com/vi/Fo7QxAVWaLw/hqdefault.jpg" alt="Thumbnail for Vibrant Violin || Kunnakudi Vaidyanathan || Carnatic Classical Instrumental Music" loading="lazy" class="video-thumbnail" onerror="handleImageError(this)">
-                                <div class="play-overlay">
-                                    <i class="fas fa-play"></i>
-                                </div>
-                            </div>
-                            <div class="card-title">
-                                <a href="https://www.youtube.com/watch?v=Fo7QxAVWaLw" target="_blank" rel="noopener">Vibrant Violin || Kunnakudi Vaidyanathan || Carnatic Classical Instrumental Music</a>
-                            </div>
-                        </div>
-                        <div class="card" data-categories="సంగీతం;కర్నాటక" data-keywords="సంగీతం కర్నాటక" data-tags="music" data-title="Kunnakudi Vaidyanathan Violin | Kurai Ondrum Illai Album | Carnatic Instrumental" data-videoid="wYtSXiOGmCQ">
-                            <div class="card-thumbnail-container">
-                                <img src="https://img.youtube.com/vi/wYtSXiOGmCQ/hqdefault.jpg" alt="Thumbnail for Kunnakudi Vaidyanathan Violin | Kurai Ondrum Illai Album | Carnatic Instrumental" loading="lazy" class="video-thumbnail" onerror="handleImageError(this)">
-                                <div class="play-overlay">
-                                    <i class="fas fa-play"></i>
-                                </div>
-                            </div>
-                            <div class="card-title">
-                                <a href="https://www.youtube.com/watch?v=wYtSXiOGmCQ" target="_blank" rel="noopener">Kunnakudi Vaidyanathan Violin | Kurai Ondrum Illai Album | Carnatic Instrumental</a>
+                                <a href="https://www.youtube.com/watch?v=Lp2wiDZL6LA" target="_blank" rel="noopener">Power of Single Remedy by Dr Sanjay</a>
                             </div>
                         </div>
                     </div>
@@ -1935,7 +1655,7 @@ button:focus-visible,
             </div>
         </div>
         <script>
-            /* Built: Tue Nov 11 05:57:01 PM UTC 2025 - DO NOT EDIT - generated from modules/ */
+            /* Built: Tue Nov 11 07:26:25 PM UTC 2025 - DO NOT EDIT - generated from modules/ */
 window.PVL = window.PVL || {};
 
 /* ===== utils.js ===== */
@@ -2553,57 +2273,84 @@ window.PVL = window.PVL || {};
 
   // Improved chevron detection + clear separation of "toggle" vs "select"
   function handleCategoryClick(event) {
-    const target = event.target;
-
-    // First try exact chevron hit
-    const chevron = target.closest('.chevron-container, .fa-chevron-down, .chev, .chevron, [data-role="chevron"], [data-toggle="chevron"]');
-
-    // Find the category row that was clicked (if any)
-    const categoryElement = target.closest('.category-header, .subcategory-item, .subsubcategory-item');
-
-    // Fallback: if chevron not found but the click occurred on the right N% of the category row, treat as chevron
-    if (!chevron && categoryElement) {
-      const rect = categoryElement.getBoundingClientRect();
-      // Support touch events: use touches if present
-      const clientX = (event.touches && event.touches[0] && event.touches[0].clientX) || event.clientX || 0;
-      const relX = clientX - rect.left;
-      const frac = rect.width > 0 ? relX / rect.width : 0;
-      // 0.8 = rightmost 20% — tweak if you need larger/smaller chevron hit area
-      if (frac >= 0.8) {
-        // Treat as chevron click
-        event.stopImmediatePropagation();
-        event.preventDefault();
-        const level = parseInt(categoryElement.dataset.level || 0);
-        const category = categoryElement.dataset.category || '';
-        if (level === 0) {
-          ns.categoryManager.toggleCategory(category, event);
-        } else if (level === 1) {
-          const parts = category.split('|');
-          ns.categoryManager.toggleSubcategory(parts[0], parts[1], event);
-        }
-        return;
-      }
+    // Get best pointer coords (touch or mouse)
+    let clientX = 0, clientY = 0;
+    if (event.changedTouches && event.changedTouches[0]) {
+      clientX = event.changedTouches[0].clientX;
+      clientY = event.changedTouches[0].clientY;
+    } else if (event.touches && event.touches[0]) {
+      clientX = event.touches[0].clientX;
+      clientY = event.touches[0].clientY;
+    } else {
+      clientX = event.clientX || 0;
+      clientY = event.clientY || 0;
     }
 
-    // If we had an explicit chevron element, toggle only
-    if (chevron) {
+    // Try the real top element at the pointer first (fix overlays)
+    const topEl = (typeof document.elementFromPoint === 'function' && clientX !== 0 && clientY !== 0)
+      ? document.elementFromPoint(clientX, clientY)
+      : null;
+
+    // 1) If topEl (or its ancestor) is a chevron, toggle only
+    const chevronFromPoint = topEl && topEl.closest
+      ? topEl.closest('.chevron-container, .fa-chevron-down, .chev, .chevron, [data-role="chevron"], [data-toggle="chevron"]')
+      : null;
+    if (chevronFromPoint) {
       event.stopImmediatePropagation();
       event.preventDefault();
-      const categoryEl = chevron.closest('.category-header, .subcategory-item, .subsubcategory-item');
+      const categoryEl = chevronFromPoint.closest('.category-header, .subcategory-item, .subsubcategory-item');
       if (!categoryEl) return;
       const level = parseInt(categoryEl.dataset.level || 0);
       const category = categoryEl.dataset.category || '';
-      if (level === 0) {
-        ns.categoryManager.toggleCategory(category, event);
-      } else if (level === 1) {
+      if (level === 0) ns.categoryManager.toggleCategory(category, event);
+      else if (level === 1) {
         const parts = category.split('|');
         ns.categoryManager.toggleSubcategory(parts[0], parts[1], event);
       }
       return;
     }
 
-    // Otherwise treat as selection click (label area)
+    // 2) If the actual clicked target contains a chevron (explicit), toggle only
+    const explicitChevron = event.target && event.target.closest
+      ? event.target.closest('.chevron-container, .fa-chevron-down, .chev, .chevron, [data-role="chevron"], [data-toggle="chevron"]')
+      : null;
+    if (explicitChevron) {
+      event.stopImmediatePropagation();
+      event.preventDefault();
+      const categoryEl = explicitChevron.closest('.category-header, .subcategory-item, .subsubcategory-item');
+      if (!categoryEl) return;
+      const level = parseInt(categoryEl.dataset.level || 0);
+      const category = categoryEl.dataset.category || '';
+      if (level === 0) ns.categoryManager.toggleCategory(category, event);
+      else if (level === 1) {
+        const parts = category.split('|');
+        ns.categoryManager.toggleSubcategory(parts[0], parts[1], event);
+      }
+      return;
+    }
+
+    // 3) Fallback right-edge zone on the category row (if no chevron detected)
+    const categoryElement = event.target && event.target.closest
+      ? event.target.closest('.category-header, .subcategory-item, .subsubcategory-item')
+      : null;
     if (categoryElement) {
+      const rect = categoryElement.getBoundingClientRect();
+      const relX = clientX - rect.left;
+      const frac = rect.width > 0 ? relX / rect.width : 0;
+      if (frac >= 0.78) { // rightmost ~22% => toggle
+        event.stopImmediatePropagation();
+        event.preventDefault();
+        const level = parseInt(categoryElement.dataset.level || 0);
+        const category = categoryElement.dataset.category || '';
+        if (level === 0) ns.categoryManager.toggleCategory(category, event);
+        else if (level === 1) {
+          const parts = category.split('|');
+          ns.categoryManager.toggleSubcategory(parts[0], parts[1], event);
+        }
+        return;
+      }
+
+      // 4) Otherwise selection (label click)
       event.stopPropagation();
       event.preventDefault();
       ns.categoryManager.handleCategorySelection(categoryElement);
