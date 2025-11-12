@@ -19,11 +19,6 @@ jobs:
           ref: gh-pages
           path: gh-pages-target
 
-      - name: Set Git identity
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
       - name: Copy ONLY index.html and resources (non-destructive)
         run: |
           echo "=== SAFELY COPYING FILES ==="
@@ -45,6 +40,10 @@ jobs:
       - name: Commit and push ONLY specific files
         run: |
           cd gh-pages-target
+          
+          # Set Git identity for THIS repository
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
           
           # Add ONLY the files we explicitly changed
           git add index.html
