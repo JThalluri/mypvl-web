@@ -1,0 +1,218 @@
+/* ===== HEADER ===== */
+header {
+    background-color: var(--primary-color);
+    color: var(--text-on-primary);
+    padding: 3rem 0;
+    text-align: center;
+    box-shadow: var(--shadow);
+    position: relative;
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.header-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+/* Floating Icons */
+.floating-icon {
+    position: absolute;
+    z-index: 2;
+    opacity: 0.2;
+    transition: all 0.3s ease;
+    pointer-events: none;
+}
+
+.floating-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+}
+
+/* Individual Icon Positioning */
+.icon-1 { /* camera-solid-full.svg */
+    width: 85px; height: 85px;
+    top: 15%; left: 12%;
+    transform: rotate(-12deg);
+    filter: brightness(0) invert(1);
+    opacity: 0.25;
+}
+
+.icon-2 { /* radio-solid-full.svg */
+    width: 65px; height: 65px;
+    top: 10%; right: 3%;
+    transform: rotate(8deg);
+    filter: brightness(0) invert(0.8);
+    opacity: 0.18;
+}
+
+.icon-3 { /* photo-film-solid-full.svg */
+    width: 95px; height: 95px;
+    bottom: 10%; left: 3%;
+    transform: rotate(15deg);
+    filter: brightness(0) invert(1);
+    opacity: 0.22;
+}
+
+.icon-4 { /* closed-captioning-solid-full.svg */
+    width: 55px; height: 55px;
+    bottom: 10%; right: 5%;
+    transform: rotate(-18deg);
+    filter: sepia(1) saturate(5) hue-rotate(300deg);
+    opacity: 0.2;
+}
+
+.icon-5 { /* clapperboard-solid-full.svg */
+    width: 75px; height: 75px;
+    top: 55%; left: 65%;
+    transform: rotate(25deg);
+    filter: brightness(0) invert(0.6);
+    opacity: 0.2;
+}
+
+.icon-6 { /* podcast-solid-full.svg */
+    width: 70px; height: 70px;
+    top: 40%; left: 85%;
+    transform: rotate(-10deg);
+    filter: brightness(0) invert(1);
+    opacity: 0.2;
+}
+
+.icon-7 { /* microphone-lines-solid-full.svg */
+    width: 60px; height: 60px;
+    top: 55%; left: 15%;
+    transform: rotate(5deg);
+    filter: sepia(1) saturate(5) hue-rotate(300deg);
+    opacity: 0.18;
+}
+
+.icon-8 { /* video-solid-full.svg */
+    width: 80px; height: 80px;
+    top: 18%; left: 70%;
+    transform: rotate(-22deg);
+    filter: brightness(0) invert(0.9);
+    opacity: 0.16;
+}
+
+.icon-9 { /* headphones-solid-full.svg */
+    width: 45px; height: 45px;
+    bottom: 25%; left: 45%;
+    transform: rotate(12deg);
+    filter: brightness(0) invert(1);
+    opacity: 0.22;
+}
+
+.icon-10 { /* play-solid-full.svg */
+    width: 75px; height: 75px;
+    top: 35%; left: 25%;
+    transform: rotate(-10deg);
+    filter: sepia(1) saturate(5) hue-rotate(300deg);
+    opacity: 0.3;
+}
+
+.icon-11 { /* film-solid-full.svg */
+    width: 90px; height: 90px;
+    bottom: 15%; right: 20%;
+    transform: rotate(18deg);
+    filter: brightness(1) invert(0.7);
+    opacity: 0.18;
+}
+
+/* Banner & Header Content */
+.banner-img {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 600px;
+    max-height: 300px;
+    width: auto;
+    height: auto;
+    z-index: 3;
+    object-fit: contain;
+}
+
+.header-content {
+    position: relative;
+    z-index: 4;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.logo-container, h1, .tagline {
+    position: relative;
+    z-index: 5;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.logo {
+    width: 80px;
+    height: 80px;
+    background: var(--text-on-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: var(--primary-color);
+    box-shadow: var(--shadow);
+    border: 3px solid var(--text-on-primary);
+    font-weight: bold;
+    flex-shrink: 0;
+}
+
+.logo-img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--text-on-primary);
+    box-shadow: var(--shadow);
+    flex-shrink: 0;
+}
+
+h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    color: var(--text-on-primary);
+}
+
+.tagline {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0;
+    background: rgb(20 0 0);
+    backdrop-filter: blur(10px);
+    border-radius: 50px;
+    border: 2px solid rgb(121 69 69 / 20%);
+    box-shadow: -1px -4px 20px rgba(0, 0, 0, 0.3);
+    position: absolute;
+    bottom: -1px;
+    left: 50%;
+    padding: 2px 800px;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    z-index: 10;
+    color: #939393;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+}
