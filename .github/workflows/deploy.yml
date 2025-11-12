@@ -55,7 +55,6 @@ jobs:
             echo "Changes deployed successfully!"
           fi
 
-<<<<<<< HEAD
       - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v3
         with:
@@ -63,7 +62,3 @@ jobs:
           publish_dir: ./public
           publish_branch: gh-pages
           force_orphan: false
-=======
-      - name: Cleanup
-        run: rm -rf gh-pages-target
->>>>>>> a2889a5 (fix: update deploy script to copy only index.html and /resources folder without overwriting entire gh-pages branch)
