@@ -8,11 +8,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout source
+      - name: Checkout source (main branch)
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # Ensures full history for gh-pages push
-          persist-credentials: true  # Required for peaceiris action
+          fetch-depth: 0
+          persist-credentials: true
+
+      - name: Checkout gh-pages branch
+        uses: actions/checkout@v3
+        with:
+          ref: gh-pages
+          path: gh-pages-target
 
       - name: Set Git identity
         run: |
@@ -21,13 +27,35 @@ jobs:
 
       - name: Build site
         run: |
-          mkdir public
+          mkdir -p public
           cp index.html public/
           cp -r resources/ public/
 
-      - name: List public contents (debug)
-        run: ls -la public
+      - name: Deploy changes selectively
+        run: |
+          cd gh-pages-target
+          
+          # Copy index.html (replace if exists)
+          echo "Updating index.html..."
+          cp ../public/index.html ./
+          
+          # Remove and replace resources folder (clean replacement)
+          echo "Updating resources folder..."
+          rm -rf resources
+          cp -r ../public/resources/ ./
+          
+          # Check if there are any changes to commit
+          if git diff --quiet && git diff --staged --quiet; then
+            echo "No changes detected - skipping commit"
+          else
+            # Commit only the specific files we care about
+            git add index.html resources/
+            git commit -m "Deploy updates: index.html and resources/ [$(date +'%Y-%m-%d %H:%M:%S')]"
+            git push origin gh-pages
+            echo "Changes deployed successfully!"
+          fi
 
+<<<<<<< HEAD
       - name: Deploy to gh-pages
         uses: peaceiris/actions-gh-pages@v3
         with:
@@ -35,3 +63,7 @@ jobs:
           publish_dir: ./public
           publish_branch: gh-pages
           force_orphan: false
+=======
+      - name: Cleanup
+        run: rm -rf gh-pages-target
+>>>>>>> a2889a5 (fix: update deploy script to copy only index.html and /resources folder without overwriting entire gh-pages branch)
