@@ -264,7 +264,7 @@ function initContactForm() {
             
             try {
                 // Use Formspree - it's reliable
-                const response = await fetch('https://formspree.io/f/xwprjezy', {
+                const response = await fetch('https://formspree.io/f/xldallkz', {
                     method: 'POST',
                     body: new FormData(contactForm),
                     headers: {
