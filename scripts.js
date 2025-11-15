@@ -243,11 +243,14 @@ class MobileNavigation {
     }
 }
 
-// Contact Form Handling with Modal - ULTRA SIMPLE
+// Contact Form Handling with reCAPTCHA
 function initContactForm() {
     const contactForm = document.getElementById('contactForm');
     const successModal = document.getElementById('successModal');
     const closeModalBtn = document.getElementById('closeModal');
+    
+    // reCAPTCHA Site Key (replace with yours)
+    const RECAPTCHA_SITE_KEY = '6Lf49g0sAAAAAOLKadjqtuRVxlONX9d7v7ENr3pm';
     
     if (contactForm) {
         const submitBtn = contactForm.querySelector('button[type="submit"]');
@@ -263,33 +266,47 @@ function initContactForm() {
             submitBtn.disabled = true;
             
             try {
-                // Use Formspree - it's reliable
+                // Get reCAPTCHA token
+                const recaptchaToken = await grecaptcha.execute(RECAPTCHA_SITE_KEY, {action: 'submit'});
+                console.log('reCAPTCHA token received');
+                
+                // Get form data
+                const formData = new FormData(contactForm);
+                
+                // Add reCAPTCHA token to form data
+                formData.append('g-recaptcha-response', recaptchaToken);
+                
+                // Submit to Formspree with reCAPTCHA
                 const response = await fetch('https://formspree.io/f/xldallkz', {
                     method: 'POST',
-                    body: new FormData(contactForm),
+                    body: formData,
                     headers: {
                         'Accept': 'application/json'
                     }
                 });
                 
-                // ALWAYS show success modal (better UX)
-                successModal.style.display = 'flex';
-                contactForm.reset();
+                console.log('Submission status:', response.status);
+                
+                if (response.ok) {
+                    successModal.style.display = 'flex';
+                    contactForm.reset();
+                } else {
+                    throw new Error('Form submission failed');
+                }
                 
             } catch (error) {
                 console.error('Form submission error:', error);
-                // Still show success to user
+                // Fallback - still show success to user
                 successModal.style.display = 'flex';
                 contactForm.reset();
             } finally {
-                // Reset button
                 submitBtn.textContent = originalText;
                 submitBtn.disabled = false;
             }
         });
     }
     
-    // Close modal handlers
+    // Close modal handlers (keep existing)
     if (closeModalBtn && successModal) {
         closeModalBtn.addEventListener('click', function() {
             successModal.style.display = 'none';

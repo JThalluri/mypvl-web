@@ -135,6 +135,7 @@ def generate_html(theme="dark"):
     <style>
         {css_content}
     </style>
+    <script src="https://www.google.com/recaptcha/api.js?render=6Lf49g0sAAAAAOLKadjqtuRVxlONX9d7v7ENr3pm"></script>
 </head>
 <body>
     {header_content}
