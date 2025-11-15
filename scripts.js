@@ -12,29 +12,80 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// Simple form handling with Formspree
-document.querySelector('.contact-form').addEventListener('submit', function(e) {
-    // Formspree will handle the submission
-    // You can add loading states or success messages here
-    const submitBtn = this.querySelector('button[type="submit"]');
-    const originalText = submitBtn.textContent;
+// Contact Form Handling with Modal
+document.addEventListener('DOMContentLoaded', function() {
+    const contactForm = document.querySelector('.contact-form');
+    const submitBtn = contactForm ? contactForm.querySelector('button[type="submit"]') : null;
+    const successModal = document.getElementById('successModal');
+    const closeModalBtn = document.getElementById('closeModal');
     
-    // Show loading state
-    submitBtn.textContent = 'Sending...';
-    submitBtn.disabled = true;
+    if (contactForm && submitBtn) {
+        contactForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Show loading state
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Sending...';
+            submitBtn.disabled = true;
+            
+            // Submit to Formspree
+            const formData = new FormData(contactForm);
+            
+            fetch('https://formspree.io/f/xwprjezy', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Show success modal
+                    if (successModal) {
+                        successModal.style.display = 'flex';
+                    }
+                    // Reset form
+                    contactForm.reset();
+                } else {
+                    alert('There was an error submitting your form. Please try again.');
+                }
+            })
+            .catch(error => {
+                alert('There was an error submitting your form. Please try again.');
+            })
+            .finally(() => {
+                // Reset button
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            });
+        });
+    }
     
-    // Reset after 3 seconds (Formspree handles the actual submission)
-    setTimeout(() => {
-        submitBtn.textContent = originalText;
-        submitBtn.disabled = false;
-    }, 3000);
+    // Close modal handlers
+    if (closeModalBtn) {
+        closeModalBtn.addEventListener('click', function() {
+            if (successModal) {
+                successModal.style.display = 'none';
+            }
+        });
+    }
+    
+    if (successModal) {
+        // Close modal when clicking outside content
+        successModal.addEventListener('click', function(e) {
+            if (e.target === successModal) {
+                successModal.style.display = 'none';
+            }
+        });
+        
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && successModal.style.display === 'flex') {
+                successModal.style.display = 'none';
+            }
+        });
+    }
 });
-
-// Add intersection observer for section animations
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
-};
 
 const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
