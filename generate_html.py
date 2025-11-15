@@ -62,6 +62,7 @@ def combine_css_files(css_dir="css", theme="dark"):
         "components/cards.css",
         "components/carousels.css",
         "components/forms.css",
+        "components/modal.css",
         "components/footer.css",
         
         # Layout & Responsive

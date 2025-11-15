@@ -243,7 +243,6 @@ class MobileNavigation {
     }
 }
 
-// Contact Form Handling with Modal
 function initContactForm() {
     const contactForm = document.getElementById('contactForm');
     const successModal = document.getElementById('successModal');
@@ -263,10 +262,13 @@ function initContactForm() {
             submitBtn.disabled = true;
             
             try {
-                // Submit to Formspree
-                const response = await fetch('https://formspree.io/f/xwprjezy', {
+                // Get form data
+                const formData = new FormData(contactForm);
+                
+                // Submit to FormSubmit
+                const response = await fetch('https://formsubmit.co/el/haxevi', {
                     method: 'POST',
-                    body: new FormData(contactForm),
+                    body: formData,
                     headers: {
                         'Accept': 'application/json'
                     }
@@ -275,6 +277,8 @@ function initContactForm() {
                 if (response.ok) {
                     // Show success modal
                     if (successModal) {
+                        successModal.style.animation = 'none';
+                        successModal.style.transition = 'none';
                         successModal.style.display = 'flex';
                     }
                     // Reset form
@@ -286,6 +290,8 @@ function initContactForm() {
                 console.error('Form submission error:', error);
                 // Fallback - still show success to user
                 if (successModal) {
+                    successModal.style.animation = 'none';
+                    successModal.style.transition = 'none';
                     successModal.style.display = 'flex';
                 }
                 contactForm.reset();
