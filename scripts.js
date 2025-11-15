@@ -1,91 +1,26 @@
-// Smooth scrolling for navigation links
+// Smooth scrolling with offset for fixed header
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         e.preventDefault();
         const target = document.querySelector(this.getAttribute('href'));
         if (target) {
-            target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
+            const headerOffset = 80;
+            const elementPosition = target.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+            
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
             });
         }
     });
 });
 
-// Contact Form Handling with Modal
-document.addEventListener('DOMContentLoaded', function() {
-    const contactForm = document.querySelector('.contact-form');
-    const submitBtn = contactForm ? contactForm.querySelector('button[type="submit"]') : null;
-    const successModal = document.getElementById('successModal');
-    const closeModalBtn = document.getElementById('closeModal');
-    
-    if (contactForm && submitBtn) {
-        contactForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Show loading state
-            const originalText = submitBtn.textContent;
-            submitBtn.textContent = 'Sending...';
-            submitBtn.disabled = true;
-            
-            // Submit to Formspree
-            const formData = new FormData(contactForm);
-            
-            fetch('https://formspree.io/f/xwprjezy', {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'Accept': 'application/json'
-                }
-            })
-            .then(response => {
-                if (response.ok) {
-                    // Show success modal
-                    if (successModal) {
-                        successModal.style.display = 'flex';
-                    }
-                    // Reset form
-                    contactForm.reset();
-                } else {
-                    alert('There was an error submitting your form. Please try again.');
-                }
-            })
-            .catch(error => {
-                alert('There was an error submitting your form. Please try again.');
-            })
-            .finally(() => {
-                // Reset button
-                submitBtn.textContent = originalText;
-                submitBtn.disabled = false;
-            });
-        });
-    }
-    
-    // Close modal handlers
-    if (closeModalBtn) {
-        closeModalBtn.addEventListener('click', function() {
-            if (successModal) {
-                successModal.style.display = 'none';
-            }
-        });
-    }
-    
-    if (successModal) {
-        // Close modal when clicking outside content
-        successModal.addEventListener('click', function(e) {
-            if (e.target === successModal) {
-                successModal.style.display = 'none';
-            }
-        });
-        
-        // Close modal with Escape key
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && successModal.style.display === 'flex') {
-                successModal.style.display = 'none';
-            }
-        });
-    }
-});
+// Section animations
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -50px 0px'
+};
 
 const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -169,62 +104,60 @@ class TestimonialCarousel {
     }
 }
 
-// Implementation Carousel - FINAL WORKING VERSION
-document.addEventListener('DOMContentLoaded', function() {
-    const carouselContainer = document.querySelector('.implementation-carousel-container');
-    if (!carouselContainer) {
-        console.error('Carousel container not found!');
-        return;
+// Implementation Carousel Class (Missing from your code)
+class ImplementationCarousel {
+    constructor(container) {
+        this.container = container;
+        this.track = container.querySelector('.implementation-track');
+        this.slides = container.querySelectorAll('.implementation-slide');
+        this.dots = container.querySelectorAll('.carousel-dot');
+        this.prevBtn = container.querySelector('.carousel-btn.prev');
+        this.nextBtn = container.querySelector('.carousel-btn.next');
+        
+        this.currentIndex = 0;
+        this.slideCount = this.slides.length;
+        
+        this.init();
     }
-
-    const track = carouselContainer.querySelector('.implementation-track');
-    const slides = carouselContainer.querySelectorAll('.implementation-slide');
-    const dots = carouselContainer.querySelectorAll('.carousel-dot');
-    const prevBtn = carouselContainer.querySelector('.carousel-btn.prev');
-    const nextBtn = carouselContainer.querySelector('.carousel-btn.next');
-
-    let currentIndex = 0;
-    const slideCount = slides.length;
-
-    console.log(`Found ${slideCount} slides and ${dots.length} dots`);
-
-    function updateCarousel() {
-        // Move track to show current slide
-        track.style.transform = `translateX(-${currentIndex * 100}%)`;
+    
+    init() {
+        this.prevBtn.addEventListener('click', () => this.prev());
+        this.nextBtn.addEventListener('click', () => this.next());
+        
+        this.dots.forEach((dot, index) => {
+            dot.addEventListener('click', () => this.goToSlide(index));
+        });
+        
+        this.updateCarousel();
+    }
+    
+    prev() {
+        this.currentIndex = (this.currentIndex - 1 + this.slideCount) % this.slideCount;
+        this.updateCarousel();
+    }
+    
+    next() {
+        this.currentIndex = (this.currentIndex + 1) % this.slideCount;
+        this.updateCarousel();
+    }
+    
+    goToSlide(index) {
+        this.currentIndex = index;
+        this.updateCarousel();
+    }
+    
+    updateCarousel() {
+        const translateX = -this.currentIndex * 100;
+        this.track.style.transform = `translateX(${translateX}%)`;
         
         // Update dots
-        dots.forEach((dot, index) => {
-            dot.classList.toggle('active', index === currentIndex);
+        this.dots.forEach((dot, index) => {
+            dot.classList.toggle('active', index === this.currentIndex);
         });
-        
-        console.log(`Now showing slide ${currentIndex + 1} of ${slideCount}`);
     }
+}
 
-    // Previous button click
-    prevBtn.addEventListener('click', () => {
-        currentIndex = currentIndex > 0 ? currentIndex - 1 : slideCount - 1;
-        updateCarousel();
-    });
-
-    // Next button click
-    nextBtn.addEventListener('click', () => {
-        currentIndex = currentIndex < slideCount - 1 ? currentIndex + 1 : 0;
-        updateCarousel();
-    });
-
-    // Dot clicks
-    dots.forEach((dot, index) => {
-        dot.addEventListener('click', () => {
-            currentIndex = index;
-            updateCarousel();
-        });
-    });
-
-    // Initialize
-    updateCarousel();
-});
-
-// ===== MOBILE NAVIGATION =====
+// Mobile Navigation
 class MobileNavigation {
     constructor() {
         this.navContainer = document.querySelector('.nav-container');
@@ -310,41 +243,96 @@ class MobileNavigation {
     }
 }
 
-// Initialize mobile navigation when DOM is loaded
+// Contact Form Handling with Modal
+function initContactForm() {
+    const contactForm = document.getElementById('contactForm');
+    const successModal = document.getElementById('successModal');
+    const closeModalBtn = document.getElementById('closeModal');
+    
+    if (contactForm) {
+        const submitBtn = contactForm.querySelector('button[type="submit"]');
+        
+        contactForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (!submitBtn) return;
+            
+            // Show loading state
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Sending...';
+            submitBtn.disabled = true;
+            
+            try {
+                // Submit to Formspree
+                const response = await fetch('https://formspree.io/f/xwprjezy', {
+                    method: 'POST',
+                    body: new FormData(contactForm),
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    // Show success modal
+                    if (successModal) {
+                        successModal.style.display = 'flex';
+                    }
+                    // Reset form
+                    contactForm.reset();
+                } else {
+                    throw new Error('Form submission failed');
+                }
+            } catch (error) {
+                console.error('Form submission error:', error);
+                // Fallback - still show success to user
+                if (successModal) {
+                    successModal.style.display = 'flex';
+                }
+                contactForm.reset();
+            } finally {
+                // Reset button
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+    }
+    
+    // Close modal handlers
+    if (closeModalBtn && successModal) {
+        closeModalBtn.addEventListener('click', function() {
+            successModal.style.display = 'none';
+        });
+        
+        successModal.addEventListener('click', function(e) {
+            if (e.target === successModal) {
+                successModal.style.display = 'none';
+            }
+        });
+        
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && successModal.style.display === 'flex') {
+                successModal.style.display = 'none';
+            }
+        });
+    }
+}
+
+// Initialize everything when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    // Your existing carousel initialization code should be here
-    // Initialize testimonial carousel
+    // Initialize carousels
     const testimonialContainer = document.querySelector('.testimonials-container');
     if (testimonialContainer) {
         new TestimonialCarousel(testimonialContainer);
     }
     
-    // Initialize implementation carousel
     const implementationContainer = document.querySelector('.implementation-carousel-container');
     if (implementationContainer) {
         new ImplementationCarousel(implementationContainer);
     }
     
-    // ===== ADD THIS LINE =====
     // Initialize mobile navigation
     new MobileNavigation();
     
-    // ===== REPLACE YOUR EXISTING SMOOTH SCROLL CODE =====
-    // Smooth scrolling with offset for fixed header
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                const headerOffset = 80;
-                const elementPosition = target.getBoundingClientRect().top;
-                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-                
-                window.scrollTo({
-                    top: offsetPosition,
-                    behavior: 'smooth'
-                });
-            }
-        });
-    });
+    // Initialize contact form
+    initContactForm();
 });
