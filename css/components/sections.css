@@ -411,3 +411,12 @@ main {
 .floating-contact-btn {
     z-index: 1001 !important; /* Keep above Tawk.to */
 }
+
+/* Book Demo Button */
+.book-demo-btn {
+    cursor: pointer;
+    border: none;
+    font-family: inherit;
+    text-decoration: none;
+    display: inline-block;
+}

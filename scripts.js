@@ -456,6 +456,30 @@ function initQuickContactModal() {
     const quickInterest = document.getElementById('quickInterest');
     const quickSubject = document.getElementById('quickSubject');
     
+    // Add demo button handler
+    const demoButton = document.querySelector('.book-demo-btn');
+    if (demoButton) {
+        demoButton.addEventListener('click', function() {
+            // Set the interest dropdown and subject for demo
+            if (quickInterest) {
+                quickInterest.value = 'Not sure';
+                quickSubject.value = 'Free Live Demo Request';
+            }
+            
+            // Pre-fill a message in the quick message field
+            const quickMessage = document.getElementById('quickMessage');
+            if (quickMessage) {
+                quickMessage.value = "I'm interested in booking a free live demo to see how this would work for my video library.";
+            }
+            
+            // Show quick contact modal
+            if (quickContactModal) {
+                quickContactModal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+        });
+    }    
+
     // Update all pricing buttons to open quick contact modal
     const pricingButtons = document.querySelectorAll('.pricing-button');
     pricingButtons.forEach(button => {
