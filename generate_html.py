@@ -124,6 +124,7 @@ def generate_html(theme="dark"):
         header_content = header_content.replace('{{LOGO_IMAGE}}', '<div class="logo">PVL</div>')
     
     # HTML Template
+        # HTML Template
     html_content = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -135,7 +136,21 @@ def generate_html(theme="dark"):
     <style>
         {css_content}
     </style>
-    <script src="https://www.google.com/recaptcha/api.js?render=6Lf49g0sAAAAAOLKadjqtuRVxlONX9d7v7ENr3pm"></script>
+    <!--Start of Tawk.to Script-->
+    <script type="text/javascript">
+    //<![CDATA[
+    var Tawk_API=Tawk_API||{{}}, Tawk_LoadStart=new Date();
+    (function(){{
+    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+    s1.async=true;
+    s1.src='https://embed.tawk.to/69193bbcf0cd89195c96cea0/1ja592m87';
+    s1.charset='UTF-8';
+    s1.setAttribute('crossorigin','*');
+    s0.parentNode.insertBefore(s1,s0);
+    }})();
+    //]]>
+    </script>
+    <!--End of Tawk.to Script-->
 </head>
 <body>
     {header_content}
