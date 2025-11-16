@@ -352,6 +352,14 @@ function initFloatingContact() {
         }
     });
     
+    const contactModalClose = document.getElementById('contactModalClose');
+    if (contactModalClose && contactModal) {
+        contactModalClose.addEventListener('click', function() {
+            contactModal.style.display = 'none';
+            document.body.style.overflow = '';
+        });
+    }
+        
     // Handle modal form submission
     if (modalForm) {
         const submitBtn = modalForm.querySelector('button[type="submit"]');
@@ -439,6 +447,94 @@ function initFloatingContact() {
         });
     }
 }
+
+// Exit Intent Popup functionality
+function initExitIntentPopup() {
+    const exitPopup = document.getElementById('exitPopup');
+    const closeBtn = document.getElementById('exitPopupClose');
+    const yesBtn = document.getElementById('exitPopupYes');
+    const noBtn = document.getElementById('exitPopupNo');
+    
+    let exitIntentTriggered = false;
+    let mouseY = 0;
+    
+    // Track mouse movement
+    document.addEventListener('mousemove', function(e) {
+        mouseY = e.clientY;
+        
+        // Trigger popup when mouse moves toward top of viewport (exit intent)
+        if (mouseY < 50 && !exitIntentTriggered) {
+            showExitPopup();
+        }
+    });
+    
+    // Also trigger on mouse leaving window
+    document.addEventListener('mouseout', function(e) {
+        if (!e.relatedTarget && !exitIntentTriggered) {
+            showExitPopup();
+        }
+    });
+    
+    function showExitPopup() {
+        // Only show once per session
+        if (exitIntentTriggered || sessionStorage.getItem('exitPopupShown')) {
+            return;
+        }
+        
+        exitIntentTriggered = true;
+        sessionStorage.setItem('exitPopupShown', 'true');
+        exitPopup.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+    
+    // Close popup handlers
+    function closePopup() {
+        exitPopup.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+    
+    if (closeBtn) closeBtn.addEventListener('click', closePopup);
+    if (noBtn) noBtn.addEventListener('click', closePopup);
+    
+    // Yes button - open contact modal
+    if (yesBtn) {
+        yesBtn.addEventListener('click', function() {
+            closePopup();
+            // Open the existing contact modal
+            const contactModal = document.getElementById('contactModal');
+            if (contactModal) {
+                contactModal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+                
+                // Pre-fill subject line
+                const subjectField = document.getElementById('modalSubject');
+                if (subjectField) {
+                    subjectField.value = 'Free 15-Minute Consultation Request';
+                }
+            }
+        });
+    }
+    
+    // Close on background click
+    exitPopup.addEventListener('click', function(e) {
+        if (e.target === exitPopup) {
+            closePopup();
+        }
+    });
+    
+    // Close on escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && exitPopup.style.display === 'flex') {
+            closePopup();
+        }
+    });
+}
+
+// Add to your existing DOMContentLoaded
+document.addEventListener('DOMContentLoaded', function() {
+    initFloatingContact();
+    initExitIntentPopup(); // Add this line
+});
 
 // REMOVE the old initContactForm() function entirely
 // Only initialize the floating contact

@@ -439,3 +439,40 @@
         width: 300px; /* Slightly larger for landscape */
     }
 }
+
+/* Mobile compact modals */
+@media (max-width: 768px) {
+    .modal-content {
+        width: 95%;
+        max-width: 400px;
+        padding: 2rem 1.25rem;
+        margin: 0.5rem;
+    }
+    
+    .contact-modal .modal-content {
+        padding-top: 2rem;
+    }
+    
+    .modal-close {
+        top: 0.75rem;
+        right: 0.75rem;
+        width: 25px;
+        height: 25px;
+        font-size: 1.25rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .modal-content {
+        padding: 1.5rem 1rem;
+    }
+    
+    .contact-modal .modal-content {
+        padding-top: 1.75rem;
+    }
+    
+    .form-group input,
+    .form-group textarea {
+        padding: 0.6rem;
+    }
+}

@@ -182,3 +182,35 @@
     width: 100%;
     margin-top: 0.5rem;
 }
+
+/* Modal Close Button */
+.modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    color: var(--text-tertiary);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+}
+
+.modal-close:hover {
+    color: var(--primary-color);
+    background: var(--surface-light);
+}
+
+/* Update existing modal content for close button spacing */
+.modal-content {
+    position: relative;
+    padding-top: 2.5rem; /* Make space for close button */
+}

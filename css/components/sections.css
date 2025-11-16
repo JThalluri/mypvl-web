@@ -260,3 +260,154 @@ main {
         gap: 0.5rem;
     }
 }
+
+/* Exit Intent Popup */
+.exit-popup {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 9998;
+    align-items: center;
+    justify-content: center;
+}
+
+.exit-popup-content {
+    background: var(--surface-dark);
+    border-radius: var(--border-radius);
+    padding: 2.5rem;
+    text-align: center;
+    max-width: 450px;
+    width: 90%;
+    border: 2px solid var(--primary-color);
+    box-shadow: 0 10px 30px rgba(247, 156, 25, 0.3);
+    position: relative;
+    animation: modalSlideIn 0.4s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-30px) scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.exit-popup-icon {
+    font-size: 3rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+.exit-popup-title {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    font-weight: bold;
+}
+
+.exit-popup-message {
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+.exit-popup-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.exit-popup-btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.exit-popup-btn.primary {
+    background: var(--primary-color);
+    color: var(--text-on-primary);
+}
+
+.exit-popup-btn.primary:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+}
+
+.exit-popup-btn.secondary {
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+}
+
+.exit-popup-btn.secondary:hover {
+    background: var(--surface-light);
+    color: var(--text-primary);
+}
+
+.exit-popup-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    color: var(--text-tertiary);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.exit-popup-close:hover {
+    color: var(--primary-color);
+    background: var(--surface-light);
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .exit-popup-content {
+        padding: 2rem 1.5rem;
+        margin: 1rem;
+    }
+    
+    .exit-popup-actions {
+        flex-direction: column;
+    }
+    
+    .exit-popup-btn {
+        width: 100%;
+    }
+}
+
+/* Tawk.to Widget Size Reduction */
+.tawk-min-container .tawk-button-circle.tawk-button-large {
+    width: 50px !important;
+    height: 50px !important;
+    min-width: 50px !important;
+    min-height: 50px !important;
+}
+
+.tawk-min-container .tawk-button-circle .tawk-button-icon {
+    width: 24px !important;
+    height: 24px !important;
+}
+
+/* Ensure it doesn't conflict with floating contact button */
+.tawk-min-container {
+    z-index: 999 !important;
+}
+
+.floating-contact-btn {
+    z-index: 1001 !important; /* Keep above Tawk.to */
+}

@@ -180,6 +180,7 @@ def generate_html(theme="dark"):
     <!-- Contact Modal -->
     <div class="modal contact-modal" id="contactModal">
         <div class="modal-content">
+            <button class="modal-close" id="contactModalClose">&times;</button>
             <h2 class="section-title" style="margin-bottom: 1.5rem; border-bottom: none; display: block; text-align: center;">Contact Us</h2>
             <form class="contact-form" id="modalContactForm" action="https://formspree.io/f/xldallkz" method="POST">
                 <div class="form-group">
@@ -202,6 +203,30 @@ def generate_html(theme="dark"):
             </form>
         </div>
     </div>
+
+    <!-- Exit Intent Popup -->
+    <div class="exit-popup" id="exitPopup">
+        <div class="exit-popup-content">
+            <button class="exit-popup-close" id="exitPopupClose">&times;</button>
+            
+            <div class="exit-popup-icon">💬</div>
+            <h2 class="exit-popup-title">Wait! Don't Go Yet...</h2>
+            
+            <p class="exit-popup-message">
+                Get a <strong>free 15-minute consultation</strong> to discuss your video library needs. 
+                Let's explore how we can organize your content and boost your productivity!
+            </p>
+            
+            <div class="exit-popup-actions">
+                <button class="exit-popup-btn primary" id="exitPopupYes">
+                    <i class="fas fa-calendar-check"></i> Yes, I'm Interested!
+                </button>
+                <button class="exit-popup-btn secondary" id="exitPopupNo">
+                    No Thanks, Continue Browsing
+                </button>
+            </div>
+        </div>
+    </div>    
 </body>
 </html>"""
     
