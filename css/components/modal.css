@@ -214,3 +214,81 @@
     position: relative;
     padding-top: 2.5rem; /* Make space for close button */
 }
+/* Quick Contact Modal */
+.quick-contact-modal .modal-content {
+    max-width: 450px;
+    padding-top: 2.5rem;
+}
+
+.quick-contact-form {
+    display: grid;
+    gap: 1.25rem;
+}
+
+.quick-contact-field {
+    display: flex;
+    flex-direction: column;
+}
+
+.quick-contact-field label {
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    font-size: 0.9rem;
+}
+
+.quick-contact-field input,
+.quick-contact-field select,
+.quick-contact-field textarea {
+    padding: 0.75rem;
+    background: var(--surface-dark);
+    border: 2px solid var(--border-color);
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+    color: var(--text-primary);
+    font-family: inherit;
+}
+
+.quick-contact-field input:focus,
+.quick-contact-field select:focus,
+.quick-contact-field textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.quick-contact-field textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.quick-contact-btn {
+    width: 100%;
+    margin-top: 0.5rem;
+}
+
+/* Mobile responsive for quick contact */
+@media (max-width: 768px) {
+    .quick-contact-modal .modal-content {
+        width: 95%;
+        max-width: 400px;
+        padding: 2rem 1.25rem;
+        margin: 0.5rem;
+    }
+    
+    .quick-contact-form {
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .quick-contact-modal .modal-content {
+        padding: 1.5rem 1rem;
+    }
+    
+    .quick-contact-field input,
+    .quick-contact-field select,
+    .quick-contact-field textarea {
+        padding: 0.6rem;
+    }
+}

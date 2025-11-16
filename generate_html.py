@@ -125,6 +125,7 @@ def generate_html(theme="dark"):
     
     # HTML Template
         # HTML Template
+    # HTML Template
     html_content = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -151,6 +152,14 @@ def generate_html(theme="dark"):
     //]]>
     </script>
     <!--End of Tawk.to Script-->
+    <!-- Microsoft Clarity Analytics -->
+    <script type="text/javascript">
+        (function(c,l,a,r,i,t,y){{
+            c[a]=c[a]||function(){{(c[a].q=c[a].q||[]).push(arguments)}};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        }})(window, document, "clarity", "script", "u71fendq3r");
+    </script>
 </head>
 <body>
     {header_content}
@@ -225,6 +234,51 @@ def generate_html(theme="dark"):
                     No Thanks, Continue Browsing
                 </button>
             </div>
+        </div>
+    </div>
+    <!-- Quick Contact Modal -->
+    <div class="modal quick-contact-modal" id="quickContactModal">
+        <div class="modal-content">
+            <button class="modal-close" id="quickContactModalClose">&times;</button>
+            <h2 class="section-title" style="margin-bottom: 1.5rem; border-bottom: none; display: block; text-align: center;">Quick Inquiry</h2>
+            
+            <form class="quick-contact-form" id="quickContactForm" action="https://formspree.io/f/xldallkz" method="POST">
+                <div class="quick-contact-field">
+                    <label for="quickName">Name *</label>
+                    <input type="text" id="quickName" name="name" required>
+                </div>
+                
+                <div class="quick-contact-field">
+                    <label for="quickEmail">Email *</label>
+                    <input type="email" id="quickEmail" name="email" required>
+                </div>
+                
+                <div class="quick-contact-field">
+                    <label for="quickInterest">I'm interested in *</label>
+                    <select id="quickInterest" name="interest" required>
+                        <option value="">Select a plan...</option>
+                        <option value="Personal Plan">Personal Plan (up to 100 videos)</option>
+                        <option value="Creator Plan">Creator Plan (entire channel)</option>
+                        <option value="Pro Plan">Pro Plan (unlimited customization)</option>
+                        <option value="Not sure">Not sure - need guidance</option>
+                    </select>
+                </div>
+                
+                <div class="quick-contact-field">
+                    <label for="quickMessage">Brief Message</label>
+                    <textarea id="quickMessage" name="message" placeholder="Tell us a bit about your video library needs..."></textarea>
+                </div>
+                
+                <input type="hidden" id="quickSubject" name="subject" value="Quick Inquiry">
+                
+                <button type="submit" class="btn quick-contact-btn">
+                    <i class="fas fa-paper-plane"></i> Send Quick Inquiry
+                </button>
+            </form>
+            
+            <p style="text-align: center; margin-top: 1rem; font-size: 0.8rem; color: var(--text-tertiary);">
+                Or <a href="#contact" style="color: var(--primary-color);">use our full contact form</a> for detailed requests
+            </p>
         </div>
     </div>    
 </body>

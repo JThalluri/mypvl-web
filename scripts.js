@@ -359,7 +359,7 @@ function initFloatingContact() {
             document.body.style.overflow = '';
         });
     }
-        
+
     // Handle modal form submission
     if (modalForm) {
         const submitBtn = modalForm.querySelector('button[type="submit"]');
@@ -447,6 +447,143 @@ function initFloatingContact() {
         });
     }
 }
+
+// Quick Contact Modal functionality
+function initQuickContactModal() {
+    const quickContactModal = document.getElementById('quickContactModal');
+    const quickContactClose = document.getElementById('quickContactModalClose');
+    const quickContactForm = document.getElementById('quickContactForm');
+    const quickInterest = document.getElementById('quickInterest');
+    const quickSubject = document.getElementById('quickSubject');
+    
+    // Update all pricing buttons to open quick contact modal
+    const pricingButtons = document.querySelectorAll('.pricing-button');
+    pricingButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Get the plan name from the pricing card
+            const planName = this.closest('.pricing-card').querySelector('.pricing-title').textContent;
+            
+            // Set the interest dropdown and subject
+            if (quickInterest) {
+                quickInterest.value = planName + ' Plan';
+                quickSubject.value = `Inquiry about ${planName} Plan`;
+            }
+            
+            // Show quick contact modal
+            if (quickContactModal) {
+                quickContactModal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+        });
+    });
+    
+    // Update subject when interest changes
+    if (quickInterest && quickSubject) {
+        quickInterest.addEventListener('change', function() {
+            if (this.value && this.value !== 'Not sure') {
+                quickSubject.value = `Inquiry about ${this.value}`;
+            } else if (this.value === 'Not sure') {
+                quickSubject.value = 'Need Guidance - Plan Selection';
+            } else {
+                quickSubject.value = 'Quick Inquiry';
+            }
+        });
+    }
+    
+    // Close modal handlers
+    if (quickContactClose && quickContactModal) {
+        quickContactClose.addEventListener('click', function() {
+            quickContactModal.style.display = 'none';
+            document.body.style.overflow = '';
+        });
+    }
+    
+    quickContactModal.addEventListener('click', function(e) {
+        if (e.target === quickContactModal) {
+            quickContactModal.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+    });
+    
+    // Form submission
+    if (quickContactForm) {
+        const submitBtn = quickContactForm.querySelector('button[type="submit"]');
+        
+        quickContactForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (!submitBtn) return;
+            
+            // Show loading state
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+            submitBtn.disabled = true;
+            
+            try {
+                // Get reCAPTCHA token
+                const recaptchaToken = await grecaptcha.execute('6Lf49g0sAAAAAOLKadjqtuRVxlONX9d7v7ENr3pm', {action: 'submit'});
+                
+                // Get form data
+                const formData = new FormData(quickContactForm);
+                formData.append('g-recaptcha-response', recaptchaToken);
+                
+                // Submit to Formspree
+                const response = await fetch('https://formspree.io/f/xldallkz', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    // Close quick contact modal and show success
+                    quickContactModal.style.display = 'none';
+                    const successModal = document.getElementById('successModal');
+                    if (successModal) {
+                        successModal.style.display = 'flex';
+                    }
+                    quickContactForm.reset();
+                    quickSubject.value = 'Quick Inquiry'; // Reset subject
+                } else {
+                    throw new Error('Form submission failed');
+                }
+                
+            } catch (error) {
+                console.error('Quick contact form submission error:', error);
+                // Fallback - still show success to user
+                quickContactModal.style.display = 'none';
+                const successModal = document.getElementById('successModal');
+                if (successModal) {
+                    successModal.style.display = 'flex';
+                }
+                quickContactForm.reset();
+                quickSubject.value = 'Quick Inquiry';
+            } finally {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+    }
+    
+    // Escape key close
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && quickContactModal.style.display === 'flex') {
+            quickContactModal.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+    });
+}
+
+// Add to your existing DOMContentLoaded
+document.addEventListener('DOMContentLoaded', function() {
+    initFloatingContact();
+    initExitIntentPopup();
+    initQuickContactModal(); // Add this line
+});
+
 
 // Exit Intent Popup functionality
 function initExitIntentPopup() {
