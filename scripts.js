@@ -243,19 +243,120 @@ class MobileNavigation {
     }
 }
 
-// Contact Form Handling with reCAPTCHA
-function initContactForm() {
-    const contactForm = document.getElementById('contactForm');
-    const successModal = document.getElementById('successModal');
-    const closeModalBtn = document.getElementById('closeModal');
+// // Contact Form Handling with reCAPTCHA
+// function initContactForm() {
+//     const contactForm = document.getElementById('contactForm');
+//     const successModal = document.getElementById('successModal');
+//     const closeModalBtn = document.getElementById('closeModal');
     
-    // reCAPTCHA Site Key (replace with yours)
-    const RECAPTCHA_SITE_KEY = '6Lf49g0sAAAAAOLKadjqtuRVxlONX9d7v7ENr3pm';
+//     // reCAPTCHA Site Key (replace with yours)
+//     const RECAPTCHA_SITE_KEY = '6Lf49g0sAAAAAOLKadjqtuRVxlONX9d7v7ENr3pm';
     
-    if (contactForm) {
-        const submitBtn = contactForm.querySelector('button[type="submit"]');
+//     if (contactForm) {
+//         const submitBtn = contactForm.querySelector('button[type="submit"]');
         
-        contactForm.addEventListener('submit', async function(e) {
+//         contactForm.addEventListener('submit', async function(e) {
+//             e.preventDefault();
+            
+//             if (!submitBtn) return;
+            
+//             // Show loading state
+//             const originalText = submitBtn.textContent;
+//             submitBtn.textContent = 'Sending...';
+//             submitBtn.disabled = true;
+            
+//             try {
+//                 // Get reCAPTCHA token
+//                 const recaptchaToken = await grecaptcha.execute(RECAPTCHA_SITE_KEY, {action: 'submit'});
+//                 console.log('reCAPTCHA token received');
+                
+//                 // Get form data
+//                 const formData = new FormData(contactForm);
+                
+//                 // Add reCAPTCHA token to form data
+//                 formData.append('g-recaptcha-response', recaptchaToken);
+                
+//                 // Submit to Formspree with reCAPTCHA
+//                 const response = await fetch('https://formspree.io/f/xldallkz', {
+//                     method: 'POST',
+//                     body: formData,
+//                     headers: {
+//                         'Accept': 'application/json'
+//                     }
+//                 });
+                
+//                 console.log('Submission status:', response.status);
+                
+//                 if (response.ok) {
+//                     successModal.style.display = 'flex';
+//                     contactForm.reset();
+//                 } else {
+//                     throw new Error('Form submission failed');
+//                 }
+                
+//             } catch (error) {
+//                 console.error('Form submission error:', error);
+//                 // Fallback - still show success to user
+//                 successModal.style.display = 'flex';
+//                 contactForm.reset();
+//             } finally {
+//                 submitBtn.textContent = originalText;
+//                 submitBtn.disabled = false;
+//             }
+//         });
+//     }
+    
+//     // Close modal handlers (keep existing)
+//     if (closeModalBtn && successModal) {
+//         closeModalBtn.addEventListener('click', function() {
+//             successModal.style.display = 'none';
+//         });
+        
+//         successModal.addEventListener('click', function(e) {
+//             if (e.target === successModal) {
+//                 successModal.style.display = 'none';
+//             }
+//         });
+        
+//         document.addEventListener('keydown', function(e) {
+//             if (e.key === 'Escape' && successModal.style.display === 'flex') {
+//                 successModal.style.display = 'none';
+//             }
+//         });
+//     }
+// }
+// Floating Contact Button & Modal functionality
+function initFloatingContact() {
+    const floatingBtn = document.getElementById('floatingContactBtn');
+    const contactModal = document.getElementById('contactModal');
+    const modalForm = document.getElementById('modalContactForm');
+    const successModal = document.getElementById('successModal');
+    
+    // Store scroll position
+    let scrollPosition = 0;
+    
+    // Open contact modal
+    if (floatingBtn && contactModal) {
+        floatingBtn.addEventListener('click', function() {
+            scrollPosition = window.pageYOffset;
+            contactModal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        });
+    }
+    
+    // Close contact modal
+    contactModal.addEventListener('click', function(e) {
+        if (e.target === contactModal) {
+            contactModal.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+    });
+    
+    // Handle modal form submission
+    if (modalForm) {
+        const submitBtn = modalForm.querySelector('button[type="submit"]');
+        
+        modalForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             
             if (!submitBtn) return;
@@ -267,16 +368,13 @@ function initContactForm() {
             
             try {
                 // Get reCAPTCHA token
-                const recaptchaToken = await grecaptcha.execute(RECAPTCHA_SITE_KEY, {action: 'submit'});
-                console.log('reCAPTCHA token received');
+                const recaptchaToken = await grecaptcha.execute('6Lf49g0sAAAAAOLKadjqtuRVxlONX9d7v7ENr3pm', {action: 'submit'});
                 
                 // Get form data
-                const formData = new FormData(contactForm);
-                
-                // Add reCAPTCHA token to form data
+                const formData = new FormData(modalForm);
                 formData.append('g-recaptcha-response', recaptchaToken);
                 
-                // Submit to Formspree with reCAPTCHA
+                // Submit to Formspree
                 const response = await fetch('https://formspree.io/f/xldallkz', {
                     method: 'POST',
                     body: formData,
@@ -285,11 +383,11 @@ function initContactForm() {
                     }
                 });
                 
-                console.log('Submission status:', response.status);
-                
                 if (response.ok) {
+                    // Close contact modal and show success
+                    contactModal.style.display = 'none';
                     successModal.style.display = 'flex';
-                    contactForm.reset();
+                    modalForm.reset();
                 } else {
                     throw new Error('Form submission failed');
                 }
@@ -297,8 +395,9 @@ function initContactForm() {
             } catch (error) {
                 console.error('Form submission error:', error);
                 // Fallback - still show success to user
+                contactModal.style.display = 'none';
                 successModal.style.display = 'flex';
-                contactForm.reset();
+                modalForm.reset();
             } finally {
                 submitBtn.textContent = originalText;
                 submitBtn.disabled = false;
@@ -306,25 +405,46 @@ function initContactForm() {
         });
     }
     
-    // Close modal handlers (keep existing)
+    // Enhanced success modal close handler
+    const closeModalBtn = document.getElementById('closeModal');
     if (closeModalBtn && successModal) {
         closeModalBtn.addEventListener('click', function() {
             successModal.style.display = 'none';
+            document.body.style.overflow = '';
+            // Restore scroll position
+            window.scrollTo(0, scrollPosition);
         });
         
         successModal.addEventListener('click', function(e) {
             if (e.target === successModal) {
                 successModal.style.display = 'none';
+                document.body.style.overflow = '';
+                // Restore scroll position
+                window.scrollTo(0, scrollPosition);
             }
         });
         
         document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && successModal.style.display === 'flex') {
-                successModal.style.display = 'none';
+            if (e.key === 'Escape') {
+                if (contactModal.style.display === 'flex') {
+                    contactModal.style.display = 'none';
+                    document.body.style.overflow = '';
+                } else if (successModal.style.display === 'flex') {
+                    successModal.style.display = 'none';
+                    document.body.style.overflow = '';
+                    // Restore scroll position
+                    window.scrollTo(0, scrollPosition);
+                }
             }
         });
     }
 }
+
+// REMOVE the old initContactForm() function entirely
+// Only initialize the floating contact
+document.addEventListener('DOMContentLoaded', function() {
+    initFloatingContact();
+});
 
 // Initialize everything when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
@@ -343,5 +463,6 @@ document.addEventListener('DOMContentLoaded', function() {
     new MobileNavigation();
     
     // Initialize contact form
-    initContactForm();
+    // initContactForm();
+    initFloatingContact();
 });

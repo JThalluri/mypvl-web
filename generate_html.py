@@ -156,6 +156,37 @@ def generate_html(theme="dark"):
     <script>
         {js_content}
     </script>
+    <!-- Floating Contact Button -->
+    <button class="floating-contact-btn" id="floatingContactBtn">
+        <i class="fas fa-envelope"></i>
+        Contact
+    </button>
+
+    <!-- Contact Modal -->
+    <div class="modal contact-modal" id="contactModal">
+        <div class="modal-content">
+            <h2 class="section-title" style="margin-bottom: 1.5rem; border-bottom: none; display: block; text-align: center;">Contact Us</h2>
+            <form class="contact-form" id="modalContactForm" action="https://formspree.io/f/xldallkz" method="POST">
+                <div class="form-group">
+                    <label for="modalName">Name *</label>
+                    <input type="text" id="modalName" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="modalEmail">Email *</label>
+                    <input type="email" id="modalEmail" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="modalSubject">Subject *</label>
+                    <input type="text" id="modalSubject" name="subject" required>
+                </div>
+                <div class="form-group">
+                    <label for="modalMessage">Message *</label>
+                    <textarea id="modalMessage" name="message" rows="4" required></textarea>
+                </div>
+                <button type="submit" class="btn">Send Message</button>
+            </form>
+        </div>
+    </div>
 </body>
 </html>"""
     
