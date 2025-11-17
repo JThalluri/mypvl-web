@@ -1,0 +1,10 @@
+{
+  "generate_main_page": true,
+  "generate_policy_pages": {
+    "privacy_policy": true,
+    "cookies_policy": true,
+    "terms_of_use": true,
+    "thirdparty_attributions": true
+  },
+  "theme": "dark"
+}

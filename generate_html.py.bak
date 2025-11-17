@@ -3,12 +3,10 @@
 HTML Generator for Personal Video Library Website
 Generates a standalone HTML file with embedded resources
 Updated for modular CSS structure with theme support
-Now includes policy page generation with config system
 """
 
 import base64
 import os
-import json
 from pathlib import Path
 
 def read_file(file_path):
@@ -19,29 +17,6 @@ def read_file(file_path):
     
     with open(file_path, 'r', encoding='utf-8') as file:
         return file.read()
-
-def read_config():
-    """Read and parse the config.json file"""
-    config_path = "config.json"
-    if not os.path.exists(config_path):
-        # Create default config if it doesn't exist
-        default_config = {
-            "generate_main_page": True,
-            "generate_policy_pages": {
-                "privacy_policy": False,
-                "cookies_policy": False,
-                "terms_of_use": False,
-                "thirdparty_attributions": False
-            },
-            "theme": "dark"
-        }
-        with open(config_path, 'w', encoding='utf-8') as f:
-            json.dump(default_config, f, indent=2)
-        print("📝 Created default config.json")
-        return default_config
-    
-    with open(config_path, 'r', encoding='utf-8') as file:
-        return json.load(file)
 
 def encode_file_to_base64(file_path):
     """Encode a file to base64 string"""
@@ -106,7 +81,7 @@ def combine_css_files(css_dir="css", theme="dark"):
     return css_content
 
 def generate_html(theme="dark"):
-    """Generate the main HTML file with embedded resources"""
+    """Generate the complete HTML file with embedded resources"""
     
     # Resource paths
     resources_dir = "resources"
@@ -148,6 +123,8 @@ def generate_html(theme="dark"):
     else:
         header_content = header_content.replace('{{LOGO_IMAGE}}', '<div class="logo">PVL</div>')
     
+    # HTML Template
+        # HTML Template
     # HTML Template
     html_content = f"""<!DOCTYPE html>
 <html lang="en">
@@ -309,120 +286,11 @@ def generate_html(theme="dark"):
     
     return html_content
 
-def generate_policy_page(policy_name, title, theme="dark"):
-    """Generate individual policy pages with external CSS"""
-    
-    # Resource paths
-    resources_dir = "resources"
-    favicon_path = os.path.join(resources_dir, "favicon.ico")
-    banner_path = os.path.join(resources_dir, "banner.png")
-    logo_path = os.path.join(resources_dir, "logo.png")
-    
-    # Encode resources to base64
-    favicon_b64 = encode_file_to_base64(favicon_path)
-    banner_b64 = encode_file_to_base64(banner_path)
-    logo_b64 = encode_file_to_base64(logo_path)
-    
-    # Read policy content
-    policy_content = read_file(f"sections/{policy_name}.html")
-    
-    # Read header, navigation, footer
-    header_content = read_file("sections/header.html")
-    navigation_content = read_file("sections/policy_navigation.html")
-    footer_content = read_file("sections/footer.html")
-    
-    # Replace image placeholders
-    if banner_b64:
-        header_content = header_content.replace('{{BANNER_IMAGE}}', f'data:image/png;base64,{banner_b64}')
-    else:
-        header_content = header_content.replace('{{BANNER_IMAGE}}', '')
-    
-    if logo_b64:
-        logo_html = f'<img src="data:image/png;base64,{logo_b64}" alt="PVL Logo" class="logo-img">'
-        header_content = header_content.replace('{{LOGO_IMAGE}}', logo_html)
-    else:
-        header_content = header_content.replace('{{LOGO_IMAGE}}', '<div class="logo">PVL</div>')
-    
-    # FIX: Use relative paths in navigation and footer
-    navigation_content = navigation_content.replace('href="/', 'href="')
-    footer_content = footer_content.replace('href="/', 'href="')
-    
-    # Highlight current page in navigation
-    navigation_content = navigation_content.replace(
-        f'href="{policy_name}.html" class="nav-link"',
-        f'href="{policy_name}.html" class="nav-link active"'
-    )
-    
-    # Highlight current page in footer
-    footer_content = footer_content.replace(
-        f'href="{policy_name}.html" class="footer-link"',
-        f'href="{policy_name}.html" class="footer-link current-page"'
-    )
-    
-    # HTML Template for Policy Pages
-    html_content = f"""<!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>{title} - My PVL Services</title>
-        {f'<link rel="icon" href="data:{get_mime_type(favicon_path)};base64,{favicon_b64}" type="{get_mime_type(favicon_path)}">' if favicon_b64 else '<!-- Favicon not found -->'}
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-        <link rel="stylesheet" href="css/policy-pages.css">  
-    </head>
-    <body>
-        {header_content}
-        {navigation_content}
-        
-        <main>
-            {policy_content}
-        </main>
-        
-        {footer_content}
-        
-        <!-- Mobile Navigation JavaScript -->
-        <script>
-            // Mobile Navigation - Consistent with main site
-            document.addEventListener('DOMContentLoaded', function() {{
-                const mobileNavToggle = document.getElementById('mobileNavToggle');
-                const navContainer = document.getElementById('navContainer');
-                
-                if (mobileNavToggle && navContainer) {{
-                    mobileNavToggle.addEventListener('click', function() {{
-                        navContainer.classList.toggle('active');
-                        const icon = this.querySelector('i');
-                        if (navContainer.classList.contains('active')) {{
-                            icon.classList.remove('fa-bars');
-                            icon.classList.add('fa-times');
-                        }} else {{
-                            icon.classList.remove('fa-times');
-                            icon.classList.add('fa-bars');
-                        }}
-                    }});
-                    
-                    // Close mobile menu when clicking on a link (optional enhancement)
-                    document.querySelectorAll('.nav-link').forEach(link => {{
-                        link.addEventListener('click', function() {{
-                            navContainer.classList.remove('active');
-                            const icon = mobileNavToggle.querySelector('i');
-                            icon.classList.remove('fa-times');
-                            icon.classList.add('fa-bars');
-                        }});
-                    }});
-                }}
-            }});
-        </script>
-    </body>
-    </html>"""
-    
-    return html_content
-
 def create_directories():
     """Create necessary directories for modular CSS structure"""
     # Create main directories
     os.makedirs("resources", exist_ok=True)
     os.makedirs("sections", exist_ok=True)
-    os.makedirs("css", exist_ok=True)  # Ensure css directory exists
     
     # Create CSS directory structure
     css_dirs = [
@@ -612,17 +480,6 @@ body {
         with open("css/main.css", "w", encoding="utf-8") as f:
             f.write(main_css_content)
     
-    # Create policy-pages.css if it doesn't exist
-    if not os.path.exists("css/policy-pages.css"):
-        print("Creating css/policy-pages.css...")
-        # We'll use the policy-pages.css content provided earlier
-        policy_css_content = read_file("policy-pages.css")  # This will be empty if file doesn't exist yet
-        if not policy_css_content:
-            # Fallback content
-            policy_css_content = "/* Policy Pages CSS - will be generated */"
-        with open("css/policy-pages.css", "w", encoding="utf-8") as f:
-            f.write(policy_css_content)
-    
     if not os.path.exists("scripts.js"):
         print("Creating placeholder scripts.js...")
         with open("scripts.js", "w") as f:
@@ -632,10 +489,7 @@ body {
     sections = [
         "header.html", "navigation.html", "about.html", "features.html",
         "categories.html", "testimonials.html", "implementations.html",
-        "pricing.html", "contact.html", "footer.html",
-        # Policy page sections
-        "privacy_policy.html", "cookies_policy.html", "terms_of_use.html", 
-        "thirdparty_attributions.html", "policy_navigation.html"
+        "pricing.html", "contact.html", "footer.html"
     ]
     
     for section in sections:
@@ -646,7 +500,7 @@ body {
                 f.write(f"<!-- {section.replace('.html', '').title()} section -->")
 
 def main():
-    """Main function to generate and save the HTML files"""
+    """Main function to generate and save the HTML file"""
     import argparse
     
     parser = argparse.ArgumentParser(description='Generate HTML with modular CSS')
@@ -657,44 +511,32 @@ def main():
     
     create_directories()
     
-    # Read configuration
-    config = read_config()
+    # Generate HTML with selected theme
+    print(f"🎨 Generating HTML with {args.theme} theme...")
+    html_content = generate_html(theme=args.theme)
     
-    # Generate main page if enabled
-    if config.get('generate_main_page', True):
-        print(f"🎨 Generating main HTML with {args.theme} theme...")
-        html_content = generate_html(theme=args.theme)
-        
-        # Save to file
-        with open("index.html", "w", encoding="utf-8") as f:
-            f.write(html_content)
-        print("✅ Main HTML file generated successfully: index.html")
-    else:
-        print("⏭️  Skipping main page generation (disabled in config)")
+    # Save to file
+    with open("index.html", "w", encoding="utf-8") as f:
+        f.write(html_content)
     
-    # Generate policy pages if enabled
-    policy_pages_config = config.get('generate_policy_pages', {})
-    policy_pages = [
-        ("privacy_policy", "Privacy Policy"),
-        ("cookies_policy", "Cookie Policy"), 
-        ("terms_of_use", "Terms of Use"),
-        ("thirdparty_attributions", "Third-Party Credits")
-    ]
-    
-    for policy_file, title in policy_pages:
-        if policy_pages_config.get(policy_file, False):
-            print(f"📄 Generating {title}...")
-            policy_html = generate_policy_page(policy_file, title, theme=args.theme)
-            with open(f"{policy_file}.html", "w", encoding="utf-8") as f:
-                f.write(policy_html)
-            print(f"✅ Generated: {policy_file}.html")
-        else:
-            print(f"⏭️  Skipping {title} (disabled in config)")
-    
-    print("\n📁 Generation complete!")
+    print("✅ HTML file generated successfully: index.html")
+    print("📁 Modular CSS structure created:")
+    print("   - css/base/ (reset, variables, typography)")
+    print("   - css/components/ (header, navigation, cards, etc.)")
+    print("   - css/themes/ (dark.css, light.css)")
+    print("   - css/layout/ (responsive styles)")
+    print("   - css/main.css (main import file)")
+    print("   - sections/ (HTML sections)")
+    print("   - resources/ (branding files)")
+    print("")
     print("🎨 Current theme:", args.theme)
-    print("⚙️  To enable policy pages, edit config.json and set flags to true")
-    print("🔄 Run this script again after updating config.json")
+    print("🔄 To switch themes, run:")
+    print("   python generate_html.py --theme light")
+    print("")
+    print("📝 To update the website:")
+    print("   1. Edit individual CSS files in their respective directories")
+    print("   2. Add your branding files to resources/")
+    print("   3. Run this script again")
 
 if __name__ == "__main__":
     main()

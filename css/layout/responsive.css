@@ -476,3 +476,27 @@
         padding: 0.6rem;
     }
 }
+
+/* Mobile responsive for footer links */
+@media (max-width: 768px) {
+    .footer-links {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .footer-links a {
+        margin: 0;
+        padding: 0.25rem 0;
+    }
+    
+    .footer-links a::before {
+        content: "• ";
+        color: var(--primary-color);
+    }
+    
+    /* Remove pipe separators on mobile */
+    .footer-links a::after {
+        content: none;
+    }
+}
