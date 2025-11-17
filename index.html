@@ -1652,6 +1652,12 @@ footer {
     border-top: 3px solid var(--primary-color);
 }
 
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
 .social-links {
     display: flex;
     justify-content: center;
@@ -1672,6 +1678,28 @@ footer {
     transform: translateY(-3px);
     background: var(--primary-color);
     color: var(--text-on-primary);
+}
+
+/* ADD THIS - Footer Links Styling */
+.footer-links {
+    margin: 1rem 0;
+}
+
+.footer-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    margin: 0 0.5rem;
+    transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: var(--primary-color);
+}
+
+/* Footer Current Page Highlighting */
+.footer-links a.current-page {
+    font-weight: bold;
+    color: var(--primary-color) !important;
 }
 
 /* === layout/responsive.css === */
@@ -2151,6 +2179,30 @@ footer {
     .form-group input,
     .form-group textarea {
         padding: 0.6rem;
+    }
+}
+
+/* Mobile responsive for footer links */
+@media (max-width: 768px) {
+    .footer-links {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .footer-links a {
+        margin: 0;
+        padding: 0.25rem 0;
+    }
+    
+    .footer-links a::before {
+        content: "• ";
+        color: var(--primary-color);
+    }
+    
+    /* Remove pipe separators on mobile */
+    .footer-links a::after {
+        content: none;
     }
 }
     </style>
@@ -2885,16 +2937,24 @@ footer {
 </div> -->
     </main>
     
-    <!-- Footer -->
-<footer>
-    <div class="social-links">
-        <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
-        <a href="#" class="social-link"><i class="fab fa-github"></i></a>
-        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
-        <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
+    <footer>
+    <div class="footer-content">
+        <p>&copy; 2024 My PVL Services. All rights reserved.</p>
+        
+        <div class="social-links">
+            <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
+            <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+            <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
+        </div>
+        
+        <div class="footer-links">
+            <a href="privacy_policy.html" class="footer-link">Privacy Policy</a> | 
+            <a href="cookies_policy.html" class="footer-link">Cookie Policy</a> | 
+            <a href="terms_of_use.html" class="footer-link">Terms of Use</a> | 
+            <a href="thirdparty_attributions.html" class="footer-link">Third-Party Credits</a>
+        </div>
     </div>
-    <p>&copy; 2025 My PVL. All rights reserved.</p>
-    <p>my-pvl.com</p>
 </footer>
     
     <script>
