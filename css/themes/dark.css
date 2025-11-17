@@ -1,0 +1,31 @@
+/* ===== DARK THEME ===== */
+:root {
+    /* Core Brand Colors */
+    --primary-color: #F79C19;
+    --primary-dark: #d8850a;
+    --primary-light: #FFB74D;
+    --primary-bg: #FFF3E0;
+    
+    /* Neutral Palette */
+    --secondary-color: #1a1a1a;
+    --background-color: #2d2d2d;
+    --surface-color: #3a3a3a;
+    --surface-light: #4a4a4a;
+    --surface-dark: #222;
+    
+    /* Text Colors */
+    --text-primary: #ffffff;
+    --text-secondary: #cccccc;
+    --text-tertiary: #999999;
+    --text-on-primary: #1a1a1a;
+    
+    /* UI Elements */
+    --border-color: #444444;
+    --shadow: 0 4px 12px rgba(0,0,0,0.25);
+    --border-radius: 12px;
+}
+
+body {
+    color: var(--text-primary);
+    background: var(--background-color);
+}

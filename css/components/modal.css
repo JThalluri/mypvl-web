@@ -1,0 +1,294 @@
+/* ===== MODAL COMPONENT STYLES ===== */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: var(--surface-dark);
+    width: 90%;
+    max-width: 500px;
+    border-radius: var(--border-radius);
+    padding: 40px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    border: 2px solid var(--primary-color);
+    position: relative;
+}
+
+.modal-icon {
+    font-size: 60px;
+    color: #2ecc71;
+    margin-bottom: 20px;
+}
+
+.modal-title {
+    font-size: 28px;
+    margin-bottom: 15px;
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+.modal-message {
+    font-size: 18px;
+    margin-bottom: 30px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+.modal-btn {
+    display: inline-block;
+    padding: 12px 30px;
+    background: var(--primary-color);
+    color: var(--text-on-primary);
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.modal-btn:hover {
+    background: var(--primary-dark);
+}
+
+/* Form loading state */
+.loading {
+    position: relative;
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Floating Contact Button */
+.floating-contact-btn {
+    position: fixed;
+    bottom: 2rem;
+    left: 2rem;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    color: var(--text-on-primary);
+    border: none;
+    border-radius: 50px;
+    padding: 1rem 1.5rem;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(247, 156, 25, 0.4);
+    z-index: 1001;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    transition: all 0.3s ease;
+    animation: pulse 2s infinite;
+}
+
+.floating-contact-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 25px rgba(247, 156, 25, 0.6);
+}
+
+.floating-contact-btn i {
+    font-size: 1.2rem;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 4px 20px rgba(247, 156, 25, 0.4);
+    }
+    50% {
+        box-shadow: 0 4px 25px rgba(247, 156, 25, 0.8);
+    }
+    100% {
+        box-shadow: 0 4px 20px rgba(247, 156, 25, 0.4);
+    }
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .floating-contact-btn {
+        bottom: 1.5rem;
+        left: 1.5rem;
+        padding: 0.75rem 1.25rem;
+        font-size: 0.9rem;
+    }
+    
+    .floating-contact-btn i {
+        font-size: 1.1rem;
+    }
+}
+
+/* Contact Modal Specific Styles */
+.contact-modal .modal-content {
+    max-width: 500px;
+}
+
+.contact-modal .form-group {
+    margin-bottom: 1.25rem;
+}
+
+.contact-modal .form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.contact-modal .form-group input,
+.contact-modal .form-group textarea {
+    width: 100%;
+    padding: 0.75rem;
+    background: var(--surface-dark);
+    border: 2px solid var(--border-color);
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+    color: var(--text-primary);
+    font-family: inherit;
+}
+
+.contact-modal .form-group input:focus,
+.contact-modal .form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.contact-modal .btn {
+    width: 100%;
+    margin-top: 0.5rem;
+}
+
+/* Modal Close Button */
+.modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    color: var(--text-tertiary);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+}
+
+.modal-close:hover {
+    color: var(--primary-color);
+    background: var(--surface-light);
+}
+
+/* Update existing modal content for close button spacing */
+.modal-content {
+    position: relative;
+    padding-top: 2.5rem; /* Make space for close button */
+}
+/* Quick Contact Modal */
+.quick-contact-modal .modal-content {
+    max-width: 450px;
+    padding-top: 2.5rem;
+}
+
+.quick-contact-form {
+    display: grid;
+    gap: 1.25rem;
+}
+
+.quick-contact-field {
+    display: flex;
+    flex-direction: column;
+}
+
+.quick-contact-field label {
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    font-size: 0.9rem;
+}
+
+.quick-contact-field input,
+.quick-contact-field select,
+.quick-contact-field textarea {
+    padding: 0.75rem;
+    background: var(--surface-dark);
+    border: 2px solid var(--border-color);
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+    color: var(--text-primary);
+    font-family: inherit;
+}
+
+.quick-contact-field input:focus,
+.quick-contact-field select:focus,
+.quick-contact-field textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.quick-contact-field textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.quick-contact-btn {
+    width: 100%;
+    margin-top: 0.5rem;
+}
+
+/* Mobile responsive for quick contact */
+@media (max-width: 768px) {
+    .quick-contact-modal .modal-content {
+        width: 95%;
+        max-width: 400px;
+        padding: 2rem 1.25rem;
+        margin: 0.5rem;
+    }
+    
+    .quick-contact-form {
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .quick-contact-modal .modal-content {
+        padding: 1.5rem 1rem;
+    }
+    
+    .quick-contact-field input,
+    .quick-contact-field select,
+    .quick-contact-field textarea {
+        padding: 0.6rem;
+    }
+}
