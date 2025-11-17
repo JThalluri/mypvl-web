@@ -165,24 +165,6 @@
         margin-bottom: 1.5rem;
     }
 
-    /* Floating Icons Mobile */
-    .floating-icon {
-        opacity: 0.12;
-        scale: 0.7;
-    }
-    
-    .icon-1 { width: 55px; height: 55px; top: 10%; left: 3%; }
-    .icon-2 { width: 45px; height: 45px; top: 15%; right: 8%; }
-    .icon-3 { width: 65px; height: 65px; bottom: 25%; left: 2%; }
-    .icon-4 { width: 40px; height: 40px; bottom: 15%; right: 5%; }
-    .icon-5 { width: 50px; height: 50px; top: 60%; left: 80%; }
-    .icon-6 { width: 45px; height: 45px; top: 35%; left: 90%; }
-    .icon-7 { width: 40px; height: 40px; top: 50%; left: 10%; }
-    .icon-8 { width: 55px; height: 55px; top: 15%; left: 70%; }
-    .icon-9 { width: 35px; height: 35px; bottom: 20%; left: 40%; }
-    .icon-10 { width: 35px; height: 35px; top: 30%; left: 20%; }
-    .icon-11 { width: 60px; height: 60px; bottom: 10%; right: 15%; }
-
     /* Value Proposition Mobile */
     .value-proposition ul {
         grid-template-columns: 1fr;

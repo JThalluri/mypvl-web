@@ -19,25 +19,34 @@ jobs:
           ref: gh-pages
           path: gh-pages-target
 
-      - name: Copy ONLY index.html and resources (non-destructive)
+      - name: Copy website files (non-destructive)
         run: |
           echo "=== SAFELY COPYING FILES ==="
           echo "Current gh-pages content:"
           ls -la gh-pages-target/
           
-          # Copy index.html (replace only if exists)
+          # Copy main site files
           cp -f index.html gh-pages-target/index.html
           echo "✅ Updated index.html"
           
+          # Copy all policy pages
+          cp -f privacy_policy.html gh-pages-target/
+          cp -f cookies_policy.html gh-pages-target/
+          cp -f terms_of_use.html gh-pages-target/
+          cp -f thirdparty_attributions.html gh-pages-target/
+          echo "✅ Updated policy pages"
+          
           # Remove and replace ONLY the resources folder
           rm -rf gh-pages-target/resources
+          rm -rf gh-pages-target/css  # Remove old css if exists
           cp -r resources gh-pages-target/
-          echo "✅ Updated resources folder"
+          cp -r css gh-pages-target/  # Add css folder for policy pages
+          echo "✅ Updated resources and css folders"
           
           echo "Final gh-pages content:"
           ls -la gh-pages-target/
 
-      - name: Commit and push ONLY specific files
+      - name: Commit and push website files
         run: |
           cd gh-pages-target
           
@@ -45,9 +54,14 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           
-          # Add ONLY the files we explicitly changed
+          # Add ALL website files we explicitly changed
           git add index.html
+          git add privacy_policy.html
+          git add cookies_policy.html
+          git add terms_of_use.html
+          git add thirdparty_attributions.html
           git add resources/
+          git add css/
           
           echo "=== FILES BEING COMMITTED ==="
           git status --short
@@ -56,9 +70,9 @@ jobs:
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "Update main site: index.html and resources/ [$(date +'%Y-%m-%d %H:%M:%S')]"
+            git commit -m "Update website: main site, policy pages, and assets [$(date +'%Y-%m-%d %H:%M:%S')]"
             git push origin gh-pages
-            echo "✅ Successfully updated only index.html and resources/"
+            echo "✅ Successfully updated website files"
           fi
 
       - name: Verify preservation
