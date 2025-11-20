@@ -1395,6 +1395,93 @@ button:focus-visible,
   z-index: 7;
   pointer-events: auto;
 }
+/* Source: theme */
+/* Education Theme Theme */
+:root {
+  /* Theme Identity */
+  --theme-name: "medical";
+  --theme-display-name: "Education Theme";
+  
+  /* Core Color System */
+  --color-primary: #6A040F;
+  --color-secondary: #9D0208;
+  --color-accent: #DC2F02;
+  --color-success: #27AE60;
+  --color-warning: #E67E22;
+  --color-error: #E74C3C;
+  --color-info: #3498DB;
+  
+  /* Neutral Colors */
+  --color-background: #FFFFFF;
+  --color-surface: #F8F9FA;
+  --color-surface-alt: #E9ECEF;
+  --color-text: #333333;
+  --color-text-muted: #6C757D;
+  --color-text-light: #FFFFFF;
+  --color-border: #DEE2E6;
+  --color-shadow: rgba(0, 0, 0, 0.1);
+  
+  /* Typography */
+  --font-family-base: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --font-family-heading: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  
+  --font-size-base: 16px;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 700;
+  
+  /* Spacing & Layout */
+  --spacing-unit: 8px;
+  --spacing-sm: calc(var(--spacing-unit) * 1);
+  --spacing-md: calc(var(--spacing-unit) * 1.5);
+  --spacing-lg: calc(var(--spacing-unit) * 2);
+  --spacing-xl: calc(var(--spacing-unit) * 3);
+  
+  --border-radius-sm: 4px;
+  --border-radius-md: 6px;
+  --border-radius-lg: 8px;
+  
+  /* Component Specific */
+  --header-height: 64px;
+  --sidebar-width: 280px;
+  --content-max-width: 1200px;
+}
+
+/* Theme-specific overrides */
+[data-theme="medical"] {
+  /* Add any theme-specific overrides here */
+}
+
+/* Category badges based on theme */
+.theme-medical .category-badge {
+  background: linear-gradient(135deg, #6A040F, #9D0208);
+  color: white;
+  border: none;
+}
+
+/* Source: theme */
+/* medical Theme - Dark Mode */
+[data-theme="medical"][data-mode="dark"] {
+  --color-background: #1A1A2E;
+  --color-surface: #16213E;
+  --color-surface-alt: #0F3460;
+  --color-text: #E2E8F0;
+  --color-text-muted: #94A3B8;
+  --color-text-light: #F1F5F9;
+  --color-border: #334155;
+  --color-shadow: rgba(0, 0, 0, 0.3);
+}
+
+/* Dark mode category badges */
+[data-theme="medical"][data-mode="dark"] .category-badge {
+  background: linear-gradient(135deg, #DC2F02, #6A040F);
+  color: var(--color-text-light);
+}
+
         </style>
     </head>
     <body>

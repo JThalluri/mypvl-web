@@ -163,16 +163,21 @@
     "category",
     "keywords",
     "level",
+    "mode",
     "reason",
     "role",
     "tags",
+    "theme",
     "title",
     "toggle",
     "videoid"
   ],
-  "obfuscation_map": {},
+  "obfuscation_map": {
+    "category-badge": "a",
+    "theme-music": "b"
+  },
   "stats": {
-    "total_obfuscated": 0,
+    "total_obfuscated": 2,
     "total_preserved": 155
   }
 }

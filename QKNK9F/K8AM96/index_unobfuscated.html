@@ -1395,6 +1395,93 @@ button:focus-visible,
   z-index: 7;
   pointer-events: auto;
 }
+/* Source: theme */
+/* Music & Performance Theme Theme */
+:root {
+  /* Theme Identity */
+  --theme-name: "music";
+  --theme-display-name: "Music & Performance Theme";
+  
+  /* Core Color System */
+  --primary-color: #EF233C;
+  --color-secondary: #EF233C;
+  --color-accent: #D90429;
+  --color-success: #27AE60;
+  --color-warning: #E67E22;
+  --color-error: #E74C3C;
+  --color-info: #3498DB;
+  
+  /* Neutral Colors */
+  --color-background: #FFFFFF;
+  --color-surface: #F8F9FA;
+  --color-surface-alt: #E9ECEF;
+  --color-text: #333333;
+  --color-text-muted: #6C757D;
+  --color-text-light: #FFFFFF;
+  --color-border: #DEE2E6;
+  --color-shadow: rgba(0, 0, 0, 0.1);
+  
+  /* Typography */
+  --font-family-base: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --font-family-heading: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  
+  --font-size-base: 16px;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 700;
+  
+  /* Spacing & Layout */
+  --spacing-unit: 8px;
+  --spacing-sm: calc(var(--spacing-unit) * 1);
+  --spacing-md: calc(var(--spacing-unit) * 1.5);
+  --spacing-lg: calc(var(--spacing-unit) * 2);
+  --spacing-xl: calc(var(--spacing-unit) * 3);
+  
+  --border-radius-sm: 4px;
+  --border-radius-md: 6px;
+  --border-radius-lg: 8px;
+  
+  /* Component Specific */
+  --header-height: 64px;
+  --sidebar-width: 220px;
+  --content-max-width: 1200px;
+}
+
+/* Theme-specific overrides */
+[data-theme="music"] {
+  /* Add any theme-specific overrides here */
+}
+
+/* Category badges based on theme */
+.theme-music .category-badge {
+  background: linear-gradient(135deg, #8D99AE, #EF233C);
+  color: white;
+  border: none;
+}
+
+/* Source: theme */
+/* music Theme - Dark Mode */
+[data-theme="music"][data-mode="dark"] {
+  --background-color: #1A1A2E;
+  --color-surface: #16213E;
+  --color-surface-alt: #0F3460;
+  --color-text: #E2E8F0;
+  --color-text-muted: #94A3B8;
+  --color-text-light: #F1F5F9;
+  --color-border: #334155;
+  --color-shadow: rgba(0, 0, 0, 0.3);
+}
+
+/* Dark mode category badges */
+[data-theme="music"][data-mode="dark"] .category-badge {
+  background: linear-gradient(135deg, #D90429, #8D99AE);
+  color: var(--color-text-light);
+}
+
         </style>
     </head>
     <body>
@@ -2897,424 +2984,6 @@ window.PVL = window.PVL || {};
 console.log('PVL Video Library loaded (bundled)');
 
 
-// Source: project
-(function(ns){
-  const cm = {};
-
-  cm.toggleCategory = function(category, event) {
-    if (event) {
-      event.stopPropagation();
-      event.preventDefault();
-    }
-    const header = document.querySelector('.category-header[data-category="' + category + '"]');
-    const sublist = document.getElementById('subcat-' + category);
-    if (!sublist) return;
-    const isExpanding = !sublist.classList.contains('expanded');
-    sublist.classList.toggle('expanded');
-    const chevron = header ? header.querySelector('.fa-chevron-down') : null;
-    if (chevron) {
-      chevron.style.transform = isExpanding ? 'rotate(-180deg)' : 'rotate(0deg)';
-    }
-  };
-
-  cm.toggleSubcategory = function(mainCat, subcat, event) {
-    if (event) {
-      event.stopPropagation();
-      event.preventDefault();
-    }
-    const subsublist = document.getElementById('subsubcat-' + mainCat + '-' + subcat);
-    if (!subsublist) return;
-    const isExpanding = !subsublist.classList.contains('expanded');
-    subsublist.classList.toggle('expanded');
-    const subItem = document.querySelector(`.subcategory-item[data-category="${mainCat}|${subcat}"]`);
-    const chevron = subItem ? subItem.querySelector('.fa-chevron-down') : null;
-    if (chevron) {
-      chevron.style.transform = isExpanding ? 'rotate(-180deg)' : 'rotate(0deg)';
-    }
-  };
-
-  cm.selectMainCategory = function(mainCat, event) {
-    if (event) {
-      event.stopPropagation();
-      event.preventDefault();
-    }
-    window.activeMainCategory = mainCat;
-    window.activeSubcategory = "";
-    window.activeSubsubcategory = "";
-    // collapse everything except this main category
-    cm.collapseAllExcept(mainCat);
-    // ensure the selected main category is expanded (if it has children)
-    const sublist = document.getElementById('subcat-' + mainCat);
-    if (sublist) sublist.classList.add('expanded');
-    const header = document.querySelector('.category-header[data-category="' + mainCat + '"]');
-    if (header) {
-      const chevron = header.querySelector('.fa-chevron-down');
-      if (chevron) chevron.style.transform = 'rotate(-180deg)';
-    }
-    cm.updateCategorySelection();
-    if (ns.dom.cache.searchBox) ns.dom.cache.searchBox.value = "";
-    window.applyFilters();
-  };
-
-  cm.selectSubcategory = function(mainCat, subcat, event) {
-    if (event) {
-      event.stopPropagation();
-      event.preventDefault();
-    }
-    window.activeMainCategory = mainCat;
-    window.activeSubcategory = subcat;
-    window.activeSubsubcategory = "";
-    // collapse everything except this main->sub branch
-    cm.collapseAllExcept(mainCat, subcat);
-    // ensure mainCat expanded
-    const sublist = document.getElementById('subcat-' + mainCat);
-    if (sublist) sublist.classList.add('expanded');
-    const header = document.querySelector('.category-header[data-category="' + mainCat + '"]');
-    if (header) {
-      const chevron = header.querySelector('.fa-chevron-down');
-      if (chevron) chevron.style.transform = 'rotate(-180deg)';
-    }
-    // ensure this subcategory's subsublist expanded (if children exist)
-    const subsublist = document.getElementById('subsubcat-' + mainCat + '-' + subcat);
-    if (subsublist) subsublist.classList.add('expanded');
-    const subItem = document.querySelector(`.subcategory-item[data-category="${mainCat}|${subcat}"]`);
-    if (subItem) {
-      const chev = subItem.querySelector('.fa-chevron-down');
-      if (chev) chev.style.transform = 'rotate(-180deg)';
-    }
-    cm.updateCategorySelection();
-    if (ns.dom.cache.searchBox) ns.dom.cache.searchBox.value = "";
-    window.applyFilters();
-  };
-
-  cm.selectSubsubcategory = function(mainCat, subcat, subsubcat, event) {
-    if (event) {
-      event.stopPropagation();
-      event.preventDefault();
-    }
-    window.activeMainCategory = mainCat;
-    window.activeSubcategory = subcat;
-    window.activeSubsubcategory = subsubcat;
-    // collapse everything except this main->sub branch (we keep subcat's subsublist)
-    cm.collapseAllExcept(mainCat, subcat);
-    // ensure parents expanded
-    const sublist = document.getElementById('subcat-' + mainCat);
-    if (sublist) sublist.classList.add('expanded');
-    const subsublist = document.getElementById('subsubcat-' + mainCat + '-' + subcat);
-    if (subsublist) subsublist.classList.add('expanded');
-    const header = document.querySelector('.category-header[data-category="' + mainCat + '"]');
-    if (header) {
-      const chevron = header.querySelector('.fa-chevron-down');
-      if (chevron) chevron.style.transform = 'rotate(-180deg)';
-    }
-    const subItem = document.querySelector(`.subcategory-item[data-category="${mainCat}|${subcat}"]`);
-    if (subItem) {
-      const chev = subItem.querySelector('.fa-chevron-down');
-      if (chev) chev.style.transform = 'rotate(-180deg)';
-    }
-    cm.updateCategorySelection();
-    if (ns.dom.cache.searchBox) ns.dom.cache.searchBox.value = "";
-    window.applyFilters();
-  };
-
-  cm.collapseHierarchy = function(mainCat, subcat) {
-    // kept for backward compatibility: collapse specific lists if needed
-    const sublist = document.getElementById('subcat-' + mainCat);
-    if (sublist && sublist.classList.contains('expanded')) {
-      sublist.classList.remove('expanded');
-      const header = document.querySelector('.category-header[data-category="' + mainCat + '"]');
-      if (header) {
-        const chevron = header.querySelector('.fa-chevron-down');
-        if (chevron) chevron.style.transform = 'rotate(0deg)';
-      }
-    }
-    if (subcat) {
-      const subsublist = document.getElementById('subsubcat-' + mainCat + '-' + subcat);
-      if (subsublist && subsublist.classList.contains('expanded')) {
-        subsublist.classList.remove('expanded');
-        const subItem = document.querySelector(`.subcategory-item[data-category="${mainCat}|${subcat}"]`);
-        if (subItem) {
-          const chevron = subItem.querySelector('.fa-chevron-down');
-          if (chevron) chevron.style.transform = 'rotate(0deg)';
-        }
-      }
-    }
-  };
-
-  cm.collapseAllExcept = function(mainCat, subcat) {
-    // Collapse all main sublists except for mainCat
-    document.querySelectorAll('.subcategory-list.expanded').forEach(list => {
-      if (list.id !== 'subcat-' + mainCat) {
-        list.classList.remove('expanded');
-        const header = document.querySelector('.category-header[data-category="' + (list.id.replace(/^subcat-/, '')) + '"]');
-        if (header) {
-          const chevron = header.querySelector('.fa-chevron-down');
-          if (chevron) chevron.style.transform = 'rotate(0deg)';
-        }
-      }
-    });
-
-    // Collapse all subsub lists except the one for mainCat/subcat (if provided)
-    document.querySelectorAll('.subsubcategory-list.expanded, .subsub-list.expanded, .subsubcategory-list.expanded').forEach(list => {
-      const keepId = subcat ? 'subsubcat-' + mainCat + '-' + subcat : null;
-      if (list.id !== keepId) {
-        list.classList.remove('expanded');
-        const prev = list.previousElementSibling;
-        if (prev) {
-          const chev = prev.querySelector('.fa-chevron-down');
-          if (chev) chev.style.transform = 'rotate(0deg)';
-        }
-      }
-    });
-  };
-
-  cm.updateCategorySelection = function() {
-    document.querySelectorAll('.category-header, .subcategory-item, .subsubcategory-item').forEach(el => {
-      el.classList.remove('active');
-    });
-    if (window.activeMainCategory) {
-      const mainHeader = document.querySelector('.category-header[data-category="' + window.activeMainCategory + '"]');
-      if (mainHeader) mainHeader.classList.add('active');
-      if (window.activeSubcategory) {
-        const subItem = document.querySelector(`.subcategory-item[data-category="${window.activeMainCategory}|${window.activeSubcategory}"]`);
-        if (subItem) subItem.classList.add('active');
-        if (window.activeSubsubcategory) {
-          const subsubItem = document.querySelector(`.subsubcategory-item[data-category="${window.activeMainCategory}|${window.activeSubcategory}|${window.activeSubsubcategory}"]`);
-          if (subsubItem) subsubItem.classList.add('active');
-        }
-      }
-    }
-  };
-
-  cm.findClickedCategoryElement = function(event) {
-    return event.target.closest('.category-header, .subcategory-item, .subsubcategory-item');
-  };
-
-  cm.handleChevronClick = function(chevronElement) {
-    chevronElement.stopPropagation();
-    chevronElement.preventDefault();
-  };
-
-  cm.handleCategorySelection = function(categoryElement) {
-    const level = parseInt(categoryElement.dataset.level || 0);
-    const category = categoryElement.dataset.category;
-    if (level === 0) {
-      cm.selectMainCategory(category);
-    } else if (level === 1) {
-      const parts = category.split('|');
-      cm.selectSubcategory(parts[0], parts[1]);
-    } else if (level === 2) {
-      const parts = category.split('|');
-      cm.selectSubsubcategory(parts[0], parts[1], parts[2]);
-    }
-  };
-
-  ns.categoryManager = cm;
-})(window.PVL = window.PVL || {});
-// Source: project
-(function(ns){
-  const pm = {};
-
-  pm.players = new Map();
-  pm.pendingPlayers = new Map();
-  pm.currentlyPlayingVideoId = null;
-
-  pm.createYouTubeIframe = function(videoId) {
-    const iframe = document.createElement("iframe");
-    let src = `https://www.youtube.com/embed/${videoId}?rel=0&enablejsapi=1&playsinline=1&autoplay=1`;
-    if (!ns.utils.isLocalFileEnvironment()) {
-      src += `&origin=${window.location.origin}`;
-    }
-    iframe.src = src;
-    iframe.allow = "autoplay; encrypted-media; accelerometer; gyroscope; picture-in-picture";
-    iframe.allowFullscreen = true;
-    iframe.width = "100%";
-    iframe.height = "100%";
-    iframe.frameBorder = "0";
-    iframe.title = "YouTube player";
-    iframe.setAttribute("webkitallowfullscreen", "");
-    iframe.setAttribute("mozallowfullscreen", "");
-    iframe.setAttribute("allowfullscreen", "");
-    return iframe;
-  };
-
-  pm.loadYouTubeAPI = function() {
-    const tag = document.createElement('script');
-    tag.src = "https://www.youtube.com/iframe_api";
-    const firstScriptTag = document.getElementsByTagName('script')[0];
-    if (firstScriptTag && firstScriptTag.parentNode) {
-      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-    }
-  };
-
-  pm.initializePlayer = function(iframe, videoId) {
-    if (window.YT && window.YT.Player) {
-      try {
-        const player = new YT.Player(iframe, {
-          videoId: videoId,
-          playerVars: {
-            playsinline: 1,
-            rel: 0,
-            enablejsapi: 1,
-            autoplay: 1
-          },
-          events: {
-            onReady: (e) => {
-              pm.players.set(videoId, e.target);
-              try {
-                e.target.playVideo();
-              } catch (err) {
-                console.error('Play error:', err);
-              }
-            },
-            onStateChange: (e) => {
-              // handle state changes if needed
-            },
-            onError: (e) => {
-              console.error('YouTube player error:', e.data);
-              pm.cleanupPlayer(videoId);
-            }
-          }
-        });
-        pm.players.set(videoId, player);
-      } catch (err) {
-        console.error('YT Player initialization error:', err);
-        pm.cleanupPlayer(videoId);
-      }
-    }
-  };
-
-  pm.initializePendingPlayers = function() {
-    if (window.YT && window.YT.Player) {
-      pm.pendingPlayers.forEach((iframe, videoId) => {
-        pm.initializePlayer(iframe, videoId);
-      });
-      pm.pendingPlayers.clear();
-    } else {
-      setTimeout(pm.initializePendingPlayers, 100);
-    }
-  };
-
-  pm.showMobilePlayButton = function(iframe, videoId) {
-    const container = iframe.parentElement;
-    if (!container || container.querySelector('.mobile-play-button')) return;
-    const playButton = document.createElement('div');
-    playButton.className = 'mobile-play-button';
-    playButton.innerHTML = '<i class="fas fa-play"></i>';
-    playButton.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;background:rgba(247,156,25,0.9);color:#fff;font-size:24px;z-index:10';
-    playButton.addEventListener('click', function(e) {
-      e.stopPropagation();
-      const player = pm.players.get(videoId);
-      if (player && player.playVideo) {
-        try {
-          player.playVideo();
-          playButton.remove();
-        } catch (err) {
-          console.error('Play button click error:', err);
-          pm.cleanupPlayer(videoId);
-        }
-      }
-    });
-    container.style.position = 'relative';
-    container.appendChild(playButton);
-  };
-
-  pm.cleanupPlayer = function(videoId) {
-    const player = pm.players.get(videoId);
-    if (player) {
-      try {
-        if (player.stopVideo) player.stopVideo();
-        if (player.destroy) player.destroy();
-      } catch (err) {
-        console.error('Cleanup error:', err);
-      }
-      pm.players.delete(videoId);
-    }
-    if (pm.currentlyPlayingVideoId === videoId) {
-      pm.currentlyPlayingVideoId = null;
-    }
-  };
-
-  pm.stopAllVideos = function() {
-    pm.players.forEach((player, videoId) => {
-      try {
-        if (player.pauseVideo) player.pauseVideo();
-      } catch (err) {
-        console.error('Stop video error:', err);
-      }
-    });
-    document.querySelectorAll('.card').forEach(card => {
-      const iframe = card.querySelector('iframe');
-      if (iframe) iframe.remove();
-    });
-    pm.players.clear();
-    pm.pendingPlayers.clear();
-    pm.currentlyPlayingVideoId = null;
-  };
-
-  pm.forcePauseAllOtherVideos = function(currentVideoId) {
-    pm.players.forEach((player, videoId) => {
-      if (videoId !== currentVideoId) {
-        try {
-          if (player.pauseVideo) player.pauseVideo();
-        } catch (err) {
-          console.error('Pause error:', err);
-        }
-      }
-    });
-  };
-
-  ns.playerManager = pm;
-})(window.PVL = window.PVL || {});
-// Source: project
-(function(ns){
-  const f = {};
-
-  f.filterVideos = function() {
-    const query = (ns.dom.cache.searchBox && ns.dom.cache.searchBox.value) || "";
-    const keywords = query ? query.toLowerCase().trim().split(/\s+/) : [];
-    let visibleCount = 0;
-
-    ns.playerManager.stopAllVideos();
-
-    ns.dom.cache.videoCards.forEach(card => {
-      const title = (card.dataset.title || "").toLowerCase();
-      const categories = (card.dataset.categories || "").split(';').map(s => s.trim());
-      const keywords_data = (card.dataset.keywords || "").toLowerCase();
-      const tags = (card.dataset.tags || "").toLowerCase();
-
-      let categoryMatch = true;
-      if (window.activeMainCategory) {
-        categoryMatch = categories.some(cat => 
-          cat === window.activeMainCategory || 
-          cat.startsWith(window.activeMainCategory + '|')
-        );
-        if (categoryMatch && window.activeSubcategory) {
-          categoryMatch = categories.includes(window.activeSubcategory);
-        }
-        if (categoryMatch && window.activeSubsubcategory) {
-          categoryMatch = categories.includes(window.activeSubsubcategory);
-        }
-      }
-
-      let searchMatch = true;
-      if (keywords.length) {
-        const all = [title, keywords_data, tags, categories.join(' ')].join(' ');
-        searchMatch = keywords.every(w => all.includes(w));
-      }
-
-      const shouldShow = categoryMatch && searchMatch;
-      card.style.display = shouldShow ? 'flex' : 'none';
-      if (shouldShow) visibleCount++;
-    });
-
-    if (ns.dom.cache.emptyState) {
-      ns.dom.cache.emptyState.style.display = visibleCount === 0 ? 'block' : 'none';
-    }
-  };
-
-  ns.filter = f;
-})(window.PVL = window.PVL || {});
         </script>
     </body>
     </html>
