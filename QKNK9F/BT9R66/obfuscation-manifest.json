@@ -39,6 +39,7 @@
     "fab",
     "fas",
     "grid",
+    "has-children",
     "has-unavailable-video",
     "header",
     "header-controls",
@@ -51,6 +52,7 @@
     "mobile-only",
     "mobile-play-button",
     "mobileClearFiltersBtn",
+    "no-children",
     "play-overlay",
     "powered-by",
     "reason",
@@ -145,11 +147,12 @@
     "videoid"
   ],
   "obfuscation_map": {
-    "theme-medical": "a",
-    "category-badge": "b"
+    "category-badge": "a",
+    "category-list": "b",
+    "theme-medical": "c"
   },
   "stats": {
-    "total_obfuscated": 2,
-    "total_preserved": 127
+    "total_obfuscated": 3,
+    "total_preserved": 129
   }
 }
