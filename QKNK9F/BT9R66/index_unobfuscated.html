@@ -1440,6 +1440,7 @@ button:focus-visible,
   --theme-display-name: "Education Theme";
   
   --primary-color: #007B8F;
+
   /* Core Color System */
   --color-primary: #6A040F;
   --color-secondary: #9D0208;
@@ -1683,6 +1684,28 @@ button:focus-visible,
 .subsubcategory-item.active .video-count {
     background: rgba(247, 156, 25, 0.2);
     color: var(--primary-color);
+}
+
+#sidebar {
+    width: var(--sidebar-width);
+    background: #061718;
+    padding: 15px 12px;
+    border-right: 1px solid var(--border-color);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    transition: transform 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+#content {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background: #001e1e;
+    padding-bottom: calc(20px + env(safe-area-inset-bottom,0px));
+    max-height: calc(100 * var(--vh) - var(--header-height));
 }
 /* Source: theme */
 /* medical Theme - Dark Mode */
