@@ -148,8 +148,8 @@
   ],
   "obfuscation_map": {
     "category-badge": "a",
-    "category-list": "b",
-    "theme-medical": "c"
+    "theme-medical": "b",
+    "category-list": "c"
   },
   "stats": {
     "total_obfuscated": 3,
