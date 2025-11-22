@@ -150,40 +150,43 @@ def generate_html(theme="dark"):
     
     # HTML Template
     html_content = f"""<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My PVL - Personal Video Library</title>
-    {f'<link rel="icon" href="data:{get_mime_type(favicon_path)};base64,{favicon_b64}" type="{get_mime_type(favicon_path)}">' if favicon_b64 else '<!-- Favicon not found -->'}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        {css_content}
-    </style>
-    <!--Start of Tawk.to Script-->
-    <script type="text/javascript">
-    //<![CDATA[
-    var Tawk_API=Tawk_API||{{}}, Tawk_LoadStart=new Date();
-    (function(){{
-    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-    s1.async=true;
-    s1.src='https://embed.tawk.to/69193bbcf0cd89195c96cea0/1ja592m87';
-    s1.charset='UTF-8';
-    s1.setAttribute('crossorigin','*');
-    s0.parentNode.insertBefore(s1,s0);
-    }})();
-    //]]>
-    </script>
-    <!--End of Tawk.to Script-->
-    <!-- Microsoft Clarity Analytics -->
-    <script type="text/javascript">
-        (function(c,l,a,r,i,t,y){{
-            c[a]=c[a]||function(){{(c[a].q=c[a].q||[]).push(arguments)}};
-            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-        }})(window, document, "clarity", "script", "u71fendq3r");
-    </script>
-</head>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.youtube.com https://www.google.com https://www.gstatic.com https://scripts.clarity.ms https://www.clarity.ms https://embed.tawk.to https://cdnjs.cloudflare.com 'unsafe-inline'; style-src 'self' https://cdnjs.cloudflare.com https://embed.tawk.to 'unsafe-inline'; img-src 'self' https: data:; font-src 'self' https://cdnjs.cloudflare.com https://embed.tawk.to data:; connect-src 'self' https://www.google.com https://va.tawk.to https://embed.tawk.to https://www.clarity.ms https://q.clarity.ms wss:; frame-src https://www.youtube.com https://www.google.com;">
+        <title>My PVL - Personal Video Library</title>
+        {f'<link rel="icon" href="data:{get_mime_type(favicon_path)};base64,{favicon_b64}" type="{get_mime_type(favicon_path)}">' if favicon_b64 else '<!-- Favicon not found -->'}
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <style>
+            {css_content}
+        </style>
+        <!-- reCAPTCHA v3 -->
+        <script src="https://www.google.com/recaptcha/api.js?render=6Lf49g0sAAAAAOLKadjqtuRVxlONX9d7v7ENr3pm"></script>
+        <!--Start of Tawk.to Script-->
+        <script type="text/javascript">
+        //<![CDATA[
+        var Tawk_API=Tawk_API||{{}}, Tawk_LoadStart=new Date();
+        (function(){{
+        var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+        s1.async=true;
+        s1.src='https://embed.tawk.to/69193bbcf0cd89195c96cea0/1ja592m87';
+        s1.charset='UTF-8';
+        s1.setAttribute('crossorigin','*');
+        s0.parentNode.insertBefore(s1,s0);
+        }})();
+        //]]>
+        </script>
+        <!--End of Tawk.to Script-->
+        <!-- Microsoft Clarity Analytics -->
+        <script type="text/javascript">
+            (function(c,l,a,r,i,t,y){{
+                c[a]=c[a]||function(){{(c[a].q=c[a].q||[]).push(arguments)}};
+                t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+                y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+            }})(window, document, "clarity", "script", "u71fendq3r");
+        </script>
+    </head>
 <body>
     {header_content}
     {navigation_content}
@@ -331,6 +334,91 @@ def generate_policy_page(policy_name, title, theme="dark"):
     navigation_content = read_file("sections/policy_navigation.html")
     footer_content = read_file("sections/footer.html")
     
+    # SPECIAL HANDLING FOR CONTACT PAGES
+    success_modal_content = ""
+    contact_javascript = ""
+    
+    if policy_name == "contact_us":
+        # Include success modal for contact pages
+        success_modal_content = read_file("sections/contact_success_modal.html")
+        
+        # Add contact-specific JavaScript
+        contact_javascript = """
+        <script>
+            // Contact form handling for standalone page
+            document.addEventListener('DOMContentLoaded', function() {
+                const contactForm = document.getElementById('contactForm');
+                const successModal = document.getElementById('successModal');
+                const closeModalBtn = document.getElementById('closeModalBtn');
+                
+                if (contactForm) {
+                    contactForm.addEventListener('submit', async function(e) {
+                        e.preventDefault();
+                        
+                        const submitBtn = contactForm.querySelector('button[type="submit"]');
+                        if (!submitBtn) return;
+                        
+                        // Show loading state
+                        const originalText = submitBtn.textContent;
+                        submitBtn.textContent = 'Sending...';
+                        submitBtn.disabled = true;
+                        
+                        try {
+                            // Get reCAPTCHA token
+                            const recaptchaToken = await grecaptcha.execute('6Lf49g0sAAAAAOLKadjqtuRVxlONX9d7v7ENr3pm', {action: 'submit'});
+                            
+                            // Get form data
+                            const formData = new FormData(contactForm);
+                            formData.append('g-recaptcha-response', recaptchaToken);
+                            
+                            // Submit to Formspree
+                            const response = await fetch('https://formspree.io/f/xldallkz', {
+                                method: 'POST',
+                                body: formData,
+                                headers: {
+                                    'Accept': 'application/json'
+                                }
+                            });
+                            
+                            if (response.ok) {
+                                contactForm.reset();
+                                if (successModal) {
+                                    successModal.style.display = 'flex';
+                                }
+                            } else {
+                                throw new Error('Form submission failed');
+                            }
+                            
+                        } catch (error) {
+                            console.error('Contact form submission error:', error);
+                            // Fallback - still show success to user
+                            contactForm.reset();
+                            if (successModal) {
+                                successModal.style.display = 'flex';
+                            }
+                        } finally {
+                            submitBtn.textContent = originalText;
+                            submitBtn.disabled = false;
+                        }
+                    });
+                }
+                
+                // Success modal close handlers
+                if (closeModalBtn && successModal) {
+                    closeModalBtn.addEventListener('click', function() {
+                        successModal.style.display = 'none';
+                    });
+                    
+                    successModal.addEventListener('click', function(e) {
+                        if (e.target === successModal) {
+                            successModal.style.display = 'none';
+                        }
+                    });
+                }
+            });
+        </script>
+        """
+    
     # Replace image placeholders
     if banner_b64:
         header_content = header_content.replace('{{BANNER_IMAGE}}', f'data:image/png;base64,{banner_b64}')
@@ -361,59 +449,64 @@ def generate_policy_page(policy_name, title, theme="dark"):
     
     # HTML Template for Policy Pages
     html_content = f"""<!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>{title} - My PVL Services</title>
-        {f'<link rel="icon" href="data:{get_mime_type(favicon_path)};base64,{favicon_b64}" type="{get_mime_type(favicon_path)}">' if favicon_b64 else '<!-- Favicon not found -->'}
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-        <link rel="stylesheet" href="css/policy-pages.css">  
-    </head>
-    <body>
-        {header_content}
-        {navigation_content}
-        
-        <main>
-            {policy_content}
-        </main>
-        
-        {footer_content}
-        
-        <!-- Mobile Navigation JavaScript -->
-        <script>
-            // Mobile Navigation - Consistent with main site
-            document.addEventListener('DOMContentLoaded', function() {{
-                const mobileNavToggle = document.getElementById('mobileNavToggle');
-                const navContainer = document.getElementById('navContainer');
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.youtube.com https://www.google.com https://www.gstatic.com https://scripts.clarity.ms https://www.clarity.ms https://embed.tawk.to https://cdnjs.cloudflare.com 'unsafe-inline'; style-src 'self' https://cdnjs.cloudflare.com https://embed.tawk.to 'unsafe-inline'; img-src 'self' https: data:; font-src 'self' https://cdnjs.cloudflare.com data:; connect-src 'self' https://www.google.com https://va.tawk.to https://embed.tawk.to https://www.clarity.ms; frame-src https://www.youtube.com https://www.google.com;"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.youtube.com https://www.google.com https://www.gstatic.com https://scripts.clarity.ms https://www.clarity.ms https://embed.tawk.to https://cdnjs.cloudflare.com 'unsafe-inline'; style-src 'self' https://cdnjs.cloudflare.com https://embed.tawk.to 'unsafe-inline'; img-src 'self' https: data:; font-src 'self' https://cdnjs.cloudflare.com https://embed.tawk.to data:; connect-src 'self' https://www.google.com https://va.tawk.to https://embed.tawk.to https://www.clarity.ms wss:; frame-src https://www.youtube.com https://www.google.com;">
+    <title>{title} - My PVL Services</title>
+    {f'<link rel="icon" href="data:{get_mime_type(favicon_path)};base64,{favicon_b64}" type="{get_mime_type(favicon_path)}">' if favicon_b64 else '<!-- Favicon not found -->'}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    {'<!-- reCAPTCHA v3 --><script src="https://www.google.com/recaptcha/api.js?render=6Lf49g0sAAAAAOLKadjqtuRVxlONX9d7v7ENr3pm"></script>' if policy_name == "contact_us" else ''}
+    <link rel="stylesheet" href="css/policy-pages.css">  
+</head>
+<body>
+    {header_content}
+    {navigation_content}
+    
+    <main>
+        {policy_content}
+    </main>
+    
+    {footer_content}
+    
+    {success_modal_content}
+    
+    <!-- Mobile Navigation JavaScript -->
+    <script>
+        // Mobile Navigation - Consistent with main site
+        document.addEventListener('DOMContentLoaded', function() {{
+            const mobileNavToggle = document.getElementById('mobileNavToggle');
+            const navContainer = document.getElementById('navContainer');
+            
+            if (mobileNavToggle && navContainer) {{
+                mobileNavToggle.addEventListener('click', function() {{
+                    navContainer.classList.toggle('active');
+                    const icon = this.querySelector('i');
+                    if (navContainer.classList.contains('active')) {{
+                        icon.classList.remove('fa-bars');
+                        icon.classList.add('fa-times');
+                    }} else {{
+                        icon.classList.remove('fa-times');
+                        icon.classList.add('fa-bars');
+                    }}
+                }});
                 
-                if (mobileNavToggle && navContainer) {{
-                    mobileNavToggle.addEventListener('click', function() {{
-                        navContainer.classList.toggle('active');
-                        const icon = this.querySelector('i');
-                        if (navContainer.classList.contains('active')) {{
-                            icon.classList.remove('fa-bars');
-                            icon.classList.add('fa-times');
-                        }} else {{
-                            icon.classList.remove('fa-times');
-                            icon.classList.add('fa-bars');
-                        }}
+                // Close mobile menu when clicking on a link (optional enhancement)
+                document.querySelectorAll('.nav-link').forEach(link => {{
+                    link.addEventListener('click', function() {{
+                        navContainer.classList.remove('active');
+                        const icon = mobileNavToggle.querySelector('i');
+                        icon.classList.remove('fa-times');
+                        icon.classList.add('fa-bars');
                     }});
-                    
-                    // Close mobile menu when clicking on a link (optional enhancement)
-                    document.querySelectorAll('.nav-link').forEach(link => {{
-                        link.addEventListener('click', function() {{
-                            navContainer.classList.remove('active');
-                            const icon = mobileNavToggle.querySelector('i');
-                            icon.classList.remove('fa-times');
-                            icon.classList.add('fa-bars');
-                        }});
-                    }});
-                }}
-            }});
-        </script>
-    </body>
-    </html>"""
+                }});
+            }}
+        }});
+    </script>
+    {contact_javascript if policy_name == "contact_us" else ''}
+</body>
+</html>"""
     
     return html_content
 
@@ -678,7 +771,8 @@ def main():
         ("privacy_policy", "Privacy Policy"),
         ("cookies_policy", "Cookie Policy"), 
         ("terms_of_use", "Terms of Use"),
-        ("thirdparty_attributions", "Third-Party Credits")
+        ("thirdparty_attributions", "Third-Party Credits"),
+        ("contact_us", "Contact Us")
     ]
     
     for policy_file, title in policy_pages:
