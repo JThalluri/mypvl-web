@@ -19,6 +19,8 @@
     "content",
     "count-",
     "css",
+    "disclaimer-link",
+    "disclaimer-modal",
     "duration",
     "empty-state",
     "emptyState",
@@ -38,6 +40,9 @@
     "fa-youtube",
     "fab",
     "fas",
+    "footer-content",
+    "footer-copyright",
+    "footer-links",
     "grid",
     "has-children",
     "has-unavailable-video",
@@ -52,12 +57,18 @@
     "mobile-only",
     "mobile-play-button",
     "mobileClearFiltersBtn",
+    "modal-body",
+    "modal-close",
+    "modal-content",
+    "modal-header",
+    "modern-footer",
     "no-children",
     "play-overlay",
     "powered-by",
     "reason",
     "search-container",
     "searchBox",
+    "separator",
     "sidebar",
     "sidebar-overlay",
     "sidebarOverlay",
@@ -114,10 +125,14 @@
     "count-\u0c39\u0c4b\u0c2e\u0c3f\u0c2f\u0c4b\u0c2a\u0c24\u0c3f-\u0c2e\u0c46\u0c1f\u0c40\u0c30\u0c3f\u0c2f\u0c3e \u0c2e\u0c46\u0c21\u0c3f\u0c15\u0c3e-\u0c05\u0c28\u0c15\u0c3e\u0c30\u0c4d\u0c21\u0c3f\u0c2f\u0c02",
     "count-\u0c39\u0c4b\u0c2e\u0c3f\u0c2f\u0c4b\u0c2a\u0c24\u0c3f-\u0c2e\u0c46\u0c1f\u0c40\u0c30\u0c3f\u0c2f\u0c3e \u0c2e\u0c46\u0c21\u0c3f\u0c15\u0c3e-\u0c32\u0c48\u0c15\u0c4b\u0c2a\u0c4b\u0c21\u0c3f\u0c2f\u0c02",
     "count-\u0c39\u0c4b\u0c2e\u0c3f\u0c2f\u0c4b\u0c2a\u0c24\u0c3f-\u0c2e\u0c46\u0c1f\u0c40\u0c30\u0c3f\u0c2f\u0c3e \u0c2e\u0c46\u0c21\u0c3f\u0c15\u0c3e-\u0c39\u0c48\u0c2f\u0c4b\u0c38\u0c4d\u0c2f\u0c3e\u0c2e\u0c38\u0c4d",
+    "disclaimerLink",
+    "disclaimerModal",
     "emptyState",
     "layout",
     "main-content",
     "mobileClearFiltersBtn",
+    "modalClose",
+    "modernFooter",
     "nqjGOyaDEbg",
     "searchBox",
     "sidebar",
@@ -147,12 +162,13 @@
     "videoid"
   ],
   "obfuscation_map": {
-    "category-badge": "a",
-    "theme-medical": "b",
-    "category-list": "c"
+    "theme-medical": "a",
+    "sidebar-collapsed": "b",
+    "category-list": "c",
+    "category-badge": "d"
   },
   "stats": {
-    "total_obfuscated": 3,
-    "total_preserved": 129
+    "total_obfuscated": 4,
+    "total_preserved": 144
   }
 }

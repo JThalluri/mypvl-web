@@ -19,6 +19,8 @@
     "content",
     "count-",
     "css",
+    "disclaimer-link",
+    "disclaimer-modal",
     "duration",
     "empty-state",
     "emptyState",
@@ -40,7 +42,11 @@
     "fa-youtube",
     "fab",
     "fas",
+    "footer-content",
+    "footer-copyright",
+    "footer-links",
     "grid",
+    "has-children",
     "has-unavailable-video",
     "header",
     "header-controls",
@@ -53,11 +59,18 @@
     "mobile-only",
     "mobile-play-button",
     "mobileClearFiltersBtn",
+    "modal-body",
+    "modal-close",
+    "modal-content",
+    "modal-header",
+    "modern-footer",
+    "no-children",
     "play-overlay",
     "powered-by",
     "reason",
     "search-container",
     "searchBox",
+    "separator",
     "sidebar",
     "sidebar-overlay",
     "sidebarOverlay",
@@ -131,6 +144,8 @@
     "count-\u0c38\u0c02\u0c17\u0c40\u0c24\u0c02-\u0c35\u0c2f\u0c4b\u0c32\u0c3f\u0c28\u0c4d",
     "count-\u0c38\u0c02\u0c17\u0c40\u0c24\u0c02-\u0c35\u0c40\u0c23",
     "count-\u0c38\u0c02\u0c17\u0c40\u0c24\u0c02-\u0c38\u0c3e\u0c15\u0c4d\u0c38\u0c4b\u0c2b\u0c4b\u0c28\u0c4d",
+    "disclaimerLink",
+    "disclaimerModal",
     "emptyState",
     "i59OWbxcMGQ",
     "k4F9sQCnH-Q",
@@ -138,6 +153,8 @@
     "layout",
     "main-content",
     "mobileClearFiltersBtn",
+    "modalClose",
+    "modernFooter",
     "qz4Q3tUUgs0",
     "searchBox",
     "sidebar",
@@ -173,11 +190,13 @@
     "videoid"
   ],
   "obfuscation_map": {
-    "category-badge": "a",
-    "theme-music": "b"
+    "sidebar-collapsed": "a",
+    "theme-music": "b",
+    "category-list": "c",
+    "category-badge": "d"
   },
   "stats": {
-    "total_obfuscated": 2,
-    "total_preserved": 155
+    "total_obfuscated": 4,
+    "total_preserved": 172
   }
 }
