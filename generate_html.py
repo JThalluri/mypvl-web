@@ -135,7 +135,12 @@ def generate_html(theme="dark"):
     pricing_content = read_file(os.path.join(sections_dir, "pricing.html"))
     contact_content = read_file(os.path.join(sections_dir, "contact.html"))
     footer_content = read_file(os.path.join(sections_dir, "footer.html"))
-    
+
+    contact_modal_content = read_file(os.path.join(sections_dir, "contact_modal.html"))
+    quick_contact_modal_content = read_file(os.path.join(sections_dir, "quick_contact_modal.html"))
+    exit_intent_popup_content = read_file(os.path.join(sections_dir, "exit_intent_popup.html"))
+    success_modal_content = read_file(os.path.join(sections_dir, "contact_success_modal.html"))
+
     # Replace placeholders in header with actual images
     if banner_b64:
         header_content = header_content.replace('{{BANNER_IMAGE}}', f'data:image/png;base64,{banner_b64}')
@@ -154,7 +159,7 @@ def generate_html(theme="dark"):
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.youtube.com https://www.google.com https://www.gstatic.com https://scripts.clarity.ms https://www.clarity.ms https://embed.tawk.to https://cdnjs.cloudflare.com https://static.cloudflareinsights.com 'unsafe-inline'; style-src 'self' https://cdnjs.cloudflare.com https://embed.tawk.to 'unsafe-inline'; img-src 'self' https: data:; font-src 'self' https://cdnjs.cloudflare.com https://embed.tawk.to data:; connect-src 'self' https://www.google.com https://va.tawk.to https://embed.tawk.to https://www.clarity.ms https://q.clarity.ms wss:; frame-src https://www.youtube.com https://www.google.com;">
+        <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.youtube.com https://www.google.com https://www.gstatic.com https://scripts.clarity.ms https://www.clarity.ms https://embed.tawk.to https://cdnjs.cloudflare.com https://static.cloudflareinsights.com 'unsafe-inline'; style-src 'self' https://cdnjs.cloudflare.com https://embed.tawk.to 'unsafe-inline'; img-src 'self' https: data:; font-src 'self' https://cdnjs.cloudflare.com https://embed.tawk.to data:; connect-src 'self' https://www.google.com https://va.tawk.to https://embed.tawk.to https://www.clarity.ms https://q.clarity.ms https://formspree.io wss:; frame-src https://www.youtube.com https://www.google.com;">
         <title>My PVL - Personal Video Library</title>
         {f'<link rel="icon" href="data:{get_mime_type(favicon_path)};base64,{favicon_b64}" type="{get_mime_type(favicon_path)}">' if favicon_b64 else '<!-- Favicon not found -->'}
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -212,101 +217,11 @@ def generate_html(theme="dark"):
         Contact
     </button>
 
-    <!-- Contact Modal -->
-    <div class="modal contact-modal" id="contactModal">
-        <div class="modal-content">
-            <button class="modal-close" id="contactModalClose">&times;</button>
-            <h2 class="section-title" style="margin-bottom: 1.5rem; border-bottom: none; display: block; text-align: center;">Contact Us</h2>
-            <form class="contact-form" id="modalContactForm" action="https://formspree.io/f/xldallkz" method="POST">
-                <div class="form-group">
-                    <label for="modalName">Name *</label>
-                    <input type="text" id="modalName" name="name" required>
-                </div>
-                <div class="form-group">
-                    <label for="modalEmail">Email *</label>
-                    <input type="email" id="modalEmail" name="email" required>
-                </div>
-                <div class="form-group">
-                    <label for="modalSubject">Subject *</label>
-                    <input type="text" id="modalSubject" name="subject" required>
-                </div>
-                <div class="form-group">
-                    <label for="modalMessage">Message *</label>
-                    <textarea id="modalMessage" name="message" rows="4" required></textarea>
-                </div>
-                <button type="submit" class="btn">Send Message</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Exit Intent Popup -->
-    <div class="exit-popup" id="exitPopup">
-        <div class="exit-popup-content">
-            <button class="exit-popup-close" id="exitPopupClose">&times;</button>
-            
-            <div class="exit-popup-icon">💬</div>
-            <h2 class="exit-popup-title">Wait! Don't Go Yet...</h2>
-            
-            <p class="exit-popup-message">
-                Get a <strong>free 15-minute consultation</strong> to discuss your video library needs. 
-                Let's explore how we can organize your content and boost your productivity!
-            </p>
-            
-            <div class="exit-popup-actions">
-                <button class="exit-popup-btn primary" id="exitPopupYes">
-                    <i class="fas fa-calendar-check"></i> Yes, I'm Interested!
-                </button>
-                <button class="exit-popup-btn secondary" id="exitPopupNo">
-                    No Thanks, Continue Browsing
-                </button>
-            </div>
-        </div>
-    </div>
-    <!-- Quick Contact Modal -->
-    <div class="modal quick-contact-modal" id="quickContactModal">
-        <div class="modal-content">
-            <button class="modal-close" id="quickContactModalClose">&times;</button>
-            <h2 class="section-title" style="margin-bottom: 1.5rem; border-bottom: none; display: block; text-align: center;">Quick Inquiry</h2>
-            
-            <form class="quick-contact-form" id="quickContactForm" action="https://formspree.io/f/xldallkz" method="POST">
-                <div class="quick-contact-field">
-                    <label for="quickName">Name *</label>
-                    <input type="text" id="quickName" name="name" required>
-                </div>
-                
-                <div class="quick-contact-field">
-                    <label for="quickEmail">Email *</label>
-                    <input type="email" id="quickEmail" name="email" required>
-                </div>
-                
-                <div class="quick-contact-field">
-                    <label for="quickInterest">I'm interested in *</label>
-                    <select id="quickInterest" name="interest" required>
-                        <option value="">Select a plan...</option>
-                        <option value="Personal Plan">Personal Plan (up to 100 videos)</option>
-                        <option value="Creator Plan">Creator Plan (entire channel)</option>
-                        <option value="Pro Plan">Pro Plan (unlimited customization)</option>
-                        <option value="Not sure">Not sure - need guidance</option>
-                    </select>
-                </div>
-                
-                <div class="quick-contact-field">
-                    <label for="quickMessage">Brief Message</label>
-                    <textarea id="quickMessage" name="message" placeholder="Tell us a bit about your video library needs..."></textarea>
-                </div>
-                
-                <input type="hidden" id="quickSubject" name="subject" value="Quick Inquiry">
-                
-                <button type="submit" class="btn quick-contact-btn">
-                    <i class="fas fa-paper-plane"></i> Send Quick Inquiry
-                </button>
-            </form>
-            
-            <p style="text-align: center; margin-top: 1rem; font-size: 0.8rem; color: var(--text-tertiary);">
-                Or <a href="#contact" style="color: var(--primary-color);">use our full contact form</a> for detailed requests
-            </p>
-        </div>
-    </div>    
+    {contact_modal_content}
+    {quick_contact_modal_content}
+    {exit_intent_popup_content}
+    {success_modal_content}
+    
 </body>
 </html>"""
     
@@ -453,7 +368,7 @@ def generate_policy_page(policy_name, title, theme="dark"):
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.youtube.com https://www.google.com https://www.gstatic.com https://scripts.clarity.ms https://www.clarity.ms https://embed.tawk.to https://cdnjs.cloudflare.com https://static.cloudflareinsights.com 'unsafe-inline'; style-src 'self' https://cdnjs.cloudflare.com https://embed.tawk.to 'unsafe-inline'; img-src 'self' https: data:; font-src 'self' https://cdnjs.cloudflare.com https://embed.tawk.to data:; connect-src 'self' https://www.google.com https://va.tawk.to https://embed.tawk.to https://www.clarity.ms https://q.clarity.ms wss:; frame-src https://www.youtube.com https://www.google.com;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.youtube.com https://www.google.com https://www.gstatic.com https://scripts.clarity.ms https://www.clarity.ms https://embed.tawk.to https://cdnjs.cloudflare.com https://static.cloudflareinsights.com 'unsafe-inline'; style-src 'self' https://cdnjs.cloudflare.com https://embed.tawk.to 'unsafe-inline'; img-src 'self' https: data:; font-src 'self' https://cdnjs.cloudflare.com https://embed.tawk.to data:; connect-src 'self' https://www.google.com https://va.tawk.to https://embed.tawk.to https://www.clarity.ms https://q.clarity.ms https://formspree.io wss:; frame-src https://www.youtube.com https://www.google.com;">
     <title>{title} - My PVL Services</title>
     {f'<link rel="icon" href="data:{get_mime_type(favicon_path)};base64,{favicon_b64}" type="{get_mime_type(favicon_path)}">' if favicon_b64 else '<!-- Favicon not found -->'}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">

@@ -481,4 +481,12 @@
     .footer-links a::after {
         content: none;
     }
+
+    .tawk-min-container {
+        bottom: 100px !important;
+    }
+    
+    .grecaptcha-badge {
+        bottom: 20px !important;
+    }
 }

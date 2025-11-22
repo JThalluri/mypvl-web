@@ -61,6 +61,7 @@ jobs:
           git add cookies_policy.html
           git add terms_of_use.html
           git add thirdparty_attributions.html
+          git add contact_us.html
           git add resources/
           git add css/
           
