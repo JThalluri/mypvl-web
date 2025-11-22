@@ -316,6 +316,61 @@ main {
     border-top: 2px solid var(--border-color);
 }
 
+/* ===== FORMS ===== */
+.contact-form {
+    display: grid;
+    gap: 1rem;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.form-group input,
+.form-group textarea {
+    padding: 0.75rem;
+    background: var(--surface-dark);
+    border: 2px solid var(--border-color);
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+    color: var(--text-primary);
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.btn {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    color: var(--text-on-primary);
+    padding: 0.75rem 2rem;
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(247, 156, 25, 0.4);
+}
 /* ===== FOOTER - MATCHING MAIN SITE ===== */
 footer {
     background: var(--surface-dark);
