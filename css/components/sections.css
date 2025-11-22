@@ -390,7 +390,15 @@ main {
     }
 }
 
-/* Tawk.to Widget Size Reduction */
+/* ===== THIRD-PARTY WIDGET POSITIONING ===== */
+
+/* Tawk.to widget - higher priority for user communication */
+.tawk-min-container {
+    z-index: 10000 !important; /* Highest priority */
+    bottom: 80px !important; /* Position above reCAPTCHA */
+}
+
+/* Tawk.to Widget Size Reduction (your existing styles) */
 .tawk-min-container .tawk-button-circle.tawk-button-large {
     width: 50px !important;
     height: 50px !important;
@@ -403,13 +411,16 @@ main {
     height: 24px !important;
 }
 
-/* Ensure it doesn't conflict with floating contact button */
-.tawk-min-container {
-    z-index: 999 !important;
+/* reCAPTCHA v3 badge - lower priority, informational */
+.grecaptcha-badge {
+    z-index: 9999 !important; /* Below Tawk.to */
+    bottom: 10px !important;
 }
 
+/* Floating contact button */
 .floating-contact-btn {
-    z-index: 1001 !important; /* Keep above Tawk.to */
+    z-index: 10001 !important; /* Highest - user action */
+    bottom: 20px !important;
 }
 
 /* Book Demo Button */
