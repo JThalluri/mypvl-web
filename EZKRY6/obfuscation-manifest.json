@@ -19,8 +19,6 @@
     "content",
     "count-",
     "css",
-    "disclaimer-link",
-    "disclaimer-modal",
     "duration",
     "empty-state",
     "emptyState",
@@ -52,9 +50,6 @@
     "fa-youtube",
     "fab",
     "fas",
-    "footer-content",
-    "footer-copyright",
-    "footer-links",
     "grid",
     "has-children",
     "has-unavailable-video",
@@ -69,18 +64,12 @@
     "mobile-only",
     "mobile-play-button",
     "mobileClearFiltersBtn",
-    "modal-body",
-    "modal-close",
-    "modal-content",
-    "modal-header",
-    "modern-footer",
     "no-children",
     "play-overlay",
     "powered-by",
     "reason",
     "search-container",
     "searchBox",
-    "separator",
     "sidebar",
     "sidebar-overlay",
     "sidebarOverlay",
@@ -902,8 +891,6 @@
     "db2WIzsBsZI",
     "dedX-yB854k",
     "dfGV2k3S-Xw",
-    "disclaimerLink",
-    "disclaimerModal",
     "dkStxqfmkkE",
     "dnwdpRGT14s",
     "doV-COH4htA",
@@ -1078,8 +1065,6 @@
     "mgVgjMfFNyY",
     "mlteRkrrevM",
     "mobileClearFiltersBtn",
-    "modalClose",
-    "modernFooter",
     "mxi_UrJXiA8",
     "n5dweiqtRtg",
     "n6nIxu9efqA",
@@ -1349,11 +1334,10 @@
     "videoid"
   ],
   "obfuscation_map": {
-    "sidebar-collapsed": "a",
-    "category-list": "b"
+    "category-list": "a"
   },
   "stats": {
-    "total_obfuscated": 2,
-    "total_preserved": 1333
+    "total_obfuscated": 1,
+    "total_preserved": 1318
   }
 }
