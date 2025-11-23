@@ -207,8 +207,8 @@
     "videoid"
   ],
   "obfuscation_map": {
-    "sidebar-collapsed": "a",
-    "category-list": "b"
+    "category-list": "a",
+    "sidebar-collapsed": "b"
   },
   "stats": {
     "total_obfuscated": 2,

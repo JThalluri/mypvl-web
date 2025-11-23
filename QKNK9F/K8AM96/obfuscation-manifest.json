@@ -190,9 +190,9 @@
     "videoid"
   ],
   "obfuscation_map": {
-    "sidebar-collapsed": "a",
+    "category-list": "a",
     "theme-music": "b",
-    "category-list": "c",
+    "sidebar-collapsed": "c",
     "category-badge": "d"
   },
   "stats": {

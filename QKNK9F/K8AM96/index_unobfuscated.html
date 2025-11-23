@@ -1565,10 +1565,20 @@ root {
     font-size: 14px;
 }
 
+/* Sidebar Toggle Support */
+body.sidebar-collapsed .modern-footer {
+    left: 0;
+}
+
+/* Ensure footer stays above content */
+#content {
+    margin-bottom: 0;
+}
+
 /* Mobile Styles */
 @media (max-width: 768px) {
     .modern-footer {
-        padding: 15px 10px;
+        padding: 10px 8px;
     }
 
     .footer-content {
@@ -1576,21 +1586,19 @@ root {
     }
 
     .footer-links {
-        flex-direction: column;
+        display: flex;
+        flex-wrap: wrap; /* allow wrapping if needed */
+        justify-content: center;
         gap: 8px;
     }
-
-    .separator {
-        display: none;
-    }
-
     .footer-links a {
-        font-size: 13px;
-        padding: 4px 8px;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 6px;
-        text-align: center;
-        width: 200px;
+        font-size: 12px;
+        padding: 2px 4px;
+        background: none; /* keep clean like desktop */
+        width: auto;       /* no fixed width */
+    }
+    .footer-links .separator {
+        display: none; /* optional: hide separators on mobile */
     }
 
     .footer-copyright {
@@ -1603,43 +1611,386 @@ root {
     }
 }
 
-/* Sidebar Toggle Support */
-body.sidebar-collapsed .modern-footer {
-    left: 0;
+/* Mobile Styles */
+@media (max-width: 480px) {
+    .modern-footer {
+        padding: 10px 8px;
+    }
+
+    .footer-content {
+        gap: 8px;
+    }
+
+    .footer-links {
+        display: flex;
+        flex-wrap: wrap; /* allow wrapping if needed */
+        justify-content: center;
+        gap: 8px;
+    }
+    .footer-links a {
+        font-size: 12px;
+        padding: 2px 4px;
+        background: none; /* keep clean like desktop */
+        width: auto;       /* no fixed width */
+    }
+    .footer-links .separator {
+        display: none; /* optional: hide separators on mobile */
+    }
+
+    .footer-copyright {
+        font-size: 11px;
+    }
+
+    .modal-content {
+        padding: 20px;
+        max-width: 90%;
+    }
 }
 
-/* Ensure footer stays above content */
+/* Mobile Styles */
+@media (max-width: 360px) {
+    .modern-footer {
+        padding: 8px 6px;
+    }
+
+    .footer-content {
+        gap: 6px;
+    }
+
+    .footer-links {
+        display: flex;
+        flex-wrap: wrap; /* allow wrapping if needed */
+        justify-content: center;
+        gap: 8px;
+    }
+    .footer-links a {
+        font-size: 12px;
+        padding: 2px 4px;
+        background: none; /* keep clean like desktop */
+        width: auto;       /* no fixed width */
+    }
+    .footer-links .separator {
+        display: none; /* optional: hide separators on mobile */
+    }
+
+    .footer-copyright {
+        font-size: 11px;
+    }
+
+    .modal-content {
+        padding: 20px;
+        max-width: 90%;
+    }
+}
+
+/* Source: client */
+:root {
+    --header-height: 100px;
+    --category-header-height: 44px;
+    --subcategory-item-height: 44px;
+    --subsubcategory-item-height: 44px;
+    --card-min-width: 200px;
+    --card-gap: 12px;
+    --shadow-card-hover: 0 8px 25px color-mix(in srgb, var(--primary-color), transparent 61%);
+    --border-card-hover: color-mix(in srgb, var(--primary-color), transparent 85%);
+    --text-primary: #ffffff;
+    --text-secondary: #cccccc;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(var(--card-min-width), 1fr));
+    gap: var(--card-gap);
+    width: 100%;
+    padding-bottom: calc(30px + env(safe-area-inset-bottom, 20px));
+    align-items: start;
+}
+
+.card {
+    background: var(--surface-color);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    position: relative;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    height: fit-content;
+}
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-card-hover);
+    border-color: var(--border-card-hover);
+}
+
+.header-controls {
+    position: absolute;
+    bottom: 6px;
+    left: 10px;
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    z-index: 2;
+}
+
+#toggleBtn {
+    background: var(--surface-color);
+    border: 2px solid transparent;
+    color: var(--text-color);
+    padding: 8px 10px;
+    cursor: pointer;
+    border-radius: var(--border-radius);
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    z-index: 1001;
+    min-width: 32px;
+    min-height: 36px;
+    box-shadow: var(--shadow);
+}
+#toggleBtn:hover {
+    background: #2a2a2a;
+    transform: translateY(-1px);
+}
+
+.search-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#searchBox {
+    padding: 10px 14px;
+    font-size: 14px;
+    border: 2px solid transparent;
+    border-radius: var(--border-radius);
+    width: 280px;
+    background: white;
+    color: #333;
+    font-family: inherit;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow);
+    height: 36px;
+}
+#searchBox:focus {
+    outline: none;
+    border-color: var(--primary-dark);
+    box-shadow: var(--shadow-primary);
+}
+
+.clear-filters-btn {
+    background: #dc3545;
+    border: 2px solid transparent;
+    color: var(--text-primary);
+    padding: 10px 16px;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.3s ease;
+    font-family: inherit;
+    box-shadow: var(--shadow);
+    height: 36px;
+    white-space: nowrap;
+}
+.clear-filters-btn:hover {
+    background: #c82333;
+    transform: translateY(-1px);
+}
+
 #content {
-    margin-bottom: 0;
+    flex: 1;
+    padding: 12px;
+    overflow-y: auto;
+    background: var(--background-color);
+    padding-bottom: calc(15px + env(safe-area-inset-bottom, 0px));
+    max-height: calc(100 * var(--vh) - var(--header-height));
+}
+
+#sidebar {
+    width: var(--sidebar-width);
+    height: 100%;
+    background: var(--surface-color);
+    border-right: 1px solid var(--border-color);
+    padding: 10px 12px;
+
+    display: flex;
+    flex-direction: column;
+
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+
+    /* transition: transform 0.3s ease; */
+
+    /* Scrollbar styling */
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, var(--primary-color), transparent 20%);
+}
+
+#categoryList {
+    position: relative;
+    padding-top: 2px;
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.card-title {
+    padding: 12px 10px;
+    font-size: 14px;
+    line-height: 1.3;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-start;
+    background: var(--surface-color);
+    height: 65px;
+    flex-shrink: 0;
+    text-align: left;
+}
+
+.card-title a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    transition: color 0.3s ease;
+    font-weight: 500;
+    max-height: none;
+    line-height: 1.3;
+    font-size: 13px;
+}
+
+.card-title a:hover {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 8px 12px;
+}
+
+.modern-footer {
+    background: var(--background-color);
+    color: var(--text-secondary);
+    padding: 10px 20px;
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    box-shadow: var(--shadow);
+    transition: all 0.3s ease;
+    border-top: 1px solid var(--primary-color);
+}
+
+.footer-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border-bottom: 1px solid transparent;
+    padding: 2px 0;
+}
+
+.footer-links a:hover {
+    color: var(--text-primary);
+    border-bottom-color: var(--text-secondary);
+    transform: translateY(-1px);
+}
+
+.category-header,
+.subcategory-item,
+.subsubcategory-item {
+    color: var(--text-secondary);
+}
+
+.category-header:hover,
+.subcategory-item:hover,
+.subsubcategory-item:hover {
+    background: color-mix(in srgb, var(--primary-color) 6%, transparent);
+}
+
+.category-header.active,
+.subcategory-item.active,
+.subsubcategory-item.active {
+    color: var(--text-primary);
+    background: color-mix(in srgb, var(--primary-color) 12%, transparent);
+}
+
+.category-header.active .video-count,
+.subcategory-item.active .video-count,
+.subsubcategory-item.active .video-count {
+    background: var(--primary-color);
+    color: var(--text-primary);
+}
+
+.category-header.active i.fa-chevron-down,
+.subcategory-item.active i.fa-chevron-down {
+    transform: rotate(-180deg);
+    color: var(--text-primary);
+}
+
+@media (max-width: 480px) {
+
+    .header-controls {
+        bottom: 1px;
+        left: 5px;
+        right: 5px;
+        padding:    4px;
+    }
+
+    #searchBox {
+        font-size: 12px;
+        height: 36px;
+        padding: 4px 5px;
+    }
 }
 /* Source: theme */
 /* Music & Performance Theme Theme */
-:root {
+/* :root {
   /* Theme Identity */
-  --theme-name: "music";
-  --theme-display-name: "Music & Performance Theme";
+  /* --theme-name: "music";
+  --theme-display-name: "Music & Performance Theme"; */ 
   
   /* Core Color System */
-  --primary-color: #EF233C;
+  /* --primary-color: #EF233C;
   --color-secondary: #EF233C;
   --color-accent: #D90429;
   --color-success: #27AE60;
   --color-warning: #E67E22;
   --color-error: #E74C3C;
-  --color-info: #3498DB;
+  --color-info: #3498DB; */
   
   /* Neutral Colors */
-  --color-background: #FFFFFF;
+  /* --color-background: #FFFFFF;
   --color-surface: #F8F9FA;
   --color-surface-alt: #E9ECEF;
   --color-text: #333333;
   --color-text-muted: #6C757D;
   --color-text-light: #FFFFFF;
   --color-border: #DEE2E6;
-  --color-shadow: rgba(0, 0, 0, 0.1);
+  --color-shadow: rgba(0, 0, 0, 0.1); */
   
   /* Typography */
-  --font-family-base: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  /* --font-family-base: 'Inter', 'Segoe UI', system-ui, sans-serif;
   --font-family-heading: 'Inter', 'Segoe UI', system-ui, sans-serif;
   
   --font-size-base: 16px;
@@ -1652,7 +2003,7 @@ body.sidebar-collapsed .modern-footer {
   --font-weight-bold: 700;
   
   /* Spacing & Layout */
-  --spacing-unit: 8px;
+  /* --spacing-unit: 8px;
   --spacing-sm: calc(var(--spacing-unit) * 1);
   --spacing-md: calc(var(--spacing-unit) * 1.5);
   --spacing-lg: calc(var(--spacing-unit) * 2);
@@ -1660,29 +2011,23 @@ body.sidebar-collapsed .modern-footer {
   
   --border-radius-sm: 4px;
   --border-radius-md: 6px;
-  --border-radius-lg: 8px;
+  --border-radius-lg: 8px; */
   
   /* Component Specific */
-  --header-height: 64px;
+  /* --header-height: 64px;
   --sidebar-width: 220px;
   --content-max-width: 1200px;
-}
-
-/* Theme-specific overrides */
-[data-theme="music"] {
-  /* Add any theme-specific overrides here */
-}
+} */
 
 /* Category badges based on theme */
-.theme-music .category-badge {
+/* .theme-music .category-badge {
   background: linear-gradient(135deg, #8D99AE, #EF233C);
   color: white;
   border: none;
-}
-
+} */
 /* Source: theme */
 /* music Theme - Dark Mode */
-[data-theme="music"][data-mode="dark"] {
+/* [data-theme="music"][data-mode="dark"] {
   --background-color: #1A1A2E;
   --color-surface: #16213E;
   --color-surface-alt: #0F3460;
@@ -1691,13 +2036,13 @@ body.sidebar-collapsed .modern-footer {
   --color-text-light: #F1F5F9;
   --color-border: #334155;
   --color-shadow: rgba(0, 0, 0, 0.3);
-}
+} */
 
 /* Dark mode category badges */
-[data-theme="music"][data-mode="dark"] .category-badge {
+/* [data-theme="music"][data-mode="dark"] .category-badge {
   background: linear-gradient(135deg, #D90429, #8D99AE);
   color: var(--color-text-light);
-}
+} */
 
         </style>
     </head>
@@ -3273,9 +3618,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     <span class="separator">|</span>
                     <a href="/terms_of_use.html" target="_blank">Terms Of Use</a>
                     <span class="separator">|</span>
+                    <a href="/dmca_policy.html" target="_blank">DMCA Notice</a>
+                    <span class="separator">|</span>
                     <a href="/thirdparty_attributions.html" target="_blank">Third Party Attributions</a>
                     <span class="separator">|</span>
-                    <a href="/index.html" target="_blank">Contact Us</a>
+                    <a href="/contact_us.html" target="_blank">Contact Us</a>
                     <span class="separator">|</span>
                     <a href="#" class="disclaimer-link" id="disclaimerLink">Disclaimer</a>
                 </div>
@@ -3293,7 +3640,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     <button class="modal-close" id="modalClose">&times;</button>
                 </div>
                 <div class="modal-body">
-                    <p>This site organizes embedded YouTube content for educational purposes. We are not responsible for the accuracy or compliance of embedded videos. Content responsibility lies with the original creators. We may earn a commission at no extra cost to you from the affiliate links on this page.</p>
+                    <p>This site organizes and distributes embedded video content from platforms such as YouTube and Vimeo for ease of access. We do not host or upload any videos directly, and we are not responsible for the accuracy, legality, or compliance of embedded content. All responsibility for video content lies with the original creators and hosting platforms.</p>
+                    
+                    <p>If you believe that any embedded video on this site infringes your copyright, please notify us in accordance with our <a href="/dmca_policy.html" style="color: var(--primary-color); font-weight: 600;">DMCA Policy</a>. Upon receiving a valid complaint, we will promptly review the claim and, if appropriate, remove the infringing content from our platform.</p>
+                    
+                    <p>We may earn a commission at no extra cost to you from affiliate links displayed on this site.</p>
                 </div>
             </div>
         </div>
