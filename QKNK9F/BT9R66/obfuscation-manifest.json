@@ -152,23 +152,19 @@
     "category",
     "keywords",
     "level",
-    "mode",
     "reason",
     "role",
     "tags",
-    "theme",
     "title",
     "toggle",
     "videoid"
   ],
   "obfuscation_map": {
-    "theme-medical": "a",
-    "sidebar-collapsed": "b",
-    "category-list": "c",
-    "category-badge": "d"
+    "sidebar-collapsed": "a",
+    "category-list": "b"
   },
   "stats": {
-    "total_obfuscated": 4,
+    "total_obfuscated": 2,
     "total_preserved": 144
   }
 }
