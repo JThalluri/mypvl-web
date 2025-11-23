@@ -89,8 +89,8 @@
 /* Floating Contact Button */
 .floating-contact-btn {
     position: fixed;
-    bottom: 2rem;
-    left: 2rem;
+    right: 4px;
+    bottom: 100px;
     background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
     color: var(--text-on-primary);
     border: none;
