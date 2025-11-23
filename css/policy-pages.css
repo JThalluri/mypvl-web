@@ -455,6 +455,24 @@ footer {
     color: var(--text-secondary);
 }
 
+/* ===== COUNTER NOTIFICATION STYLING ===== */
+.counter-notification-content {
+    line-height: 1.8;
+}
+
+.counter-notification-content p {
+    margin-bottom: 1rem;
+    color: var(--text-secondary);
+}
+
+.counter-notification-content strong {
+    color: var(--primary-light);
+}
+
+.counter-notification-content p:last-child {
+    margin-bottom: 0;
+}
+
 /* ===== RESPONSIVE DESIGN ===== */
 @media (max-width: 768px) {
     h1 {
