@@ -35,6 +35,7 @@ jobs:
           cp -f terms_of_use.html gh-pages-target/
           cp -f thirdparty_attributions.html gh-pages-target/
           cp -f contact_us.html gh-pages-target/
+          cp -f dmca_policy.html gh-pages-target/
           echo "✅ Updated policy pages"
           
           # Remove and replace ONLY the resources folder
@@ -62,6 +63,7 @@ jobs:
           git add terms_of_use.html
           git add thirdparty_attributions.html
           git add contact_us.html
+          git add dmca_policy.html
           git add resources/
           git add css/
           

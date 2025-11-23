@@ -392,12 +392,6 @@ main {
 
 /* ===== THIRD-PARTY WIDGET POSITIONING ===== */
 
-/* Tawk.to widget - higher priority for user communication */
-.tawk-min-container {
-    z-index: 10000 !important; /* Highest priority */
-    bottom: 80px !important; /* Position above reCAPTCHA */
-}
-
 /* Tawk.to Widget Size Reduction (your existing styles) */
 .tawk-min-container .tawk-button-circle.tawk-button-large {
     width: 50px !important;

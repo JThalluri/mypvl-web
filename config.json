@@ -5,7 +5,8 @@
     "cookies_policy": true,
     "terms_of_use": true,
     "thirdparty_attributions": true,
-    "contact_us": true
+    "contact_us": true,
+    "dmca_policy": true
   },
   "theme": "dark"
 }

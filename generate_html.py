@@ -643,7 +643,7 @@ body {
         "pricing.html", "contact.html", "footer.html",
         # Policy page sections
         "privacy_policy.html", "cookies_policy.html", "terms_of_use.html", 
-        "thirdparty_attributions.html", "policy_navigation.html"
+        "dmca_policy.html", "thirdparty_attributions.html", "policy_navigation.html"
     ]
     
     for section in sections:
@@ -686,6 +686,7 @@ def main():
         ("privacy_policy", "Privacy Policy"),
         ("cookies_policy", "Cookie Policy"), 
         ("terms_of_use", "Terms of Use"),
+        ("dmca_policy", "DMCA Notice"),
         ("thirdparty_attributions", "Third-Party Credits"),
         ("contact_us", "Contact Us")
     ]
