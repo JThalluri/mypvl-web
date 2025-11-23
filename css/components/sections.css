@@ -417,12 +417,6 @@ main {
     bottom: 10px !important;
 }
 
-/* Floating contact button */
-.floating-contact-btn {
-    z-index: 10001 !important; /* Highest - user action */
-    bottom: 20px !important;
-}
-
 /* Book Demo Button */
 .book-demo-btn {
     cursor: pointer;
