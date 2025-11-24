@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Video Libraries</title>
+    
+    <!-- PWA Essentials -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#1a1a1a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            overflow: hidden;
+        }
+        
+        .app-header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: #1a1a1a;
+            color: white;
+            z-index: 1000;
+            padding: 10px 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            height: 60px;
+        }
+        
+        .library-selector {
+            flex: 1;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 20px;
+            background: #2d2d2d;
+            color: white;
+            font-size: 14px;
+        }
+        
+        .app-controls {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .control-btn {
+            background: #2d2d2d;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: background 0.2s;
+        }
+        
+        .control-btn:hover {
+            background: #3d3d3d;
+        }
+        
+        .client-frame {
+            margin-top: 60px;
+            width: 100%;
+            height: calc(100vh - 60px);
+            border: none;
+            background: white;
+        }
+        
+        .offline-indicator {
+            position: fixed;
+            top: 70px;
+            right: 15px;
+            background: #ff6b6b;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            z-index: 1001;
+            display: none;
+        }
+        
+        .loading-overlay {
+            position: fixed;
+            top: 60px;
+            left: 0;
+            width: 100%;
+            height: calc(100vh - 60px);
+            background: rgba(255,255,255,0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            display: none;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #1a1a1a;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            .app-header {
+                padding: 8px 12px;
+            }
+            
+            .library-selector {
+                font-size: 16px; /* Better touch targets */
+            }
+            
+            .control-btn {
+                width: 44px;
+                height: 44px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- PWA Navigation Header -->
+    <header class="app-header">
+        <select id="librarySelector" class="library-selector">
+            <option value="">Select Library...</option>
+            <option value="/QKNK9F/index.html">🎵 Main Library (QKNK9F)</option>
+            <option value="/EZKRY6/index.html">🎬 Client EZKRY6</option>
+            <option value="/QKNK9F/BT9R66/index.html">🎸 Subclient BT9R66</option>
+            <option value="/QKNK9F/K8AM96/index.html">🎤 Subclient K8AM96</option>
+        </select>
+        
+        <div class="app-controls">
+            <button id="offlineBtn" class="control-btn" title="Offline Mode">📥</button>
+            <button id="shareBtn" class="control-btn" title="Share Library">📤</button>
+            <button id="reloadBtn" class="control-btn" title="Reload">🔄</button>
+        </div>
+    </header>
+
+    <!-- Offline Indicator -->
+    <div class="offline-indicator" id="offlineIndicator">Offline</div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Client Content Area -->
+    <iframe 
+        id="clientFrame" 
+        class="client-frame" 
+        src="/QKNK9F/index.html"
+        allowfullscreen
+        allow="autoplay; encrypted-media">
+    </iframe>
+
+    <script>
+        class PWAWrapper {
+            constructor() {
+                this.clientFrame = document.getElementById('clientFrame');
+                this.librarySelector = document.getElementById('librarySelector');
+                this.offlineBtn = document.getElementById('offlineBtn');
+                this.shareBtn = document.getElementById('shareBtn');
+                this.reloadBtn = document.getElementById('reloadBtn');
+                this.offlineIndicator = document.getElementById('offlineIndicator');
+                this.loadingOverlay = document.getElementById('loadingOverlay');
+                
+                this.init();
+            }
+            
+            init() {
+                this.setupEventListeners();
+                this.setupOnlineOfflineDetection();
+                this.loadRecentLibrary();
+            }
+            
+            setupEventListeners() {
+                // Library selection
+                this.librarySelector.addEventListener('change', (e) => {
+                    if (e.target.value) {
+                        this.loadClient(e.target.value);
+                    }
+                });
+                
+                // Share functionality
+                this.shareBtn.addEventListener('click', () => {
+                    this.shareCurrentLibrary();
+                });
+                
+                // Reload functionality
+                this.reloadBtn.addEventListener('click', () => {
+                    this.clientFrame.src = this.clientFrame.src;
+                });
+                
+                // Offline mode (future enhancement)
+                this.offlineBtn.addEventListener('click', () => {
+                    this.toggleOfflineMode();
+                });
+                
+                // Frame loading states
+                this.clientFrame.addEventListener('load', () => {
+                    this.hideLoading();
+                    this.saveRecentLibrary(this.clientFrame.src);
+                });
+                
+                this.clientFrame.addEventListener('loadstart', () => {
+                    this.showLoading();
+                });
+            }
+            
+            setupOnlineOfflineDetection() {
+                window.addEventListener('online', () => {
+                    this.offlineIndicator.style.display = 'none';
+                    console.log('PWA: Online');
+                });
+                
+                window.addEventListener('offline', () => {
+                    this.offlineIndicator.style.display = 'block';
+                    console.log('PWA: Offline');
+                });
+                
+                // Initial state
+                if (!navigator.onLine) {
+                    this.offlineIndicator.style.display = 'block';
+                }
+            }
+            
+            loadClient(url) {
+                this.showLoading();
+                this.clientFrame.src = url;
+            }
+            
+            showLoading() {
+                this.loadingOverlay.style.display = 'flex';
+            }
+            
+            hideLoading() {
+                this.loadingOverlay.style.display = 'none';
+            }
+            
+            async shareCurrentLibrary() {
+                const currentUrl = this.clientFrame.src;
+                const libraryName = this.getLibraryNameFromUrl(currentUrl);
+                
+                const shareData = {
+                    title: `Music Video Library - ${libraryName}`,
+                    text: 'Check out this amazing music video collection!',
+                    url: currentUrl,
+                };
+                
+                try {
+                    if (navigator.share) {
+                        await navigator.share(shareData);
+                        console.log('PWA: Library shared successfully');
+                    } else {
+                        // Fallback: copy to clipboard
+                        await navigator.clipboard.writeText(currentUrl);
+                        alert('Library URL copied to clipboard!');
+                    }
+                } catch (error) {
+                    console.log('PWA: Sharing cancelled', error);
+                }
+            }
+            
+            getLibraryNameFromUrl(url) {
+                const libraryMap = {
+                    '/QKNK9F/index.html': 'Main Library',
+                    '/EZKRY6/index.html': 'Client EZKRY6', 
+                    '/QKNK9F/BT9R66/index.html': 'Subclient BT9R66',
+                    '/QKNK9F/K8AM96/index.html': 'Subclient K8AM96'
+                };
+                
+                for (const [path, name] of Object.entries(libraryMap)) {
+                    if (url.includes(path)) return name;
+                }
+                
+                return 'Music Video Library';
+            }
+            
+            saveRecentLibrary(url) {
+                try {
+                    localStorage.setItem('pwa_recent_library', url);
+                    this.updateLibrarySelector(url);
+                } catch (error) {
+                    console.log('PWA: Could not save recent library', error);
+                }
+            }
+            
+            loadRecentLibrary() {
+                try {
+                    const recent = localStorage.getItem('pwa_recent_library');
+                    if (recent) {
+                        this.clientFrame.src = recent;
+                        this.updateLibrarySelector(recent);
+                    }
+                } catch (error) {
+                    console.log('PWA: Could not load recent library', error);
+                }
+            }
+            
+            updateLibrarySelector(url) {
+                for (let option of this.librarySelector.options) {
+                    if (option.value === url) {
+                        option.selected = true;
+                        break;
+                    }
+                }
+            }
+            
+            toggleOfflineMode() {
+                // Future enhancement: Pre-cache selected libraries
+                alert('Offline mode coming soon! This will cache libraries for offline viewing.');
+            }
+        }
+        
+        // Initialize PWA when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new PWAWrapper();
+        });
+        
+        // Register service worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('PWA: ServiceWorker registered');
+                    })
+                    .catch((error) => {
+                        console.log('PWA: ServiceWorker registration failed');
+                    });
+            });
+        }
+    </script>
+</body>
+</html>
