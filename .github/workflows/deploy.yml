@@ -44,8 +44,10 @@ jobs:
           # Remove and replace ONLY the resources folder
           rm -rf gh-pages-target/resources
           rm -rf gh-pages-target/css  # Remove old css if exists
+          rm -rf gh-pages-target/icons
           cp -r resources gh-pages-target/
           cp -r css gh-pages-target/  # Add css folder for policy pages
+          cp -r icons gh-pages-target/
           echo "✅ Updated resources and css folders"
           
           echo "Final gh-pages content:"
@@ -72,6 +74,7 @@ jobs:
           git add manifest.json
           git add resources/
           git add css/
+          git add icons/ 
           
           echo "=== FILES BEING COMMITTED ==="
           git status --short
