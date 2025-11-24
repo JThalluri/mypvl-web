@@ -1,6 +1,6 @@
 // Service Worker for PWA Wrapper
-const CACHE_NAME = 'pwa-wrapper-v1';
-const APP_SHELL_CACHE = 'app-shell-v1';
+const CACHE_NAME = 'pwa-wrapper-v2';
+const APP_SHELL_CACHE = 'app-shell-v2';
 
 // Resources to cache immediately
 const APP_SHELL_RESOURCES = [
