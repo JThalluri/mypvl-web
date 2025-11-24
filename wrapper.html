@@ -11,6 +11,9 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
         * {
             margin: 0;
@@ -35,13 +38,52 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.3);
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             height: 60px;
         }
         
-        .library-selector {
+        .app-logo {
+            flex-shrink: 0;
+            width: 40px;
+            height: 40px;
+            background: #2d2d2d;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+            color: white;
+        }
+        
+        .app-logo img {
+            width: 100%;
+            height: 100%;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+        
+        .search-container {
             flex: 1;
-            padding: 8px 12px;
+            position: relative;
+        }
+        
+        .search-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .search-input-wrapper .fa-magnifying-glass {
+            position: absolute;
+            left: 12px;
+            color: #888;
+            z-index: 2;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 10px 10px 10px 35px;
             border: none;
             border-radius: 20px;
             background: #2d2d2d;
@@ -49,9 +91,55 @@
             font-size: 14px;
         }
         
+        .search-input::placeholder {
+            color: #888;
+        }
+        
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #2d2d2d;
+            border-radius: 10px;
+            margin-top: 5px;
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+            z-index: 1001;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        
+        .search-result-item {
+            padding: 12px 15px;
+            border-bottom: 1px solid #3d3d3d;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .search-result-item:hover {
+            background: #3d3d3d;
+        }
+        
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+        
+        .search-result-name {
+            font-weight: bold;
+            color: white;
+            margin-bottom: 4px;
+        }
+        
+        .search-result-desc {
+            font-size: 12px;
+            color: #aaa;
+        }
+        
         .app-controls {
             display: flex;
             gap: 8px;
+            flex-shrink: 0;
         }
         
         .control-btn {
@@ -126,15 +214,47 @@
         @media (max-width: 768px) {
             .app-header {
                 padding: 8px 12px;
+                gap: 10px;
             }
             
-            .library-selector {
-                font-size: 16px; /* Better touch targets */
+            .app-logo {
+                width: 36px;
+                height: 36px;
+                font-size: 16px;
+            }
+            
+            .search-input {
+                font-size: 16px;
+                padding: 12px 12px 12px 38px;
             }
             
             .control-btn {
-                width: 44px;
-                height: 44px;
+                width: 42px;
+                height: 42px;
+            }
+        }
+        
+        @media (max-width: 380px) {
+            .app-header {
+                padding: 6px 10px;
+                gap: 8px;
+            }
+            
+            .app-logo {
+                width: 34px;
+                height: 34px;
+                font-size: 14px;
+            }
+            
+            .search-input {
+                font-size: 14px;
+                padding: 10px 10px 10px 32px;
+            }
+            
+            .control-btn {
+                width: 38px;
+                height: 38px;
+                font-size: 14px;
             }
         }
     </style>
@@ -142,23 +262,38 @@
 <body>
     <!-- PWA Navigation Header -->
     <header class="app-header">
-        <select id="librarySelector" class="library-selector">
-            <option value="">Select Library...</option>
-            <option value="/QKNK9F/index.html">🎵 Main Library (QKNK9F)</option>
-            <option value="/EZKRY6/index.html">🎬 Client EZKRY6</option>
-            <option value="/QKNK9F/BT9R66/index.html">🎸 Subclient BT9R66</option>
-            <option value="/QKNK9F/K8AM96/index.html">🎤 Subclient K8AM96</option>
-        </select>
+        <!-- App Logo - Placeholder for your brand -->
+        <div class="app-logo" id="appLogo">
+            <!-- Temporary placeholder - replace with your logo -->
+            <span>VL</span>
+            <!-- When you have your logo, use: -->
+            <img src="/icons/app-logo.png" alt="VideoLib">
+        </div>
         
+        <!-- Search Container -->
+        <div class="search-container">
+            <div class="search-input-wrapper">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="librarySearch" placeholder="Search libraries..." class="search-input">
+                <div id="searchResults" class="search-results"></div>
+            </div>
+        </div>
+        
+        <!-- App Controls -->
         <div class="app-controls">
-            <button id="offlineBtn" class="control-btn" title="Offline Mode">📥</button>
-            <button id="shareBtn" class="control-btn" title="Share Library">📤</button>
-            <button id="reloadBtn" class="control-btn" title="Reload">🔄</button>
+            <button id="shareBtn" class="control-btn" title="Share Library">
+                <i class="fa-solid fa-share"></i>
+            </button>
+            <button id="reloadBtn" class="control-btn" title="Reload">
+                <i class="fa-solid fa-arrows-rotate"></i>
+            </button>
         </div>
     </header>
 
     <!-- Offline Indicator -->
-    <div class="offline-indicator" id="offlineIndicator">Offline</div>
+    <div class="offline-indicator" id="offlineIndicator">
+        <i class="fa-solid fa-wifi-slash"></i> Offline
+    </div>
 
     <!-- Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay">
@@ -175,30 +310,105 @@
     </iframe>
 
     <script>
+        class LibrarySearch {
+            constructor() {
+                this.libraryRegistry = [
+                    {
+                        id: 'QKNK9F',
+                        path: '/QKNK9F/index.html',
+                        name: 'Main Music Library',
+                        description: 'Complete music video collection',
+                        category: 'music',
+                        keywords: ['main', 'music', 'videos', 'complete', 'all']
+                    },
+                    {
+                        id: 'EZKRY6', 
+                        path: '/EZKRY6/index.html',
+                        name: 'Instrumental Collection',
+                        description: 'Pure instrumental music videos',
+                        category: 'music',
+                        keywords: ['instrumental', 'music', 'no vocals', 'background']
+                    },
+                    {
+                        id: 'BT9R66',
+                        path: '/QKNK9F/BT9R66/index.html', 
+                        name: 'Classical Performances',
+                        description: 'Traditional classical music',
+                        category: 'classical',
+                        keywords: ['classical', 'traditional', 'performance', 'orchestra']
+                    },
+                    {
+                        id: 'K8AM96',
+                        path: '/QKNK9F/K8AM96/index.html',
+                        name: 'Modern Covers',
+                        description: 'Contemporary cover versions',
+                        category: 'covers',
+                        keywords: ['covers', 'modern', 'contemporary', 'remix']
+                    }
+                ];
+            }
+
+            searchLibraries(query) {
+                if (!query.trim()) return [];
+                
+                const searchTerm = query.toLowerCase().trim();
+                
+                return this.libraryRegistry.filter(lib => 
+                    lib.name.toLowerCase().includes(searchTerm) ||
+                    lib.description.toLowerCase().includes(searchTerm) ||
+                    lib.keywords.some(keyword => keyword.includes(searchTerm)) ||
+                    lib.id.toLowerCase().includes(searchTerm)
+                );
+            }
+
+            getLibraryByPath(path) {
+                return this.libraryRegistry.find(lib => lib.path === path);
+            }
+            
+            getLibraryById(id) {
+                return this.libraryRegistry.find(lib => lib.id === id);
+            }
+        }
+
         class PWAWrapper {
             constructor() {
                 this.clientFrame = document.getElementById('clientFrame');
-                this.librarySelector = document.getElementById('librarySelector');
-                this.offlineBtn = document.getElementById('offlineBtn');
+                this.searchInput = document.getElementById('librarySearch');
+                this.searchResults = document.getElementById('searchResults');
                 this.shareBtn = document.getElementById('shareBtn');
                 this.reloadBtn = document.getElementById('reloadBtn');
                 this.offlineIndicator = document.getElementById('offlineIndicator');
                 this.loadingOverlay = document.getElementById('loadingOverlay');
+                this.appLogo = document.getElementById('appLogo');
                 
                 this.init();
             }
             
             init() {
+                this.search = new LibrarySearch();
                 this.setupEventListeners();
                 this.setupOnlineOfflineDetection();
+                this.hideClientBranding();
+                this.handleDeepLinks();
                 this.loadRecentLibrary();
             }
             
             setupEventListeners() {
-                // Library selection
-                this.librarySelector.addEventListener('change', (e) => {
-                    if (e.target.value) {
-                        this.loadClient(e.target.value);
+                // Search functionality
+                this.searchInput.addEventListener('input', (e) => {
+                    this.handleSearch(e.target.value);
+                });
+                
+                this.searchInput.addEventListener('focus', () => {
+                    if (this.searchInput.value) {
+                        this.handleSearch(this.searchInput.value);
+                    }
+                });
+                
+                // Close results when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('.search-container')) {
+                        this.hideSearchResults();
                     }
                 });
                 
@@ -212,15 +422,11 @@
                     this.clientFrame.src = this.clientFrame.src;
                 });
                 
-                // Offline mode (future enhancement)
-                this.offlineBtn.addEventListener('click', () => {
-                    this.toggleOfflineMode();
-                });
-                
                 // Frame loading states
                 this.clientFrame.addEventListener('load', () => {
                     this.hideLoading();
                     this.saveRecentLibrary(this.clientFrame.src);
+                    this.hideClientBranding();
                 });
                 
                 this.clientFrame.addEventListener('loadstart', () => {
@@ -243,6 +449,41 @@
                 if (!navigator.onLine) {
                     this.offlineIndicator.style.display = 'block';
                 }
+            }
+            
+            handleSearch(query) {
+                const results = this.search.searchLibraries(query);
+                this.displaySearchResults(results);
+            }
+            
+            displaySearchResults(results) {
+                if (results.length === 0) {
+                    this.searchResults.innerHTML = '<div class="search-result-item">No libraries found</div>';
+                } else {
+                    this.searchResults.innerHTML = results.map(lib => `
+                        <div class="search-result-item" data-path="${lib.path}">
+                            <div class="search-result-name">${lib.name}</div>
+                            <div class="search-result-desc">${lib.description}</div>
+                        </div>
+                    `).join('');
+                    
+                    // Add click handlers
+                    this.searchResults.querySelectorAll('.search-result-item').forEach(item => {
+                        item.addEventListener('click', () => {
+                            const path = item.getAttribute('data-path');
+                            this.loadClient(path);
+                            const library = this.search.getLibraryByPath(path);
+                            this.searchInput.value = library ? library.name : '';
+                            this.hideSearchResults();
+                        });
+                    });
+                }
+                
+                this.searchResults.style.display = 'block';
+            }
+            
+            hideSearchResults() {
+                this.searchResults.style.display = 'none';
             }
             
             loadClient(url) {
@@ -283,24 +524,33 @@
             }
             
             getLibraryNameFromUrl(url) {
-                const libraryMap = {
-                    '/QKNK9F/index.html': 'Main Library',
-                    '/EZKRY6/index.html': 'Client EZKRY6', 
-                    '/QKNK9F/BT9R66/index.html': 'Subclient BT9R66',
-                    '/QKNK9F/K8AM96/index.html': 'Subclient K8AM96'
-                };
-                
-                for (const [path, name] of Object.entries(libraryMap)) {
-                    if (url.includes(path)) return name;
-                }
-                
-                return 'Music Video Library';
+                const library = this.search.getLibraryByPath(new URL(url).pathname);
+                return library ? library.name : 'Music Video Library';
+            }
+            
+            hideClientBranding() {
+                // Try to hide branding in iframe (works for same-origin)
+                this.clientFrame.addEventListener('load', () => {
+                    try {
+                        const iframeDoc = this.clientFrame.contentDocument || this.clientFrame.contentWindow.document;
+                        const hideBrandingCSS = `
+                            .brand-logo-container {
+                                display: none !important;
+                            }
+                        `;
+                        const style = iframeDoc.createElement('style');
+                        style.textContent = hideBrandingCSS;
+                        iframeDoc.head.appendChild(style);
+                    } catch (e) {
+                        // Cross-origin restriction - this is normal for different domains
+                        console.log('PWA: Could not hide branding (cross-origin)');
+                    }
+                });
             }
             
             saveRecentLibrary(url) {
                 try {
                     localStorage.setItem('pwa_recent_library', url);
-                    this.updateLibrarySelector(url);
                 } catch (error) {
                     console.log('PWA: Could not save recent library', error);
                 }
@@ -311,25 +561,28 @@
                     const recent = localStorage.getItem('pwa_recent_library');
                     if (recent) {
                         this.clientFrame.src = recent;
-                        this.updateLibrarySelector(recent);
+                        const library = this.search.getLibraryByPath(new URL(recent).pathname);
+                        if (library) {
+                            this.searchInput.value = library.name;
+                        }
                     }
                 } catch (error) {
                     console.log('PWA: Could not load recent library', error);
                 }
             }
             
-            updateLibrarySelector(url) {
-                for (let option of this.librarySelector.options) {
-                    if (option.value === url) {
-                        option.selected = true;
-                        break;
+            handleDeepLinks() {
+                // Future: Handle app deep links like my-pvl.com/app?library=QKNK9F
+                const urlParams = new URLSearchParams(window.location.search);
+                const libraryId = urlParams.get('library');
+                
+                if (libraryId) {
+                    const library = this.search.getLibraryById(libraryId);
+                    if (library) {
+                        this.loadClient(library.path);
+                        this.searchInput.value = library.name;
                     }
                 }
-            }
-            
-            toggleOfflineMode() {
-                // Future enhancement: Pre-cache selected libraries
-                alert('Offline mode coming soon! This will cache libraries for offline viewing.');
             }
         }
         
