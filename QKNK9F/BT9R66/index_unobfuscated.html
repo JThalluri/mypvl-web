@@ -3253,6 +3253,13 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+// Source: client
+window.toggleSidepane = function(forceOpen) {
+    if (typeof toggleSidebar === 'function') {
+        toggleSidebar(forceOpen);
+    }
+};
+
         </script>
     
         <!-- MODERN FOOTER -->
