@@ -1,0 +1,34 @@
+[
+    {
+        "id": "QKNK9F",
+        "path": "/QKNK9F/index.html",
+        "name": "@Jay",
+        "description": "Jay's video collection",
+        "category": "music",
+        "keywords": ["main", "music", "videos", "complete", "all", "primary"]
+    },
+    {
+        "id": "EZKRY6",
+        "path": "/EZKRY6/index.html", 
+        "name": "@kiranprabha",
+        "description": "Kiran Prabha Talk Shows",
+        "category": "podcasts",
+        "keywords": ["talk shows", "telugu"]
+    },
+    {
+        "id": "BT9R66",
+        "path": "/QKNK9F/BT9R66/index.html",
+        "name": "@amma",
+        "description": "Traditional and classical performances", 
+        "category": "classical",
+        "keywords": ["homeopathy"]
+    },
+    {
+        "id": "K8AM96",
+        "path": "/QKNK9F/K8AM96/index.html",
+        "name": "Modern Cover Songs",
+        "description": "Contemporary cover versions and remixes",
+        "category": "covers", 
+        "keywords": ["covers", "modern", "contemporary", "remix", "coversongs"]
+    }
+]
