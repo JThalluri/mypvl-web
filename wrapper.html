@@ -570,6 +570,7 @@
                 this.setupEventListeners();
                 this.setupOnlineOfflineDetection();
                 this.hideClientUI();
+                this.setupPolicyLinks();
                 this.loadRecentLibrary();
                 this.updateRecentLibraries();
             }
@@ -613,7 +614,27 @@
                     console.log('PWA: Offline');
                 });
             }
-            
+
+            setupPolicyLinks() {
+                // Policy links should open in system browser, not within PWA
+                const policyLinks = document.querySelectorAll('.menu-item[href]');
+                policyLinks.forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const url = e.target.href;
+                        
+                        // Try to open in system browser
+                        if (window.navigator && window.navigator.app) {
+                            // For Cordova/PhoneGap
+                            window.navigator.app.loadUrl(url, { openExternal: true });
+                        } else {
+                            // For PWA - open in new tab with noopener
+                            window.open(url, '_blank', 'noopener,noreferrer');
+                        }
+                    });
+                });
+            }
+
             // Library Search functionality
             showLibrarySearch() {
                 this.librarySearchBackdrop.classList.add('active');
@@ -707,19 +728,58 @@
             
             // Client Integration
             toggleClientSidepane() {
-                try {
-                    const iframeWindow = this.clientFrame.contentWindow;
-                    if (iframeWindow && typeof iframeWindow.toggleSidepane === 'function') {
-                        iframeWindow.toggleSidepane();
-                    } else {
-                        // Fallback: try to click the toggle button
+                // Wait a bit to ensure client page is fully loaded
+                setTimeout(() => {
+                    try {
+                        const iframeWindow = this.clientFrame.contentWindow;
                         const iframeDoc = this.clientFrame.contentDocument;
-                        const toggleBtn = iframeDoc.getElementById('toggleBtn');
-                        if (toggleBtn) toggleBtn.click();
+                        
+                        console.log('PWA: Attempting to toggle sidepane...');
+                        
+                        // Method 1: Try exposed function
+                        if (iframeWindow && typeof iframeWindow.toggleSidepane === 'function') {
+                            console.log('PWA: Using toggleSidepane()');
+                            iframeWindow.toggleSidepane();
+                            return;
+                        }
+                        
+                        // Method 2: Try the original function
+                        if (iframeWindow && typeof iframeWindow.toggleSidebar === 'function') {
+                            console.log('PWA: Using toggleSidebar()');
+                            iframeWindow.toggleSidebar();
+                            return;
+                        }
+                        
+                        // Method 3: Direct DOM click
+                        if (iframeDoc) {
+                            const toggleBtn = iframeDoc.getElementById('toggleBtn');
+                            if (toggleBtn) {
+                                console.log('PWA: Clicking toggle button');
+                                toggleBtn.click();
+                                return;
+                            }
+                        }
+                        
+                        // Method 4: Look for any toggle element
+                        if (iframeDoc) {
+                            const toggleElements = iframeDoc.querySelectorAll('button, [class*="toggle"], [class*="menu"]');
+                            toggleElements.forEach(element => {
+                                if (element.textContent.includes('☰') || 
+                                    element.innerHTML.includes('fa-bars') ||
+                                    element.getAttribute('onclick')?.includes('sidebar') ||
+                                    element.id.includes('toggle')) {
+                                    console.log('PWA: Found toggle element:', element);
+                                    element.click();
+                                }
+                            });
+                        }
+                        
+                        console.log('PWA: No sidepane toggle method found');
+                        
+                    } catch (error) {
+                        console.log('PWA: Error toggling sidepane:', error);
                     }
-                } catch (error) {
-                    console.log('PWA: Could not toggle sidepane', error);
-                }
+                }, 100); // Small delay to ensure client JS is loaded
             }
             
             hideClientUI() {
@@ -727,7 +787,7 @@
                     try {
                         const iframeDoc = this.clientFrame.contentDocument;
                         const hideCSS = `
-                            /* Hide only the main header/branding, not functional elements */
+                            /* Hide main header/branding */
                             .brand-logo-container,
                             .page-header > img,
                             header > img,
@@ -736,7 +796,20 @@
                                 display: none !important;
                             }
                             
-                            /* Keep all functional elements visible */
+                            /* Hide client's sidepane toggle since we have one in wrapper */
+                            #toggleBtn,
+                            [class*="toggle"][class*="sidebar"],
+                            [class*="toggle"][class*="menu"] {
+                                display: none !important;
+                            }
+                            
+                            /* Hide client's clear filters button in header area */
+                            /* But keep the one in sidepane visible */
+                            .clear-filters-btn:not(.mobile-clear-btn) {
+                                display: none !important;
+                            }
+                            
+                            /* Keep functional elements visible */
                             .sidebar,
                             .sidepane,
                             .navigation,
@@ -744,13 +817,12 @@
                             .mobile-clear-btn,
                             .search-bar,
                             .video-search,
-                            [class*="search"]:not(.library-search),
-                            .clear-filters-btn {
+                            [class*="search"]:not(.library-search) {
                                 display: block !important;
                                 visibility: visible !important;
                             }
                             
-                            /* Hide footer in app mode */
+                            /* Hide footer */
                             footer,
                             .site-footer,
                             .page-footer {
@@ -778,28 +850,57 @@
                     const socialContainer = iframeDoc.querySelector('.social-links-container');
                     
                     if (socialContainer && socialContainer.querySelector('a')) {
-                        // Clear existing social links
                         this.socialLinksContainer.innerHTML = '';
                         
-                        // Recreate each social link with proper attributes
                         const links = socialContainer.querySelectorAll('a');
                         links.forEach(link => {
                             const newLink = document.createElement('a');
                             newLink.href = link.href;
                             newLink.innerHTML = link.innerHTML;
+                            
+                            // Force open in external browser/app
                             newLink.target = '_blank';
                             newLink.rel = 'noopener noreferrer';
-                            newLink.setAttribute('aria-label', link.getAttribute('aria-label') || 'Social media');
-                            newLink.style.display = 'flex';
-                            newLink.style.alignItems = 'center';
-                            newLink.style.justifyContent = 'center';
-                            newLink.style.width = '40px';
-                            newLink.style.height = '40px';
-                            newLink.style.borderRadius = '50%';
-                            newLink.style.background = '#2d2d2d';
-                            newLink.style.color = 'white';
-                            newLink.style.textDecoration = 'none';
-                            newLink.style.transition = 'background 0.2s';
+                            
+                            // Add click handler to ensure it opens externally
+                            newLink.addEventListener('click', (e) => {
+                                e.preventDefault();
+                                console.log('PWA: Opening social link:', newLink.href);
+                                
+                                // Try multiple methods to open externally
+                                const openInNewTab = (url) => {
+                                    window.open(url, '_blank', 'noopener,noreferrer');
+                                };
+                                
+                                // For Facebook/YouTube, try to open in app or browser
+                                if (newLink.href.includes('facebook.com')) {
+                                    // Try app-specific URL first, then fallback to browser
+                                    const appUrl = newLink.href.replace('https://www.facebook.com', 'fb://page');
+                                    openInNewTab(appUrl);
+                                    setTimeout(() => openInNewTab(newLink.href), 500);
+                                } else if (newLink.href.includes('youtube.com')) {
+                                    // Try YouTube app first
+                                    const appUrl = newLink.href.replace('https://www.youtube.com', 'vnd.youtube:');
+                                    openInNewTab(appUrl);
+                                    setTimeout(() => openInNewTab(newLink.href), 500);
+                                } else {
+                                    openInNewTab(newLink.href);
+                                }
+                            });
+                            
+                            // Style the link
+                            Object.assign(newLink.style, {
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                width: '40px',
+                                height: '40px',
+                                borderRadius: '50%',
+                                background: '#2d2d2d',
+                                color: 'white',
+                                textDecoration: 'none',
+                                transition: 'background 0.2s'
+                            });
                             
                             newLink.addEventListener('mouseenter', () => {
                                 newLink.style.background = '#3d3d3d';
