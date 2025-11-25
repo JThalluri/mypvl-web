@@ -6,7 +6,7 @@
     <title>Music Video Libraries</title>
     
     <!-- PWA Essentials -->
-    <link rel="manifest" href="/manifest.json?v=2">
+    <link rel="manifest" href="/manifest.json?v=3">
     <meta name="theme-color" content="#1a1a1a">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -27,6 +27,7 @@
             overflow: hidden;
         }
         
+        /* App Header */
         .app-header {
             position: fixed;
             top: 0;
@@ -38,7 +39,7 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.3);
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 8px;
             height: 60px;
         }
         
@@ -46,100 +47,17 @@
             flex-shrink: 0;
             width: 40px;
             height: 40px;
-            background: #2d2d2d;
             border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
-            font-size: 18px;
-            color: white;
         }
         
         .app-logo img {
             width: 100%;
             height: 100%;
             border-radius: 8px;
-            object-fit: cover;
-        }
-        
-        .search-container {
-            flex: 1;
-            position: relative;
-        }
-        
-        .search-input-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-        
-        .search-input-wrapper .fa-magnifying-glass {
-            position: absolute;
-            left: 12px;
-            color: #888;
-            z-index: 2;
-        }
-        
-        .search-input {
-            width: 100%;
-            padding: 10px 10px 10px 35px;
-            border: none;
-            border-radius: 20px;
-            background: #2d2d2d;
-            color: white;
-            font-size: 14px;
-        }
-        
-        .search-input::placeholder {
-            color: #888;
-        }
-        
-        .search-results {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: #2d2d2d;
-            border-radius: 10px;
-            margin-top: 5px;
-            max-height: 300px;
-            overflow-y: auto;
-            display: none;
-            z-index: 1001;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        }
-        
-        .search-result-item {
-            padding: 12px 15px;
-            border-bottom: 1px solid #3d3d3d;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        
-        .search-result-item:hover {
-            background: #3d3d3d;
-        }
-        
-        .search-result-item:last-child {
-            border-bottom: none;
-        }
-        
-        .search-result-name {
-            font-weight: bold;
-            color: white;
-            margin-bottom: 4px;
-        }
-        
-        .search-result-desc {
-            font-size: 12px;
-            color: #aaa;
-        }
-        
-        .app-controls {
-            display: flex;
-            gap: 8px;
-            flex-shrink: 0;
+            object-fit: contain;
         }
         
         .control-btn {
@@ -155,12 +73,37 @@
             justify-content: center;
             font-size: 16px;
             transition: background 0.2s;
+            flex-shrink: 0;
         }
         
-        .control-btn:hover {
+        .control-btn:hover, .control-btn.active {
             background: #3d3d3d;
         }
         
+        .social-links-container {
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+        
+        .social-links-container a {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #2d2d2d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+        
+        .social-links-container a:hover {
+            background: #3d3d3d;
+        }
+        
+        /* Client Frame */
         .client-frame {
             margin-top: 60px;
             width: 100%;
@@ -169,19 +112,195 @@
             background: white;
         }
         
-        .offline-indicator {
+        /* Overlay Backdrop */
+        .overlay-backdrop {
             position: fixed;
-            top: 70px;
-            right: 15px;
-            background: #ff6b6b;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 12px;
-            z-index: 1001;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 2000;
             display: none;
+            animation: fadeIn 0.3s ease;
         }
         
+        .overlay-backdrop.active {
+            display: block;
+        }
+        
+        /* Library Search Modal */
+        .library-search-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            background: white;
+            border-radius: 15px;
+            z-index: 2001;
+            display: none;
+            animation: slideUp 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .library-search-modal.active {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .search-modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: between;
+            align-items: center;
+        }
+        
+        .search-modal-header h2 {
+            margin: 0;
+            color: #1a1a1a;
+            font-size: 1.5rem;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #666;
+            cursor: pointer;
+            padding: 5px;
+        }
+        
+        .search-input-container {
+            padding: 20px;
+            position: relative;
+        }
+        
+        .search-input-container .fa-magnifying-glass {
+            position: absolute;
+            left: 35px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+        }
+        
+        .search-input-container input {
+            width: 100%;
+            padding: 12px 20px 12px 45px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 16px;
+            transition: border-color 0.2s;
+        }
+        
+        .search-input-container input:focus {
+            outline: none;
+            border-color: #1a1a1a;
+        }
+        
+        .search-results-container {
+            flex: 1;
+            overflow-y: auto;
+            max-height: 300px;
+        }
+        
+        .search-result-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .search-result-item:hover {
+            background: #f8f8f8;
+        }
+        
+        .search-result-name {
+            font-weight: bold;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+        }
+        
+        .search-result-desc {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .recent-libraries {
+            padding: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        .recent-libraries h3 {
+            margin-bottom: 10px;
+            color: #1a1a1a;
+            font-size: 1.1rem;
+        }
+        
+        /* App Menu Modal */
+        .app-menu-modal {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 20px 20px 0 0;
+            z-index: 2001;
+            display: none;
+            animation: slideUp 0.3s ease;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .app-menu-modal.active {
+            display: block;
+        }
+        
+        .menu-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .menu-content {
+            padding: 10px 0;
+        }
+        
+        .menu-section {
+            padding: 0 20px 10px;
+        }
+        
+        .menu-section h3 {
+            margin: 15px 0 10px;
+            color: #666;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .menu-item {
+            display: block;
+            padding: 12px 0;
+            color: #1a1a1a;
+            text-decoration: none;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background 0.2s;
+        }
+        
+        .menu-item:last-child {
+            border-bottom: none;
+        }
+        
+        .menu-item:hover {
+            background: #f8f8f8;
+        }
+        
+        /* Loading States */
         .loading-overlay {
             position: fixed;
             top: 60px;
@@ -205,100 +324,89 @@
             animation: spin 1s linear infinite;
         }
         
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translate(-50%, -40%);
+            }
+            to { 
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+        
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
         
-        /* Mobile optimizations */
+        /* Mobile Optimizations */
         @media (max-width: 768px) {
             .app-header {
                 padding: 8px 12px;
-                gap: 10px;
+                gap: 6px;
             }
             
-            .app-logo {
-                width: 36px;
-                height: 36px;
-                font-size: 16px;
+            .control-btn, .social-links-container a {
+                width: 38px;
+                height: 38px;
             }
             
-            .search-input {
-                font-size: 16px;
-                padding: 12px 12px 12px 38px;
-            }
-            
-            .control-btn {
-                width: 42px;
-                height: 42px;
+            .library-search-modal {
+                width: 95%;
+                max-height: 85vh;
             }
         }
         
         @media (max-width: 380px) {
             .app-header {
                 padding: 6px 10px;
-                gap: 8px;
+                gap: 4px;
             }
             
-            .app-logo {
-                width: 34px;
-                height: 34px;
-                font-size: 14px;
-            }
-            
-            .search-input {
-                font-size: 14px;
-                padding: 10px 10px 10px 32px;
-            }
-            
-            .control-btn {
-                width: 38px;
-                height: 38px;
+            .control-btn, .social-links-container a {
+                width: 36px;
+                height: 36px;
                 font-size: 14px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- PWA Navigation Header -->
+    <!-- App Header -->
     <header class="app-header">
-        <!-- App Logo - Placeholder for your brand -->
-        <div class="app-logo" id="appLogo">
-            <!-- Temporary placeholder - replace with your logo -->
-            <span>VL</span>
-            <!-- When you have your logo, use: -->
+        <div class="app-logo">
             <img src="/icons/app-logo.png" alt="VideoLib">
         </div>
         
-        <!-- Search Container -->
-        <div class="search-container">
-            <div class="search-input-wrapper">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" id="librarySearch" placeholder="Search libraries..." class="search-input">
-                <div id="searchResults" class="search-results"></div>
-            </div>
-        </div>
+        <button class="control-btn" id="sidepaneToggle" title="Toggle Navigation">
+            <i class="fa-solid fa-bars"></i>
+        </button>
         
-        <!-- App Controls -->
-        <div class="app-controls">
-            <button id="shareBtn" class="control-btn" title="Share Library">
-                <i class="fa-solid fa-share"></i>
-            </button>
-            <button id="reloadBtn" class="control-btn" title="Reload">
-                <i class="fa-solid fa-arrows-rotate"></i>
-            </button>
-        </div>
+        <button class="control-btn" id="librarySearchTrigger" title="Search Libraries">
+            <i class="fa-solid fa-search"></i>
+        </button>
+        
+        <button class="control-btn" id="shareBtn" title="Share Library">
+            <i class="fa-solid fa-share"></i>
+        </button>
+        
+        <button class="control-btn" id="reloadBtn" title="Reload">
+            <i class="fa-solid fa-rotate"></i>
+        </button>
+        
+        <div class="social-links-container" id="socialLinksContainer"></div>
+        
+        <button class="control-btn" id="appMenuTrigger" title="Menu">
+            <i class="fa-solid fa-ellipsis-vertical"></i>
+        </button>
     </header>
-
-    <!-- Offline Indicator -->
-    <div class="offline-indicator" id="offlineIndicator">
-        <i class="fa-solid fa-wifi-slash"></i> Offline
-    </div>
-
-    <!-- Loading Overlay -->
-    <div class="loading-overlay" id="loadingOverlay">
-        <div class="spinner"></div>
-    </div>
 
     <!-- Client Content Area -->
     <iframe 
@@ -309,6 +417,64 @@
         allow="autoplay; encrypted-media">
     </iframe>
 
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Library Search Overlay -->
+    <div class="overlay-backdrop" id="librarySearchBackdrop"></div>
+    <div class="library-search-modal" id="librarySearchModal">
+        <div class="search-modal-header">
+            <h2>Search Libraries</h2>
+            <button class="close-modal" id="closeLibrarySearch">
+                <i class="fa-solid fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="search-input-container">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="librarySearchInput" placeholder="Search libraries by name, genre, or description..." autocomplete="off">
+        </div>
+        
+        <div class="search-results-container" id="librarySearchResults">
+            <!-- Results will appear here -->
+        </div>
+        
+        <div class="recent-libraries" id="recentLibraries">
+            <h3>Recently Viewed</h3>
+            <!-- Recent libraries will appear here -->
+        </div>
+    </div>
+
+    <!-- App Menu Overlay -->
+    <div class="overlay-backdrop" id="appMenuBackdrop"></div>
+    <div class="app-menu-modal" id="appMenuModal">
+        <div class="menu-header">
+            <h2>Menu</h2>
+            <button class="close-modal" id="closeAppMenu">
+                <i class="fa-solid fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="menu-content">
+            <div class="menu-section">
+                <h3>Legal & Policies</h3>
+                <a href="/privacy_policy.html" class="menu-item" target="_blank">Privacy Policy</a>
+                <a href="/terms_of_use.html" class="menu-item" target="_blank">Terms of Use</a>
+                <a href="/cookies_policy.html" class="menu-item" target="_blank">Cookies Policy</a>
+                <a href="/dmca_policy.html" class="menu-item" target="_blank">DMCA Policy</a>
+                <a href="/thirdparty_attributions.html" class="menu-item" target="_blank">Third Party Attributions</a>
+            </div>
+            
+            <div class="menu-section">
+                <h3>Support</h3>
+                <a href="/contact_us.html" class="menu-item" target="_blank">Contact Us</a>
+                <div class="menu-item" id="clearAppData">Clear App Data</div>
+            </div>
+        </div>
+    </div>
+
     <script>
         class LibrarySearch {
             constructor() {
@@ -316,34 +482,34 @@
                     {
                         id: 'QKNK9F',
                         path: '/QKNK9F/index.html',
-                        name: 'Main Music Library',
-                        description: 'Complete music video collection',
+                        name: 'Main Music Collection',
+                        description: 'Complete music video library with various genres',
                         category: 'music',
-                        keywords: ['main', 'music', 'videos', 'complete', 'all']
+                        keywords: ['main', 'music', 'videos', 'complete', 'all', 'primary']
                     },
                     {
                         id: 'EZKRY6', 
                         path: '/EZKRY6/index.html',
-                        name: 'Instrumental Collection',
-                        description: 'Pure instrumental music videos',
+                        name: 'Instrumental Music',
+                        description: 'Pure instrumental and background music',
                         category: 'music',
-                        keywords: ['instrumental', 'music', 'no vocals', 'background']
+                        keywords: ['instrumental', 'music', 'no vocals', 'background', 'ambient']
                     },
                     {
                         id: 'BT9R66',
                         path: '/QKNK9F/BT9R66/index.html', 
-                        name: 'Classical Performances',
-                        description: 'Traditional classical music',
+                        name: 'Classical Music Library',
+                        description: 'Traditional and classical performances',
                         category: 'classical',
-                        keywords: ['classical', 'traditional', 'performance', 'orchestra']
+                        keywords: ['classical', 'traditional', 'performance', 'orchestra', 'symphony']
                     },
                     {
                         id: 'K8AM96',
                         path: '/QKNK9F/K8AM96/index.html',
-                        name: 'Modern Covers',
-                        description: 'Contemporary cover versions',
+                        name: 'Modern Cover Songs',
+                        description: 'Contemporary cover versions and remixes',
                         category: 'covers',
-                        keywords: ['covers', 'modern', 'contemporary', 'remix']
+                        keywords: ['covers', 'modern', 'contemporary', 'remix', 'coversongs']
                     }
                 ];
             }
@@ -373,13 +539,28 @@
         class PWAWrapper {
             constructor() {
                 this.clientFrame = document.getElementById('clientFrame');
-                this.searchInput = document.getElementById('librarySearch');
-                this.searchResults = document.getElementById('searchResults');
+                this.loadingOverlay = document.getElementById('loadingOverlay');
+                
+                // Header elements
+                this.sidepaneToggle = document.getElementById('sidepaneToggle');
+                this.librarySearchTrigger = document.getElementById('librarySearchTrigger');
                 this.shareBtn = document.getElementById('shareBtn');
                 this.reloadBtn = document.getElementById('reloadBtn');
-                this.offlineIndicator = document.getElementById('offlineIndicator');
-                this.loadingOverlay = document.getElementById('loadingOverlay');
-                this.appLogo = document.getElementById('appLogo');
+                this.socialLinksContainer = document.getElementById('socialLinksContainer');
+                this.appMenuTrigger = document.getElementById('appMenuTrigger');
+                
+                // Modal elements
+                this.librarySearchBackdrop = document.getElementById('librarySearchBackdrop');
+                this.librarySearchModal = document.getElementById('librarySearchModal');
+                this.librarySearchInput = document.getElementById('librarySearchInput');
+                this.librarySearchResults = document.getElementById('librarySearchResults');
+                this.closeLibrarySearch = document.getElementById('closeLibrarySearch');
+                this.recentLibraries = document.getElementById('recentLibraries');
+                
+                this.appMenuBackdrop = document.getElementById('appMenuBackdrop');
+                this.appMenuModal = document.getElementById('appMenuModal');
+                this.closeAppMenu = document.getElementById('closeAppMenu');
+                this.clearAppData = document.getElementById('clearAppData');
                 
                 this.init();
             }
@@ -388,104 +569,206 @@
                 this.search = new LibrarySearch();
                 this.setupEventListeners();
                 this.setupOnlineOfflineDetection();
-                this.hideClientBranding();
-                this.handleDeepLinks();
+                this.hideClientUI();
                 this.loadRecentLibrary();
+                this.updateRecentLibraries();
             }
             
             setupEventListeners() {
-                // Search functionality
-                this.searchInput.addEventListener('input', (e) => {
-                    this.handleSearch(e.target.value);
-                });
+                // Header controls
+                this.sidepaneToggle.addEventListener('click', () => this.toggleClientSidepane());
+                this.librarySearchTrigger.addEventListener('click', () => this.showLibrarySearch());
+                this.shareBtn.addEventListener('click', () => this.shareCurrentLibrary());
+                this.reloadBtn.addEventListener('click', () => this.clientFrame.src = this.clientFrame.src);
+                this.appMenuTrigger.addEventListener('click', () => this.showAppMenu());
                 
-                this.searchInput.addEventListener('focus', () => {
-                    if (this.searchInput.value) {
-                        this.handleSearch(this.searchInput.value);
-                    }
-                });
+                // Library search modal
+                this.librarySearchInput.addEventListener('input', (e) => this.handleLibrarySearch(e.target.value));
+                this.closeLibrarySearch.addEventListener('click', () => this.hideLibrarySearch());
+                this.librarySearchBackdrop.addEventListener('click', () => this.hideLibrarySearch());
                 
-                // Close results when clicking outside
-                document.addEventListener('click', (e) => {
-                    if (!e.target.closest('.search-container')) {
-                        this.hideSearchResults();
-                    }
-                });
+                // App menu modal
+                this.closeAppMenu.addEventListener('click', () => this.hideAppMenu());
+                this.appMenuBackdrop.addEventListener('click', () => this.hideAppMenu());
+                this.clearAppData.addEventListener('click', () => this.clearAppDataHandler());
                 
-                // Share functionality
-                this.shareBtn.addEventListener('click', () => {
-                    this.shareCurrentLibrary();
-                });
-                
-                // Reload functionality
-                this.reloadBtn.addEventListener('click', () => {
-                    this.clientFrame.src = this.clientFrame.src;
-                });
-                
-                // Frame loading states
+                // Frame events
                 this.clientFrame.addEventListener('load', () => {
                     this.hideLoading();
                     this.saveRecentLibrary(this.clientFrame.src);
-                    this.hideClientBranding();
+                    this.updateRecentLibraries();
+                    this.hideClientUI();
+                    this.extractSocialLinks();
                 });
                 
-                this.clientFrame.addEventListener('loadstart', () => {
-                    this.showLoading();
-                });
+                this.clientFrame.addEventListener('loadstart', () => this.showLoading());
             }
             
             setupOnlineOfflineDetection() {
                 window.addEventListener('online', () => {
-                    this.offlineIndicator.style.display = 'none';
                     console.log('PWA: Online');
                 });
                 
                 window.addEventListener('offline', () => {
-                    this.offlineIndicator.style.display = 'block';
                     console.log('PWA: Offline');
                 });
-                
-                // Initial state
-                if (!navigator.onLine) {
-                    this.offlineIndicator.style.display = 'block';
-                }
             }
             
-            handleSearch(query) {
+            // Library Search functionality
+            showLibrarySearch() {
+                this.librarySearchBackdrop.classList.add('active');
+                this.librarySearchModal.classList.add('active');
+                this.librarySearchInput.focus();
+                this.updateRecentLibraries();
+            }
+            
+            hideLibrarySearch() {
+                this.librarySearchBackdrop.classList.remove('active');
+                this.librarySearchModal.classList.remove('active');
+                this.librarySearchInput.value = '';
+                this.librarySearchResults.innerHTML = '';
+            }
+            
+            handleLibrarySearch(query) {
                 const results = this.search.searchLibraries(query);
-                this.displaySearchResults(results);
+                this.displayLibrarySearchResults(results);
             }
             
-            displaySearchResults(results) {
+            displayLibrarySearchResults(results) {
                 if (results.length === 0) {
-                    this.searchResults.innerHTML = '<div class="search-result-item">No libraries found</div>';
+                    this.librarySearchResults.innerHTML = '<div class="search-result-item">No libraries found</div>';
                 } else {
-                    this.searchResults.innerHTML = results.map(lib => `
+                    this.librarySearchResults.innerHTML = results.map(lib => `
                         <div class="search-result-item" data-path="${lib.path}">
                             <div class="search-result-name">${lib.name}</div>
                             <div class="search-result-desc">${lib.description}</div>
                         </div>
                     `).join('');
                     
-                    // Add click handlers
-                    this.searchResults.querySelectorAll('.search-result-item').forEach(item => {
+                    this.librarySearchResults.querySelectorAll('.search-result-item').forEach(item => {
                         item.addEventListener('click', () => {
                             const path = item.getAttribute('data-path');
                             this.loadClient(path);
-                            const library = this.search.getLibraryByPath(path);
-                            this.searchInput.value = library ? library.name : '';
-                            this.hideSearchResults();
+                            this.hideLibrarySearch();
                         });
                     });
                 }
-                
-                this.searchResults.style.display = 'block';
             }
             
-            hideSearchResults() {
-                this.searchResults.style.display = 'none';
+            updateRecentLibraries() {
+                try {
+                    const recent = JSON.parse(localStorage.getItem('pwa_recent_libraries') || '[]');
+                    const recentHtml = recent.slice(0, 3).map(path => {
+                        const library = this.search.getLibraryByPath(path);
+                        return library ? `
+                            <div class="search-result-item" data-path="${library.path}">
+                                <div class="search-result-name">${library.name}</div>
+                                <div class="search-result-desc">${library.description}</div>
+                            </div>
+                        ` : '';
+                    }).join('');
+                    
+                    this.recentLibraries.innerHTML = recentHtml ? `
+                        <h3>Recently Viewed</h3>
+                        ${recentHtml}
+                    ` : '';
+                    
+                    // Add click handlers to recent libraries
+                    this.recentLibraries.querySelectorAll('.search-result-item').forEach(item => {
+                        item.addEventListener('click', () => {
+                            const path = item.getAttribute('data-path');
+                            this.loadClient(path);
+                            this.hideLibrarySearch();
+                        });
+                    });
+                } catch (error) {
+                    console.log('PWA: Could not load recent libraries', error);
+                }
             }
             
+            // App Menu functionality
+            showAppMenu() {
+                this.appMenuBackdrop.classList.add('active');
+                this.appMenuModal.classList.add('active');
+            }
+            
+            hideAppMenu() {
+                this.appMenuBackdrop.classList.remove('active');
+                this.appMenuModal.classList.remove('active');
+            }
+            
+            clearAppDataHandler() {
+                if (confirm('Clear all app data? This will reset your recent libraries.')) {
+                    localStorage.clear();
+                    this.hideAppMenu();
+                    alert('App data cleared successfully.');
+                }
+            }
+            
+            // Client Integration
+            toggleClientSidepane() {
+                try {
+                    const iframeWindow = this.clientFrame.contentWindow;
+                    if (iframeWindow && typeof iframeWindow.toggleSidepane === 'function') {
+                        iframeWindow.toggleSidepane();
+                    } else {
+                        // Fallback: try to click the toggle button
+                        const iframeDoc = this.clientFrame.contentDocument;
+                        const toggleBtn = iframeDoc.getElementById('toggleBtn');
+                        if (toggleBtn) toggleBtn.click();
+                    }
+                } catch (error) {
+                    console.log('PWA: Could not toggle sidepane', error);
+                }
+            }
+            
+            hideClientUI() {
+                this.clientFrame.addEventListener('load', () => {
+                    try {
+                        const iframeDoc = this.clientFrame.contentDocument;
+                        const hideCSS = `
+                            .brand-logo-container,
+                            .page-header,
+                            header:not(.app-header),
+                            .header-image,
+                            .site-header,
+                            [class*="header"]:not(.app-header):not(.content-header) {
+                                display: none !important;
+                            }
+                            
+                            .content, main, .page-content {
+                                margin-top: 0 !important;
+                                padding-top: 10px !important;
+                            }
+                        `;
+                        const style = iframeDoc.createElement('style');
+                        style.textContent = hideCSS;
+                        iframeDoc.head.appendChild(style);
+                    } catch (error) {
+                        console.log('PWA: Could not hide client UI (cross-origin)');
+                    }
+                });
+            }
+            
+            extractSocialLinks() {
+                try {
+                    const iframeDoc = this.clientFrame.contentDocument;
+                    const socialContainer = iframeDoc.querySelector('.social-links-container');
+                    
+                    if (socialContainer) {
+                        this.socialLinksContainer.innerHTML = socialContainer.innerHTML;
+                        
+                        // Hide original social links in client
+                        socialContainer.style.display = 'none';
+                    } else {
+                        this.socialLinksContainer.innerHTML = '';
+                    }
+                } catch (error) {
+                    console.log('PWA: Could not extract social links');
+                }
+            }
+            
+            // Client loading and state management
             loadClient(url) {
                 this.showLoading();
                 this.clientFrame.src = url;
@@ -501,7 +784,8 @@
             
             async shareCurrentLibrary() {
                 const currentUrl = this.clientFrame.src;
-                const libraryName = this.getLibraryNameFromUrl(currentUrl);
+                const library = this.search.getLibraryByPath(new URL(currentUrl).pathname);
+                const libraryName = library ? library.name : 'Music Video Library';
                 
                 const shareData = {
                     title: `Music Video Library - ${libraryName}`,
@@ -512,9 +796,7 @@
                 try {
                     if (navigator.share) {
                         await navigator.share(shareData);
-                        console.log('PWA: Library shared successfully');
                     } else {
-                        // Fallback: copy to clipboard
                         await navigator.clipboard.writeText(currentUrl);
                         alert('Library URL copied to clipboard!');
                     }
@@ -523,34 +805,11 @@
                 }
             }
             
-            getLibraryNameFromUrl(url) {
-                const library = this.search.getLibraryByPath(new URL(url).pathname);
-                return library ? library.name : 'Music Video Library';
-            }
-            
-            hideClientBranding() {
-                // Try to hide branding in iframe (works for same-origin)
-                this.clientFrame.addEventListener('load', () => {
-                    try {
-                        const iframeDoc = this.clientFrame.contentDocument || this.clientFrame.contentWindow.document;
-                        const hideBrandingCSS = `
-                            .brand-logo-container {
-                                display: none !important;
-                            }
-                        `;
-                        const style = iframeDoc.createElement('style');
-                        style.textContent = hideBrandingCSS;
-                        iframeDoc.head.appendChild(style);
-                    } catch (e) {
-                        // Cross-origin restriction - this is normal for different domains
-                        console.log('PWA: Could not hide branding (cross-origin)');
-                    }
-                });
-            }
-            
             saveRecentLibrary(url) {
                 try {
-                    localStorage.setItem('pwa_recent_library', url);
+                    const recent = JSON.parse(localStorage.getItem('pwa_recent_libraries') || '[]');
+                    const updated = [url, ...recent.filter(item => item !== url)].slice(0, 5);
+                    localStorage.setItem('pwa_recent_libraries', JSON.stringify(updated));
                 } catch (error) {
                     console.log('PWA: Could not save recent library', error);
                 }
@@ -558,30 +817,12 @@
             
             loadRecentLibrary() {
                 try {
-                    const recent = localStorage.getItem('pwa_recent_library');
-                    if (recent) {
-                        this.clientFrame.src = recent;
-                        const library = this.search.getLibraryByPath(new URL(recent).pathname);
-                        if (library) {
-                            this.searchInput.value = library.name;
-                        }
+                    const recent = JSON.parse(localStorage.getItem('pwa_recent_libraries') || '[]');
+                    if (recent.length > 0) {
+                        this.clientFrame.src = recent[0];
                     }
                 } catch (error) {
                     console.log('PWA: Could not load recent library', error);
-                }
-            }
-            
-            handleDeepLinks() {
-                // Future: Handle app deep links like my-pvl.com/app?library=QKNK9F
-                const urlParams = new URLSearchParams(window.location.search);
-                const libraryId = urlParams.get('library');
-                
-                if (libraryId) {
-                    const library = this.search.getLibraryById(libraryId);
-                    if (library) {
-                        this.loadClient(library.path);
-                        this.searchInput.value = library.name;
-                    }
                 }
             }
         }
@@ -603,12 +844,6 @@
                     });
             });
         }
-
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.ready.then(registration => {
-                registration.update();
-            });
-        }        
     </script>
 </body>
 </html>

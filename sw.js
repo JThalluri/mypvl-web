@@ -1,21 +1,19 @@
-// Service Worker for PWA Wrapper
-const CACHE_NAME = 'pwa-wrapper-v2';
-const APP_SHELL_CACHE = 'app-shell-v2';
+// Service Worker for PWA Wrapper - v3
+const CACHE_NAME = 'pwa-wrapper-v3';
+const APP_SHELL_CACHE = 'app-shell-v3';
 
 // Resources to cache immediately
 const APP_SHELL_RESOURCES = [
     '/wrapper.html',
     '/manifest.json',
-    '/css/main.css',
-    '/resources/play-solid-full.svg',
-    '/resources/banner.png'
+    '/icons/app-logo.png',
+    '/icons/icon-192.png',
+    '/icons/icon-512.png',
+    'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'
 ];
 
-// Resources to cache on demand
-const DYNAMIC_CACHE = 'dynamic-content-v1';
-
 self.addEventListener('install', (event) => {
-    console.log('PWA: Service Worker installing');
+    console.log('PWA: Service Worker installing v3');
     
     event.waitUntil(
         caches.open(APP_SHELL_CACHE)
@@ -30,13 +28,13 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('activate', (event) => {
-    console.log('PWA: Service Worker activating');
+    console.log('PWA: Service Worker activating v3');
     
     event.waitUntil(
         caches.keys().then((cacheNames) => {
             return Promise.all(
                 cacheNames.map((cacheName) => {
-                    if (cacheName !== APP_SHELL_CACHE && cacheName !== DYNAMIC_CACHE) {
+                    if (cacheName !== APP_SHELL_CACHE) {
                         console.log('PWA: Deleting old cache', cacheName);
                         return caches.delete(cacheName);
                     }
@@ -58,32 +56,7 @@ self.addEventListener('fetch', (event) => {
         caches.match(event.request)
             .then((response) => {
                 // Return cached version or fetch from network
-                return response || fetch(event.request)
-                    .then((fetchResponse) => {
-                        // Cache successful requests to dynamic cache
-                        if (fetchResponse && fetchResponse.status === 200) {
-                            const responseToCache = fetchResponse.clone();
-                            caches.open(DYNAMIC_CACHE)
-                                .then((cache) => {
-                                    cache.put(event.request, responseToCache);
-                                });
-                        }
-                        return fetchResponse;
-                    })
-                    .catch(() => {
-                        // If both cache and network fail, show offline page
-                        if (event.request.destination === 'document') {
-                            return caches.match('/wrapper.html');
-                        }
-                    });
+                return response || fetch(event.request);
             })
     );
-});
-
-// Background sync for future offline functionality
-self.addEventListener('sync', (event) => {
-    if (event.tag === 'background-sync') {
-        console.log('PWA: Background sync triggered');
-        // Future: Sync user actions when back online
-    }
 });
