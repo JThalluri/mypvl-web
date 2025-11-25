@@ -3321,6 +3321,13 @@ window.PVL = window.PVL || {};
 console.log('PVL Video Library loaded (bundled)');
 
 
+// Source: client
+window.toggleSidepane = function(forceOpen) {
+    if (typeof toggleSidebar === 'function') {
+        toggleSidebar(forceOpen);
+    }
+};
+
         </script>
     </body>
     </html>

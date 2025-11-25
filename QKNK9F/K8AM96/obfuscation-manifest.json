@@ -175,10 +175,10 @@
     "videoid"
   ],
   "obfuscation_map": {
-    "theme-music": "a",
-    "category-list": "b",
-    "footer-links": "c",
-    "category-badge": "d",
+    "category-badge": "a",
+    "footer-links": "b",
+    "category-list": "c",
+    "theme-music": "d",
     "modern-footer": "e"
   },
   "stats": {
