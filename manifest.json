@@ -1,14 +1,14 @@
 {
-    "name": "Organized Video Libraries",
-    "short_name": "VideoLib", 
-    "description": "Organized video collections with easy navigation",
+    "name": "Personal Video Libraries",
+    "short_name": "VideoLib",
+    "description": "Organized video collections with easy navigation between libraries",
     "start_url": "/wrapper.html",
     "display": "standalone",
     "background_color": "#ffffff",
     "theme_color": "#1a1a1a",
     "orientation": "any",
     "scope": "/",
-    "categories": ["talkshows", "entertainment", "music", "video", "homeopathy"],
+    "categories": ["talkshows", "entertainment", "music", "video"],
     "icons": [
         {
             "src": "/icons/icon-192.png",
@@ -18,7 +18,7 @@
         },
         {
             "src": "/icons/icon-512.png",
-            "sizes": "512x512", 
+            "sizes": "512x512",
             "type": "image/png",
             "purpose": "any maskable"
         }
