@@ -974,6 +974,13 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+// Source: client
+window.toggleSidepane = function(forceOpen) {
+    if (typeof toggleSidebar === 'function') {
+        toggleSidebar(forceOpen);
+    }
+};
+
         </script><footer class="modern-footer" id="modernFooter"><div class="footer-content"><div class="footer-links"><a href="/privacy_policy.html" target="_blank">Privacy Policy</a><span class="separator">|</span><a href="/cookies_policy.html" target="_blank">Cookie Policy</a><span class="separator">|</span><a href="/terms_of_use.html" target="_blank">Terms Of Use</a><span class="separator">|</span><a href="/dmca_policy.html" target="_blank">DMCA Policy</a><span class="separator">|</span><a href="/thirdparty_attributions.html" target="_blank">Third-Party Credits</a><span class="separator">|</span><a href="/contact_us.html" target="_blank">Contact Us</a><span class="separator">|</span><a href="#" class="disclaimer-link" id="disclaimerLink">Disclaimer</a></div><div class="footer-copyright">
                     © 2024 My Personal Video Library. All rights reserved.
                 </div></div></footer><div class="disclaimer-modal" id="disclaimerModal"><div class="modal-content"><div class="modal-header"><h3>Disclaimer</h3><button class="modal-close" id="modalClose">&times;</button></div><div class="modal-body"><p>This site organizes and distributes embedded video content from platforms such as YouTube and Vimeo for ease of access. We do not host or upload any videos directly, and we are not responsible for the accuracy, legality, or compliance of embedded content. All responsibility for video content lies with the original creators and hosting platforms.</p><p>If you believe that any embedded video on this site infringes your copyright, please notify us in accordance with our <a href="/dmca_policy.html" style="color: var(--primary-color); font-weight: 600;">DMCA Policy</a>. Upon receiving a valid complaint, we will promptly review the claim and, if appropriate, remove the infringing content from our platform.</p><p>We may earn a commission at no extra cost to you from affiliate links displayed on this site.</p></div></div></div></body></html>
