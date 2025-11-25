@@ -727,15 +727,37 @@
                     try {
                         const iframeDoc = this.clientFrame.contentDocument;
                         const hideCSS = `
+                            /* Hide only the main header/branding, not functional elements */
                             .brand-logo-container,
-                            .page-header,
-                            header:not(.app-header),
-                            .header-image,
-                            .site-header,
-                            [class*="header"]:not(.app-header):not(.content-header) {
+                            .page-header > img,
+                            header > img,
+                            .header-banner,
+                            .site-branding {
                                 display: none !important;
                             }
                             
+                            /* Keep all functional elements visible */
+                            .sidebar,
+                            .sidepane,
+                            .navigation,
+                            .categories,
+                            .mobile-clear-btn,
+                            .search-bar,
+                            .video-search,
+                            [class*="search"]:not(.library-search),
+                            .clear-filters-btn {
+                                display: block !important;
+                                visibility: visible !important;
+                            }
+                            
+                            /* Hide footer in app mode */
+                            footer,
+                            .site-footer,
+                            .page-footer {
+                                display: none !important;
+                            }
+                            
+                            /* Adjust content spacing */
                             .content, main, .page-content {
                                 margin-top: 0 !important;
                                 padding-top: 10px !important;
@@ -745,7 +767,7 @@
                         style.textContent = hideCSS;
                         iframeDoc.head.appendChild(style);
                     } catch (error) {
-                        console.log('PWA: Could not hide client UI (cross-origin)');
+                        console.log('PWA: Could not adjust client UI');
                     }
                 });
             }
@@ -755,16 +777,47 @@
                     const iframeDoc = this.clientFrame.contentDocument;
                     const socialContainer = iframeDoc.querySelector('.social-links-container');
                     
-                    if (socialContainer) {
-                        this.socialLinksContainer.innerHTML = socialContainer.innerHTML;
+                    if (socialContainer && socialContainer.querySelector('a')) {
+                        // Clear existing social links
+                        this.socialLinksContainer.innerHTML = '';
                         
-                        // Hide original social links in client
+                        // Recreate each social link with proper attributes
+                        const links = socialContainer.querySelectorAll('a');
+                        links.forEach(link => {
+                            const newLink = document.createElement('a');
+                            newLink.href = link.href;
+                            newLink.innerHTML = link.innerHTML;
+                            newLink.target = '_blank';
+                            newLink.rel = 'noopener noreferrer';
+                            newLink.setAttribute('aria-label', link.getAttribute('aria-label') || 'Social media');
+                            newLink.style.display = 'flex';
+                            newLink.style.alignItems = 'center';
+                            newLink.style.justifyContent = 'center';
+                            newLink.style.width = '40px';
+                            newLink.style.height = '40px';
+                            newLink.style.borderRadius = '50%';
+                            newLink.style.background = '#2d2d2d';
+                            newLink.style.color = 'white';
+                            newLink.style.textDecoration = 'none';
+                            newLink.style.transition = 'background 0.2s';
+                            
+                            newLink.addEventListener('mouseenter', () => {
+                                newLink.style.background = '#3d3d3d';
+                            });
+                            newLink.addEventListener('mouseleave', () => {
+                                newLink.style.background = '#2d2d2d';
+                            });
+                            
+                            this.socialLinksContainer.appendChild(newLink);
+                        });
+                        
+                        // Hide original social links
                         socialContainer.style.display = 'none';
                     } else {
                         this.socialLinksContainer.innerHTML = '';
                     }
                 } catch (error) {
-                    console.log('PWA: Could not extract social links');
+                    console.log('PWA: Could not extract social links', error);
                 }
             }
             
