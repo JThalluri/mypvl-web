@@ -3303,6 +3303,62 @@ window.PVL = window.PVL || {};
     }
   }
 
+  function setupPWAWrapperIntegration() {
+      let currentUrl = window.location.href;
+      
+      // Notify wrapper when navigation happens
+      function notifyNavigation() {
+          if (window.parent !== window) {
+              window.parent.postMessage({
+                  type: 'CONTENT_CHANGED',
+                  source: 'pwa-client',
+                  timestamp: Date.now(),
+                  url: window.location.href
+              }, '*');
+              console.log('PWA: Notified wrapper of content change');
+          }
+      }
+      
+      // Monitor URL changes
+      setInterval(() => {
+          if (window.location.href !== currentUrl) {
+              currentUrl = window.location.href;
+              notifyNavigation();
+          }
+      }, 300);
+      
+      // Monitor pushState/replaceState (for SPA-like navigation)
+      const originalPushState = history.pushState;
+      history.pushState = function() {
+          originalPushState.apply(this, arguments);
+          setTimeout(notifyNavigation, 100);
+      };
+      
+      const originalReplaceState = history.replaceState;
+      history.replaceState = function() {
+          originalReplaceState.apply(this, arguments);
+          setTimeout(notifyNavigation, 100);
+      };
+      
+      // Notify on initial load
+      window.addEventListener('load', () => {
+          setTimeout(notifyNavigation, 500);
+      });
+      
+      console.log('PWA: Navigation monitoring setup complete');
+  }
+
+  // Also add auto-collapse sidepane function here
+  function autoCollapseSidepane() {
+      const isMobile = ns.utils.isMobile();
+      const sidebar = ns.dom.cache.sidebar;
+      
+      if (isMobile && sidebar) {
+          sidebar.classList.add('collapsed');
+          console.log('Auto-collapsed sidebar on mobile');
+      }
+  }
+
   function toggleSidebar(forceOpen) {
     const sidebar = ns.dom.cache.sidebar;
     const overlay = ns.dom.cache.sidebarOverlay;
@@ -3363,7 +3419,9 @@ window.PVL = window.PVL || {};
     initializeVideoClickDelegation();
     initializeSearchBox();
     initializeClearFiltersButtons();
-    initializeSidebarToggle(); // wire sidebar toggle listeners after DOM is cached
+    initializeSidebarToggle(); 
+    setupPWAWrapperIntegration();
+    autoCollapseSidepane();
     console.log('Application initialized');
   }
     
@@ -3458,13 +3516,6 @@ window.PVL = window.PVL || {};
 })(window.PVL = window.PVL || {});
 console.log('PVL Video Library loaded (bundled)');
 
-
-// Source: client
-window.toggleSidepane = function(forceOpen) {
-    if (typeof toggleSidebar === 'function') {
-        toggleSidebar(forceOpen);
-    }
-};
 
         </script>
     </body>

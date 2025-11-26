@@ -192,9 +192,9 @@
     "videoid"
   ],
   "obfuscation_map": {
-    "footer-links": "a",
+    "modern-footer": "a",
     "category-list": "b",
-    "modern-footer": "c"
+    "footer-links": "c"
   },
   "stats": {
     "total_obfuscated": 3,
