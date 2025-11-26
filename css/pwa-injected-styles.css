@@ -1,0 +1,65 @@
+/* pwa-injected-styles.css */
+:root {
+    --header-height: 46px !important;
+}
+
+/* Hide unnecessary elements */
+.brand-logo-container,
+.page-header > img,
+header > img,
+.header-banner,
+.site-branding {
+    display: none !important;
+}
+
+header {
+    height: var(--header-height);
+    justify-content: flex-end!important;
+    align-items: flex-start!important;  
+}
+
+.header-controls {
+    left: 2px!important;
+    bottom: 1px!important;
+    max-width: 99%!important;
+    position: absolute!important;
+    display: flex!important;
+    justify-content: flex-start !important;
+    gap: 2px!important;
+    align-items: flex-start!important;
+}
+
+#clearFiltersBtn{
+    display: none!important;
+}
+
+.search-container {
+    display: flex;
+    justify-items: flex-start!important;
+    align-items: flex-start;
+    gap: 6px!important;
+}
+
+.header-controls #searchBox{
+    max-width: 88%!important;
+    display: flex!important;
+    align-items: flex-start!important;
+} 
+
+#mobileClearFiltersBtn{
+    display: flex!important;
+    width: 36px;
+    height: 36px;
+    border-radius: 25% !important;
+}
+
+@media (max-width: 767px) {
+    .header-controls{
+        align-items: center!important;
+        padding: 2px!important;
+    }
+    .search-container {
+        justify-content:flex-start!important;
+        width: 100%;
+    }
+}
