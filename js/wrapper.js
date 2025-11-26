@@ -1,6 +1,6 @@
 class PWAWrapper {
     constructor() {
-        this.APP_VERSION = '1.2.0'; 
+        this.APP_VERSION = '3.1.0'; 
         this.clientFrame = document.getElementById('clientFrame');
         this.loadingOverlay = document.getElementById('loadingOverlay');
         this.appHeader = document.querySelector('.app-header');
@@ -125,9 +125,8 @@ class PWAWrapper {
     async onFrameLoad() {
         this.hideLoading();
         this.saveRecentLibrary(this.clientFrame.src);
-        
-        // Stagger UI adjustments for better performance
         await this.staggerUIAdjustments();
+        this.setupContentChangeMonitoring();
     }
     
     // In your staggerUIAdjustments method, add small delays between operations
@@ -155,6 +154,34 @@ class PWAWrapper {
         }
     }
 
+    setupContentChangeMonitoring() {
+        let lastUrl = this.clientFrame.src;
+        
+        const checkForUrlChange = () => {
+            try {
+                const currentUrl = this.clientFrame.src;
+                if (currentUrl !== lastUrl) {
+                    console.log('PWA: URL changed, reapplying UI adjustments');
+                    lastUrl = currentUrl;
+                    this.staggerUIAdjustments();
+                }
+            } catch (error) {
+                // Ignore cross-origin errors
+            }
+        };
+        
+        // Check for URL changes every 500ms
+        this.urlCheckInterval = setInterval(checkForUrlChange, 500);
+        
+        // Also listen for navigation events from the iframe
+        window.addEventListener('message', (event) => {
+            if (event.data?.type === 'CONTENT_CHANGED' || event.data?.type === 'PAGE_NAVIGATED') {
+                console.log('PWA: Content change detected via message');
+                setTimeout(() => this.staggerUIAdjustments(), 100);
+            }
+        });
+    } 
+       
     // Helper method to yield to main thread
     yieldToMainThread(ms = 0) {
         return new Promise(resolve => {

@@ -4,6 +4,7 @@
 }
 
 /* Hide unnecessary elements */
+#modernFooter,
 .brand-logo-container,
 .page-header > img,
 header > img,
@@ -53,6 +54,9 @@ header {
     border-radius: 25% !important;
 }
 
+.modern-footer{
+    display: none!important;
+}
 @media (max-width: 767px) {
     .header-controls{
         align-items: center!important;

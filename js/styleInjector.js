@@ -6,9 +6,8 @@ class StyleInjector {
         this.isLoading = false;
     }
 
-    // Main method to inject all PWA styles
     async injectStyles(iframeDoc) {
-        if (this.injected || this.isLoading) return;
+        if (this.isLoading) return;
         
         this.isLoading = true;
         
