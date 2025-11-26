@@ -3,8 +3,29 @@ class UIExtractor {
         this.pwaWrapper = pwaWrapper;
         this.extractionQueue = new Set();
         this.isProcessing = false;
-        this.observerCache = new WeakMap();
+        this.observerCache = new Map();
         this.extractionCache = new Map();
+    }
+
+    cleanup() {
+        console.log('PWA: Cleaning up previous UI extractions');
+        
+        // Clear all observers (now works with Map)
+        this.observerCache.forEach((observer, element) => {
+            observer.disconnect();
+        });
+        this.observerCache.clear();
+        
+        // Clear social links container
+        if (this.pwaWrapper.socialLinksContainer) {
+            this.pwaWrapper.socialLinksContainer.innerHTML = '';
+        }
+        
+        // Clear extraction cache and queue
+        this.extractionCache.clear();
+        this.extractionQueue.clear();
+        
+        console.log('PWA: UI extraction cleanup complete');
     }
 
     // Debounced extraction to avoid multiple rapid calls
@@ -38,10 +59,23 @@ class UIExtractor {
         return new Promise(resolve => {
             requestAnimationFrame(() => {
                 try {
+                    this.cleanup();
                     const mobileClearBtn = iframeDoc.querySelector('.mobile-clear-btn, .clear-filters-btn.mobile-only');
                     
                     if (mobileClearBtn) {
-                        mobileClearBtn.style.display = 'none';
+                        // CHECK: Is button already processed? (has PWA styles and in correct position)
+                        const isAlreadyProcessed = 
+                            mobileClearBtn.style.borderRadius === '50%' && 
+                            mobileClearBtn.closest('.search-container');
+                        
+                        if (isAlreadyProcessed) {
+                            console.log('PWA: Button already processed, skipping extraction');
+                            resolve();
+                            return;
+                        }
+                        
+                        // Only process if button needs extraction
+                        mobileClearBtn.style.display = 'flex';
                         
                         const headerControls = iframeDoc.querySelector('.header-controls');
                         const searchContainer = headerControls?.querySelector('.search-container');
@@ -160,6 +194,7 @@ class UIExtractor {
             childList: false,
             subtree: false
         });
+        this.observerCache.set(clearFiltersBtn, observer);
     }
 
     extractSocialLinks() {
