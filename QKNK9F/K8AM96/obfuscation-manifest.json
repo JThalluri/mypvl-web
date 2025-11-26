@@ -175,11 +175,11 @@
     "videoid"
   ],
   "obfuscation_map": {
-    "category-badge": "a",
-    "footer-links": "b",
-    "category-list": "c",
-    "theme-music": "d",
-    "modern-footer": "e"
+    "modern-footer": "a",
+    "theme-music": "b",
+    "category-badge": "c",
+    "footer-links": "d",
+    "category-list": "e"
   },
   "stats": {
     "total_obfuscated": 5,
