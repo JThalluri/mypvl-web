@@ -778,6 +778,62 @@ window.PVL = window.PVL || {};
     }
   }
 
+  function setupPWAWrapperIntegration() {
+      let currentUrl = window.location.href;
+      
+      // Notify wrapper when navigation happens
+      function notifyNavigation() {
+          if (window.parent !== window) {
+              window.parent.postMessage({
+                  type: 'CONTENT_CHANGED',
+                  source: 'pwa-client',
+                  timestamp: Date.now(),
+                  url: window.location.href
+              }, '*');
+              console.log('PWA: Notified wrapper of content change');
+          }
+      }
+      
+      // Monitor URL changes
+      setInterval(() => {
+          if (window.location.href !== currentUrl) {
+              currentUrl = window.location.href;
+              notifyNavigation();
+          }
+      }, 300);
+      
+      // Monitor pushState/replaceState (for SPA-like navigation)
+      const originalPushState = history.pushState;
+      history.pushState = function() {
+          originalPushState.apply(this, arguments);
+          setTimeout(notifyNavigation, 100);
+      };
+      
+      const originalReplaceState = history.replaceState;
+      history.replaceState = function() {
+          originalReplaceState.apply(this, arguments);
+          setTimeout(notifyNavigation, 100);
+      };
+      
+      // Notify on initial load
+      window.addEventListener('load', () => {
+          setTimeout(notifyNavigation, 500);
+      });
+      
+      console.log('PWA: Navigation monitoring setup complete');
+  }
+
+  // Also add auto-collapse sidepane function here
+  function autoCollapseSidepane() {
+      const isMobile = ns.utils.isMobile();
+      const sidebar = ns.dom.cache.sidebar;
+      
+      if (isMobile && sidebar) {
+          sidebar.classList.add('collapsed');
+          console.log('Auto-collapsed sidebar on mobile');
+      }
+  }
+
   function toggleSidebar(forceOpen) {
     const sidebar = ns.dom.cache.sidebar;
     const overlay = ns.dom.cache.sidebarOverlay;
@@ -838,7 +894,9 @@ window.PVL = window.PVL || {};
     initializeVideoClickDelegation();
     initializeSearchBox();
     initializeClearFiltersButtons();
-    initializeSidebarToggle(); // wire sidebar toggle listeners after DOM is cached
+    initializeSidebarToggle(); 
+    setupPWAWrapperIntegration();
+    autoCollapseSidepane();
     console.log('Application initialized');
   }
     
@@ -973,13 +1031,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
-
-// Source: client
-window.toggleSidepane = function(forceOpen) {
-    if (typeof toggleSidebar === 'function') {
-        toggleSidebar(forceOpen);
-    }
-};
 
         </script><footer class="modern-footer" id="modernFooter"><div class="footer-content"><div class="footer-links"><a href="/privacy_policy.html" target="_blank">Privacy Policy</a><span class="separator">|</span><a href="/cookies_policy.html" target="_blank">Cookie Policy</a><span class="separator">|</span><a href="/terms_of_use.html" target="_blank">Terms Of Use</a><span class="separator">|</span><a href="/dmca_policy.html" target="_blank">DMCA Policy</a><span class="separator">|</span><a href="/thirdparty_attributions.html" target="_blank">Third-Party Credits</a><span class="separator">|</span><a href="/contact_us.html" target="_blank">Contact Us</a><span class="separator">|</span><a href="#" class="disclaimer-link" id="disclaimerLink">Disclaimer</a></div><div class="footer-copyright">
                     © 2024 My Personal Video Library. All rights reserved.
