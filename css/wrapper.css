@@ -227,12 +227,12 @@ body {
 /* Library Search Modal */
 .library-search-modal {
     position: fixed;
-    top: 50%;
+    top: 30%;
     left: 50%;
     transform: translate(-50%, -50%);
     width: 90%;
     max-width: 500px;
-    max-height: 80vh;
+    max-height: 70vh;
     background: white;
     border-radius: 15px;
     z-index: 2001;
@@ -267,6 +267,7 @@ body {
     color: #666;
     cursor: pointer;
     padding: 5px;
+    align-items: center;
 }
 
 .search-input-container {
