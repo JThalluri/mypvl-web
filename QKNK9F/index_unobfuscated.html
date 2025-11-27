@@ -1084,10 +1084,10 @@ button:focus-visible,
         position: fixed;
         top: var(--header-height);
         left: 0;
-        height: calc(100vh - var(--header-height) - 20px);
+        height: calc(100vh - var(--header-height) - 80px);
         z-index: 1000;
         box-shadow: 4px 0 20px rgba(0,0,0,0.5);
-        padding: 12px 10px 20px 10px;
+        padding: 6px 10px 20px 10px;
         max-width: 250px;
     }
     #content {
@@ -1221,7 +1221,7 @@ button:focus-visible,
 
     #searchBox {
         font-size: 12px;
-        height: 20px;
+        height: 36px;
         padding: 5px 6px;
     }
 
@@ -2582,6 +2582,35 @@ window.PVL = window.PVL || {};
     img.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3Crect fill="%23ddd" width="100" height="100"/%3E%3C/svg%3E';
   };
 
+  u.shortcuts = {
+    'Ctrl+KeyF': (e) => {
+      e.preventDefault();
+      ns.dom.cache.searchBox?.focus();
+    },
+    'Ctrl+KeyK': (e) => {
+      e.preventDefault();
+      toggleSidebar();
+    },
+    // Future: 'Space': (e) => { e.preventDefault(); togglePlayPause(); },
+    // Future: 'Ctrl+KeyM': (e) => { e.preventDefault(); toggleMute(); },
+  };
+
+  u.handleShortcut = function(e) {
+    let combo = '';
+    if (e.ctrlKey) combo += 'Ctrl+';
+    if (e.altKey) combo += 'Alt+';
+    if (e.shiftKey) combo += 'Shift+';
+    combo += e.code;
+
+    const action = u.shortcuts[combo];
+    if (action) action(e);
+  };
+
+  u.initializeShortcuts = function() {
+    document.removeEventListener('keydown', u.handleShortcut);
+    document.addEventListener('keydown', u.handleShortcut);
+  };
+
   ns.utils = u;
 })(window.PVL = window.PVL || {});
 /* ===== dom.js ===== */
@@ -3291,7 +3320,7 @@ window.PVL = window.PVL || {};
         chev.style.transform = 'rotate(0deg)';
       });
       ns.categoryManager.updateCategorySelection();
-      if (ns.dom.cache.sidebar) ns.dom.cache.sidebar.classList.remove('collapsed');
+      // if (ns.dom.cache.sidebar) ns.dom.cache.sidebar.classList.remove('collapsed');
       window.applyFilters();
     };
 
@@ -3387,7 +3416,10 @@ window.PVL = window.PVL || {};
   }
 
   function handleKeydown(e) {
-    if (e.key === 'Escape' || e.key === 'Esc') toggleSidebar(false);
+    if (e.key === 'Escape' || e.key === 'Esc') {
+      // toggleSidebar(false);
+      clearFilters();
+    }
   }
 
   function initializeSidebarToggle() {
@@ -3422,6 +3454,7 @@ window.PVL = window.PVL || {};
     initializeSidebarToggle(); 
     setupPWAWrapperIntegration();
     autoCollapseSidepane();
+    ns.utils.initializeShortcuts();
     console.log('Application initialized');
   }
     
@@ -3517,6 +3550,45 @@ window.PVL = window.PVL || {};
 console.log('PVL Video Library loaded (bundled)');
 
 
+// Source: template
+// Mobile Deep Link Handler - Add this to every client's index.html
+(function() {
+    // Only redirect on mobile devices
+    const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+    
+    if (!isMobile) {
+        return; // Desktop users stay on responsive site
+    }
+    
+    // Check if we're already in the wrapper or this is a direct app open
+    const isInWrapper = window.location.search.includes('wrapper=true') || 
+                       window.parent !== window; // In iframe
+    
+    if (isInWrapper) {
+        return; // Already in wrapper, don't redirect
+    }
+    
+    // Extract library ID from current path
+    const path = window.location.pathname;
+    let libraryId = null;
+    
+    // Pattern: /QKNK9F/index.html → QKNK9F
+    if (path.match(/\/[A-Z0-9]{6}\/index\.html$/)) {
+        libraryId = path.split('/')[1];
+    }
+    // Pattern: /QKNK9F/BT9R66/index.html → BT9R66  
+    else if (path.match(/\/[A-Z0-9]{6}\/[A-Z0-9]{6}\/index\.html$/)) {
+        const parts = path.split('/').filter(part => part.length === 6);
+        libraryId = parts[1]; // Get the subclient ID
+    }
+    
+    if (libraryId) {
+        // Redirect to wrapper with deep link
+        const wrapperUrl = `${window.location.origin}/wrapper.html?library=@${libraryId}&source=deeplink`;
+        console.log(`PWA: Mobile redirect to ${wrapperUrl}`);
+        window.location.href = wrapperUrl;
+    }
+})();
         </script>
     </body>
     </html>
