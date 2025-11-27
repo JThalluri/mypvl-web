@@ -104,6 +104,7 @@
     "0y5QB3Lax-0",
     "205K1K-ruM0",
     "4MxeBiRPsqc",
+    "7VZt7gOyDrI",
     "9mx8frWdPFk",
     "IJkF76eNrzc",
     "Lp2wiDZL6LA",
@@ -160,11 +161,11 @@
     "videoid"
   ],
   "obfuscation_map": {
-    "sidebar-collapsed": "a",
-    "category-list": "b"
+    "category-list": "a",
+    "sidebar-collapsed": "b"
   },
   "stats": {
     "total_obfuscated": 2,
-    "total_preserved": 144
+    "total_preserved": 145
   }
 }
