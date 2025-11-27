@@ -1,10 +1,6 @@
 class PWAWrapper {
     constructor() {
         this.APP_VERSION = '3.1.0'; 
-
-        const urlParams = new URLSearchParams(window.location.search);
-        this.initialLibrary = urlParams.get('library');
-
         this.clientFrame = document.getElementById('clientFrame');
         this.loadingOverlay = document.getElementById('loadingOverlay');
         this.appHeader = document.querySelector('.app-header');
@@ -418,48 +414,12 @@ class PWAWrapper {
         }
     }
     
-    normalizeLibraryUrl(url) {
-        // Extract library name from both formats:
-        // /@library → library
-        // /CLIENT/index.html → CLIENT
-        const urlObj = new URL(url);
-        const path = urlObj.pathname;
-        
-        // Handle /@library format
-        const cleanMatch = path.match(/^\/@([a-zA-Z0-9]+)/);
-        if (cleanMatch) {
-            return cleanMatch[1];
-        }
-        
-        // Handle legacy /CLIENT/index.html format  
-        const legacyMatch = path.match(/\/([A-Z0-9]+)\/index\.html$/);
-        if (legacyMatch) {
-            return legacyMatch[1];
-        }
-        
-        // Handle direct /CLIENT/ format
-        const directMatch = path.match(/\/([A-Z0-9]+)\/?$/);
-        if (directMatch) {
-            return directMatch[1];
-        }
-        
-        return null;
-    }
-
+    // Client loading and state management
     loadClient(url) {
         this.showLoading();
-        
-        // Normalize URL to extract library name
-        const libraryName = this.normalizeLibraryUrl(url);
-        if (libraryName) {
-            // Load using clean internal format
-            this.clientFrame.src = `/${libraryName}/index.html`;
-        } else {
-            // Fallback to direct URL
-            this.clientFrame.src = url;
-        }
+        this.clientFrame.src = url;
     }
-
+    
     showLoading() {
         this.loadingOverlay.style.display = 'flex';
     }
@@ -501,30 +461,17 @@ class PWAWrapper {
         }
     }
     
-    // loadRecentLibrary() {
-    //     try {
-    //         const recent = JSON.parse(localStorage.getItem('pwa_recent_libraries') || '[]');
-    //         if (recent.length > 0) {
-    //             this.clientFrame.src = recent[0];
-    //         }
-    //     } catch (error) {
-    //         console.log('PWA: Could not load recent library', error);
-    //     }
-    // }
-
     loadRecentLibrary() {
         try {
             const recent = JSON.parse(localStorage.getItem('pwa_recent_libraries') || '[]');
-            // Use URL parameter library if present, otherwise recent
-            const libraryToLoad = this.initialLibrary || (recent.length > 0 ? recent[0] : null);
-            if (libraryToLoad) {
-                this.clientFrame.src = `/${libraryToLoad}/index.html`;
+            if (recent.length > 0) {
+                this.clientFrame.src = recent[0];
             }
         } catch (error) {
             console.log('PWA: Could not load recent library', error);
         }
     }
-    
+
     detectPerformanceMode() {
         const isLowEndDevice = 
             navigator.hardwareConcurrency <= 4 ||
