@@ -1,7 +1,7 @@
 {
-    "name": "Personal Video Libraries",
-    "short_name": "VideoLib",
-    "description": "Organized video collections with easy navigation between libraries",
+    "name": "My Personal Video Library",
+    "short_name": "My PVL",
+    "description": "Curated video libraries made simple — discover, create, and share across platforms",
     "start_url": "/wrapper.html",
     "display": "standalone",
     "background_color": "#ffffff",

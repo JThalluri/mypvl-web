@@ -336,6 +336,28 @@ body {
     font-size: 1.1rem;
 }
 
+/* Fix for non-clickable search result items */
+.search-result-item.no-results {
+    opacity: 0.6;
+    cursor: default !important;
+    pointer-events: none;
+}
+
+.search-result-item.no-results:hover {
+    background: transparent !important;
+}
+
+/* Ensure only valid items are clickable */
+.search-result-item:not([data-path]) {
+    cursor: default !important;
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+.search-result-item:not([data-path]):hover {
+    background: transparent !important;
+}
+
 /* App Menu Modal */
 .app-menu-modal {
     position: fixed;

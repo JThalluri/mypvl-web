@@ -1,6 +1,6 @@
 class PWAWrapper {
     constructor() {
-        this.APP_VERSION = '3.1.0'; 
+        this.APP_VERSION = '3.2.0'; 
         this.clientFrame = document.getElementById('clientFrame');
         this.loadingOverlay = document.getElementById('loadingOverlay');
         this.appHeader = document.querySelector('.app-header');
@@ -39,6 +39,12 @@ class PWAWrapper {
         this.performanceMode = this.detectPerformanceMode();
         this.isBackground = false;        
 
+        // Enhanced error recovery variables
+        this.maxRetries = 3;
+        this.retryCount = 0;
+        this.isRecovering = false;
+        this.currentLibraryId = null;
+
         this.init();
     }
     
@@ -59,7 +65,326 @@ class PWAWrapper {
         
         this.isInitialized = true;
     }
-    
+
+    // NEW: Enhanced initial load handling with URL normalization
+    async handleInitialLoad() {
+        // Check for deep link parameters first
+        const urlParams = new URLSearchParams(window.location.search);
+        const libraryParam = urlParams.get('library');
+        
+        if (libraryParam && libraryParam.startsWith('@')) {
+            // Deep link from mobile redirect
+            const libraryId = libraryParam.substring(1);
+            console.log(`PWA: Loading from deep link - ${libraryId}`);
+            await this.loadClient(`/@${libraryId}`);
+        } else if (window.location.pathname.startsWith('/@')) {
+            // Direct clean URL access
+            const libraryId = window.location.pathname.substring(2);
+            await this.loadClient(`/@${libraryId}`);
+        } else {
+            // Normal app launch
+            this.loadRecentLibrary();
+        }
+    }
+
+    // ENHANCED: Loading with improved error detection and success timeout
+    async loadWithRecovery(url, retryCount = 0) {
+        return new Promise((resolve, reject) => {
+            const cleanup = () => {
+                this.clientFrame.onload = null;
+                this.clientFrame.onerror = null;
+                if (this.successTimeout) {
+                    clearTimeout(this.successTimeout);
+                }
+            };
+
+            const success = () => {
+                cleanup();
+                this.retryCount = 0;
+                this.isRecovering = false;
+                
+                // Update URL to clean format if applicable
+                this.updateUrlForSharing(url);
+                resolve();
+            };
+
+            const failure = (error) => {
+                cleanup();
+                reject(error);
+            };
+
+            // Setup success timeout (page is OK if no errors detected within 3 seconds)
+            const setupSuccessTimeout = () => {
+                return new Promise((resolve) => {
+                    this.successTimeout = setTimeout(() => {
+                        console.log('PWA: Success timeout - page loaded without errors');
+                        resolve(true);
+                    }, 3000);
+                });
+            };
+
+            this.clientFrame.onload = async () => {
+                const successPromise = setupSuccessTimeout();
+                
+                // Check for errors after content has settled
+                setTimeout(async () => {
+                    const timedOut = await successPromise;
+                    
+                    if (!timedOut && this.isErrorPage()) {
+                        if (retryCount < this.maxRetries) {
+                            console.log(`PWA: Error page detected, retry ${retryCount + 1}`);
+                            this.clearCacheForUrl(url);
+                            setTimeout(() => {
+                                this.loadWithRecovery(this.addCacheBuster(url), retryCount + 1)
+                                    .then(success)
+                                    .catch(failure);
+                            }, 1000 * (retryCount + 1));
+                        } else {
+                            failure(new Error('Max retries reached - error page persists'));
+                        }
+                    } else {
+                        // Clear the success timeout since we're successful
+                        if (this.successTimeout) {
+                            clearTimeout(this.successTimeout);
+                        }
+                        success();
+                    }
+                }, 800); // Increased delay to ensure content is fully initialized
+            };
+
+            this.clientFrame.onerror = () => {
+                if (retryCount < this.maxRetries) {
+                    console.log(`PWA: Frame load error, retry ${retryCount + 1}`);
+                    this.clearCacheForUrl(url);
+                    setTimeout(() => {
+                        this.loadWithRecovery(this.addCacheBuster(url), retryCount + 1)
+                            .then(success)
+                            .catch(failure);
+                    }, 1000 * (retryCount + 1));
+                } else {
+                    failure(new Error('Max retries reached - frame load failed'));
+                }
+            };
+
+            // Handle URL normalization before loading
+            const normalizedUrl = this.normalizeUrlForLoading(url);
+            this.clientFrame.src = normalizedUrl;
+        });
+    }
+
+    // NEW: URL normalization for loading
+    normalizeUrlForLoading(url) {
+        // Handle clean URLs (@library format)
+        if (url.startsWith('/@')) {
+            const libraryId = url.substring(2);
+            const library = this.search.getLibraryById(libraryId);
+            if (library) {
+                this.currentLibraryId = libraryId;
+                return library.path; // Convert to actual path
+            }
+        }
+        
+        // Handle legacy URLs - extract library ID for tracking
+        const library = this.search.getLibraryByPath(new URL(url, window.location.origin).pathname);
+        if (library) {
+            this.currentLibraryId = library.id;
+        }
+        
+        return url;
+    }
+
+    // NEW: Update URL for clean sharing
+    updateUrlForSharing(url) {
+        if (this.currentLibraryId) {
+            const cleanUrl = `/@${this.currentLibraryId}`;
+            window.history.replaceState(null, '', cleanUrl);
+            this.saveRecentLibrary(cleanUrl);
+            
+            // Show app install prompt for Android users coming from deep links
+            this.checkAppInstallPrompt();
+        } else {
+            // Fallback to original URL
+            this.saveRecentLibrary(url);
+        }
+    }
+
+    // NEW: Cache busting for library content
+    addCacheBuster(url) {
+        if (this.isLibraryUrl(url)) {
+            const separator = url.includes('?') ? '&' : '?';
+            return `${url}${separator}_t=${Date.now()}`;
+        }
+        return url;
+    }
+
+    isLibraryUrl(url) {
+        return url.includes('/QKNK9F/') || 
+            url.includes('/ABDC1F/') ||
+            url.match(/\/[A-Z0-9]{6}\//) ||
+            url.startsWith('/@');
+    }
+
+    isErrorPage() {
+        try {
+            const iframeDoc = this.clientFrame.contentDocument || 
+                            this.clientFrame.contentWindow.document;
+            const content = iframeDoc.body.innerHTML;
+            const title = iframeDoc.title.toLowerCase();
+            
+            // Check for SUCCESS indicators first (positive validation)
+            const successIndicators = [
+                'pvl video library',
+                'video library', 
+                'music video',
+                'youtube api ready',
+                'application initialized'
+            ];
+            
+            // If we see success indicators, it's definitely NOT an error
+            const hasSuccessContent = successIndicators.some(indicator => 
+                content.toLowerCase().includes(indicator) || title.includes(indicator)
+            );
+            
+            if (hasSuccessContent) {
+                return false; // Definitely not an error
+            }
+            
+            // Only then check for error indicators
+            const errorIndicators = [
+                '404',
+                'error',
+                'not found',
+                'page not found', 
+                'failed to load',
+                'this page isn\'t working',
+                'cannot load',
+                'failed to fetch'
+            ];
+            
+            const hasErrorContent = errorIndicators.some(indicator => 
+                content.toLowerCase().includes(indicator) || title.includes(indicator)
+            );
+            
+            // Also check for very little content (potential error)
+            const hasVeryLittleContent = iframeDoc.body.textContent.trim().length < 50;
+            
+            return hasErrorContent || hasVeryLittleContent;
+        } catch (e) {
+            // Cross-origin restriction, assume it's OK
+            console.log('PWA: Cannot access iframe content (cross-origin), assuming successful load');
+            return false;
+        }
+    }
+
+    // NEW: Success timeout to prevent false error detection
+    setupSuccessTimeout() {
+        return new Promise((resolve) => {
+            this.successTimeout = setTimeout(() => {
+                console.log('PWA: Success timeout - page loaded without errors');
+                resolve(true);
+            }, 3000); // If no errors detected within 3 seconds, assume success
+        });
+    }    
+
+    // NEW: Critical error handling
+    async handleCriticalError(failedUrl) {
+        this.isRecovering = true;
+        this.hideLoading();
+        
+        // Clear all related caches
+        await this.clearCacheForUrl(failedUrl);
+        
+        // Show user-friendly error
+        this.showErrorModal(
+            'Trouble loading this library. ' +
+            'We\'re switching to your recent library instead.'
+        );
+        
+        // Fallback to recent library after delay
+        setTimeout(async () => {
+            try {
+                await this.loadRecentLibrary();
+                this.isRecovering = false;
+            } catch (fallbackError) {
+                console.error('PWA: Fallback also failed', fallbackError);
+                this.showErrorModal(
+                    'We\'re having trouble loading content. ' +
+                    'Please check your connection or try the reset option.'
+                );
+            }
+        }, 2000);
+    }
+
+    // NEW: Clear cache for specific URL
+    async clearCacheForUrl(url) {
+        try {
+            if ('caches' in window) {
+                const cacheNames = await caches.keys();
+                for (const key of cacheNames) {
+                    const cache = await caches.open(key);
+                    const requests = await cache.keys();
+                    for (const request of requests) {
+                        if (request.url.includes(url.split('?')[0])) { // Ignore query params
+                            await cache.delete(request);
+                            console.log('PWA: Cleared cache for', request.url);
+                        }
+                    }
+                }
+            }
+        } catch (error) {
+            console.log('PWA: Cache clearing failed', error);
+        }
+    }
+
+    // NEW: App install prompt for Android
+    checkAppInstallPrompt() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const source = urlParams.get('source');
+        
+        const isDeepLink = source === 'deeplink';
+        const isAndroid = /Android/.test(navigator.userAgent);
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+        
+        if (isDeepLink && isAndroid && !isStandalone) {
+            // This is a deep link opened in browser on Android
+            // Show install prompt after a delay
+            setTimeout(() => {
+                this.showAppInstallPrompt();
+            }, 3000);
+        }
+    }
+
+    // NEW: App install prompt
+    showAppInstallPrompt() {
+        if (confirm('Get the full app experience from Play Store?')) {
+            // Redirect to Play Store when available
+            // For now, just inform the user
+            alert('App coming soon to Play Store!');
+        }
+    }
+
+    // NEW: Error modal
+    showErrorModal(message) {
+        // Remove existing modals
+        document.querySelectorAll('.pwa-error-modal').forEach(modal => modal.remove());
+        
+        const modal = document.createElement('div');
+        modal.className = 'pwa-error-modal';
+        modal.style.cssText = `
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 10000; max-width: 300px; text-align: center; border-left: 4px solid #ff4444;
+        `;
+        modal.innerHTML = `
+            <h3 style="margin: 0 0 10px 0; color: #333;">Oops!</h3>
+            <p style="margin: 0 0 15px 0; color: #666; line-height: 1.4;">${message}</p>
+            <button onclick="this.closest('.pwa-error-modal').remove()" 
+                    style="background: #007bff; color: white; border: none; padding: 8px 16px; 
+                        border-radius: 4px; cursor: pointer;">OK</button>
+        `;
+        document.body.appendChild(modal);
+    }
+
     async loadCriticalResources() {
         // Load search functionality (needed for recent libraries)
         this.search = new LibrarySearch();
@@ -67,8 +392,8 @@ class PWAWrapper {
         // Initialize basic event listeners
         this.setupCriticalEventListeners();
         
-        // Load recent library immediately
-        this.loadRecentLibrary();
+        // Load initial content based on URL or recent library
+        await this.handleInitialLoad();
     }
     
     deferNonCriticalInit() {
@@ -328,7 +653,8 @@ class PWAWrapper {
     
     displayLibrarySearchResults(results) {
         if (results.length === 0) {
-            this.librarySearchResults.innerHTML = '<div class="search-result-item">No libraries found</div>';
+            // FIX: Make non-clickable and add proper styling
+            this.librarySearchResults.innerHTML = '<div class="search-result-item no-results">No libraries found</div>';
         } else {
             this.librarySearchResults.innerHTML = results.map(lib => `
                 <div class="search-result-item" data-path="${lib.path}">
@@ -337,7 +663,8 @@ class PWAWrapper {
                 </div>
             `).join('');
             
-            this.librarySearchResults.querySelectorAll('.search-result-item').forEach(item => {
+            // FIX: Only add click listeners to valid library items
+            this.librarySearchResults.querySelectorAll('.search-result-item[data-path]').forEach(item => {
                 item.addEventListener('click', () => {
                     const path = item.getAttribute('data-path');
                     this.loadClient(path);
@@ -350,22 +677,32 @@ class PWAWrapper {
     updateRecentLibraries() {
         try {
             const recent = JSON.parse(localStorage.getItem('pwa_recent_libraries') || '[]');
-            const recentHtml = recent.slice(0, 3).map(path => {
+            const validRecentLibraries = recent.slice(0, 3).filter(path => {
                 const library = this.search.getLibraryByPath(path);
-                return library ? `
-                    <div class="search-result-item" data-path="${library.path}">
-                        <div class="search-result-name">${library.name}</div>
-                        <div class="search-result-desc">${library.description}</div>
-                    </div>
-                ` : '';
-            }).join('');
+                return library !== null && library !== undefined;
+            });
+            
+            let recentHtml = '';
+            
+            if (validRecentLibraries.length > 0) {
+                recentHtml = validRecentLibraries.map(path => {
+                    const library = this.search.getLibraryByPath(path);
+                    return library ? `
+                        <div class="search-result-item" data-path="${library.path}">
+                            <div class="search-result-name">${library.name}</div>
+                            <div class="search-result-desc">${library.description}</div>
+                        </div>
+                    ` : '';
+                }).join('');
+            }
             
             this.recentLibraries.innerHTML = recentHtml ? `
                 <h3>Recently Viewed</h3>
                 ${recentHtml}
-            ` : '<div class="search-result-item">No recent libraries</div>';
+            ` : '<div class="search-result-item no-results">No recent libraries</div>';
             
-            this.recentLibraries.querySelectorAll('.search-result-item').forEach(item => {
+            // FIX: Only add click listeners to valid library items with data-path
+            this.recentLibraries.querySelectorAll('.search-result-item[data-path]').forEach(item => {
                 item.addEventListener('click', () => {
                     const path = item.getAttribute('data-path');
                     this.loadClient(path);
@@ -374,9 +711,9 @@ class PWAWrapper {
             });
         } catch (error) {
             console.log('PWA: Could not load recent libraries', error);
-            this.recentLibraries.innerHTML = '<div class="search-result-item">Error loading recent libraries</div>';
+            this.recentLibraries.innerHTML = '<div class="search-result-item no-results">Error loading recent libraries</div>';
         }
-    }
+    }    
     
     // App Menu functionality
     showAppMenu() {
@@ -415,9 +752,22 @@ class PWAWrapper {
     }
     
     // Client loading and state management
-    loadClient(url) {
+    async loadClient(url) {
+        if (this.isRecovering) {
+            console.log('PWA: Recovery in progress, skipping load');
+            return;
+        }
+        
         this.showLoading();
-        this.clientFrame.src = url;
+        this.retryCount = 0;
+        
+        try {
+            await this.loadWithRecovery(url);
+            this.hideLoading();
+        } catch (error) {
+            console.error('PWA: All recovery attempts failed', error);
+            await this.handleCriticalError(url);
+        }
     }
     
     showLoading() {
@@ -429,21 +779,30 @@ class PWAWrapper {
     }
     
     async shareCurrentLibrary() {
+        let shareUrl;
         const currentUrl = this.clientFrame.src;
+        
+        // Try to get clean URL for sharing
         const library = this.search.getLibraryByPath(new URL(currentUrl).pathname);
+        if (library) {
+            shareUrl = `${window.location.origin}/@${library.id}`;
+        } else {
+            shareUrl = currentUrl;
+        }
+        
         const libraryName = library ? library.name : 'Music Video Library';
         
         const shareData = {
             title: `Music Video Library - ${libraryName}`,
             text: 'Check out this amazing music video collection!',
-            url: currentUrl,
+            url: shareUrl, // Use clean URL for sharing
         };
         
         try {
             if (navigator.share) {
                 await navigator.share(shareData);
             } else {
-                await navigator.clipboard.writeText(currentUrl);
+                await navigator.clipboard.writeText(shareUrl);
                 alert('Library URL copied to clipboard!');
             }
         } catch (error) {
@@ -662,9 +1021,8 @@ class PWAWrapper {
     }
 }
 
-// Initialize PWA when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    new PWAWrapper();
+    window.pwaWrapper = new PWAWrapper(); 
 });
 
 // Register service worker
