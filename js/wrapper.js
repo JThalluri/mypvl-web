@@ -1,6 +1,10 @@
 class PWAWrapper {
     constructor() {
         this.APP_VERSION = '3.1.0'; 
+
+        const urlParams = new URLSearchParams(window.location.search);
+        this.initialLibrary = urlParams.get('library');
+
         this.clientFrame = document.getElementById('clientFrame');
         this.loadingOverlay = document.getElementById('loadingOverlay');
         this.appHeader = document.querySelector('.app-header');
@@ -455,7 +459,7 @@ class PWAWrapper {
             this.clientFrame.src = url;
         }
     }
-        
+
     showLoading() {
         this.loadingOverlay.style.display = 'flex';
     }
@@ -497,17 +501,30 @@ class PWAWrapper {
         }
     }
     
+    // loadRecentLibrary() {
+    //     try {
+    //         const recent = JSON.parse(localStorage.getItem('pwa_recent_libraries') || '[]');
+    //         if (recent.length > 0) {
+    //             this.clientFrame.src = recent[0];
+    //         }
+    //     } catch (error) {
+    //         console.log('PWA: Could not load recent library', error);
+    //     }
+    // }
+
     loadRecentLibrary() {
         try {
             const recent = JSON.parse(localStorage.getItem('pwa_recent_libraries') || '[]');
-            if (recent.length > 0) {
-                this.clientFrame.src = recent[0];
+            // Use URL parameter library if present, otherwise recent
+            const libraryToLoad = this.initialLibrary || (recent.length > 0 ? recent[0] : null);
+            if (libraryToLoad) {
+                this.clientFrame.src = `/${libraryToLoad}/index.html`;
             }
         } catch (error) {
             console.log('PWA: Could not load recent library', error);
         }
     }
-
+    
     detectPerformanceMode() {
         const isLowEndDevice = 
             navigator.hardwareConcurrency <= 4 ||
