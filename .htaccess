@@ -1,0 +1,11 @@
+RewriteEngine On
+
+# Redirect legacy /CLIENT/index.html to /@CLIENT (permanent)
+RewriteRule ^([A-Z0-9]+)/index\.html$ /@$1 [R=301,L]
+
+# Redirect legacy /CLIENT/ to /@CLIENT (permanent)  
+RewriteRule ^([A-Z0-9]+)/?$ /@$1 [R=301,L]
+
+# Map clean URLs /@library to actual library paths
+RewriteRule ^@([a-zA-Z0-9]+)$ /$1/index.html [L]
+RewriteRule ^@([a-zA-Z0-9]+)/$ /$1/index.html [L]

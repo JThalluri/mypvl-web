@@ -414,12 +414,48 @@ class PWAWrapper {
         }
     }
     
-    // Client loading and state management
+    normalizeLibraryUrl(url) {
+        // Extract library name from both formats:
+        // /@library → library
+        // /CLIENT/index.html → CLIENT
+        const urlObj = new URL(url);
+        const path = urlObj.pathname;
+        
+        // Handle /@library format
+        const cleanMatch = path.match(/^\/@([a-zA-Z0-9]+)/);
+        if (cleanMatch) {
+            return cleanMatch[1];
+        }
+        
+        // Handle legacy /CLIENT/index.html format  
+        const legacyMatch = path.match(/\/([A-Z0-9]+)\/index\.html$/);
+        if (legacyMatch) {
+            return legacyMatch[1];
+        }
+        
+        // Handle direct /CLIENT/ format
+        const directMatch = path.match(/\/([A-Z0-9]+)\/?$/);
+        if (directMatch) {
+            return directMatch[1];
+        }
+        
+        return null;
+    }
+
     loadClient(url) {
         this.showLoading();
-        this.clientFrame.src = url;
+        
+        // Normalize URL to extract library name
+        const libraryName = this.normalizeLibraryUrl(url);
+        if (libraryName) {
+            // Load using clean internal format
+            this.clientFrame.src = `/${libraryName}/index.html`;
+        } else {
+            // Fallback to direct URL
+            this.clientFrame.src = url;
+        }
     }
-    
+        
     showLoading() {
         this.loadingOverlay.style.display = 'flex';
     }
