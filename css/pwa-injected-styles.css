@@ -1,6 +1,6 @@
 /* pwa-injected-styles.css */
 :root {
-    --header-height: 46px !important;
+    --header-height: 30px !important;
 }
 
 /* Hide unnecessary elements */
@@ -15,19 +15,27 @@ header > img,
 
 header {
     height: var(--header-height);
-    justify-content: flex-end!important;
-    align-items: flex-start!important;  
+    justify-content: center!important;
+    align-items: flex-start!important;
+    background-color: #202020 !important;
 }
 
 .header-controls {
-    left: 2px!important;
     bottom: 1px!important;
-    max-width: 99%!important;
+    max-width: 98%!important;
     position: absolute!important;
     display: flex!important;
-    justify-content: flex-start !important;
-    gap: 2px!important;
+    justify-content: center !important;
+    gap: 4px!important;
     align-items: flex-start!important;
+}
+
+#toggleBtn{
+    height: 24px!important;
+    width: 24px!important;
+    padding: 2px!important;
+    border: none!important;
+    min-height: 24px!important;
 }
 
 #clearFiltersBtn{
@@ -37,30 +45,36 @@ header {
 .search-container {
     display: flex;
     justify-items: flex-start!important;
-    align-items: flex-start;
-    gap: 6px!important;
+    align-items: center;
+    gap: 4px!important;
 }
 
 .header-controls #searchBox{
     max-width: 88%!important;
     display: flex!important;
+    height: 24px!important;
+    border-radius: 12px!important;
     align-items: flex-start!important;
+    border: none!important;
 } 
 
 #mobileClearFiltersBtn{
     display: flex!important;
     width: 36px;
-    height: 36px;
-    border-radius: 25% !important;
+    height: 24px;
+    border-radius: 12px !important;
 }
 
 .modern-footer{
     display: none!important;
 }
+
 @media (max-width: 767px) {
+
     .header-controls{
         align-items: center!important;
         padding: 2px!important;
+        min-height: 28px!important;
     }
     .search-container {
         justify-content:flex-start!important;
