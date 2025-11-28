@@ -2540,59 +2540,54 @@ button:focus-visible,
         </div>
         <script>
             // Source: template
-// Enhanced Mobile Deep Link Handler - Add to every client's index.html
+// Aggressive Mobile Redirect with Stronger Guards
 (function() {
-    // Only redirect on mobile devices
-    const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+    console.log('PWA: MOBILE REDIRECT SCRIPT EXECUTING');
     
+    // Only redirect mobile devices
+    const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
     if (!isMobile) {
-        return; // Desktop users stay on responsive site
+        console.log('PWA: Not mobile, skipping redirect');
+        return;
     }
     
-    // Check if we're already in the wrapper or this is a direct app open
+    // STRONGER: Never redirect if we're in wrapper context
     const isInWrapper = window.location.search.includes('wrapper=true') || 
-                       window.parent !== window; // In iframe
+                       window.parent !== window ||
+                       window.location.pathname.includes('wrapper.html');
     
     if (isInWrapper) {
-        return; // Already in wrapper, don't redirect
+        console.log('PWA: Already in wrapper context, skipping redirect');
+        return;
     }
     
-    // Extract library ID from current path for ALL URL formats
+    // STRONGER: Check if we just came from a redirect
+    if (sessionStorage.getItem('pwa_redirect_attempt')) {
+        console.log('PWA: Redirect already attempted, stopping loop');
+        sessionStorage.removeItem('pwa_redirect_attempt');
+        return;
+    }
+    
     const path = window.location.pathname;
+    console.log('PWA: Current path:', path);
+    
+    // Extract library ID
     let libraryId = null;
-    
-    console.log('PWA: Mobile detection analyzing path:', path);
-    
-    // Format 1: /QKNK9F/index.html → QKNK9F
-    if (path.match(/^\/([A-Z0-9]{6})\/index\.html$/)) {
-        libraryId = path.split('/')[1];
-        console.log('PWA: Detected format 1, libraryId:', libraryId);
-    }
-    // Format 2: /QKNK9F/ → QKNK9F  
-    else if (path.match(/^\/([A-Z0-9]{6})\/$/)) {
-        libraryId = path.split('/')[1];
-        console.log('PWA: Detected format 2, libraryId:', libraryId);
-    }
-    // Format 3: /QKNK9F/BT9R66/index.html → BT9R66
-    else if (path.match(/^\/([A-Z0-9]{6})\/([A-Z0-9]{6})\/index\.html$/)) {
-        const parts = path.split('/').filter(part => part.length === 6);
-        libraryId = parts[1]; // Get the subclient ID
-        console.log('PWA: Detected format 3, libraryId:', libraryId);
-    }
-    // Format 4: /QKNK9F/BT9R66/ → BT9R66
-    else if (path.match(/^\/([A-Z0-9]{6})\/([A-Z0-9]{6})\/$/)) {
-        const parts = path.split('/').filter(part => part.length === 6);
-        libraryId = parts[1]; // Get the subclient ID
-        console.log('PWA: Detected format 4, libraryId:', libraryId);
+    const pathParts = path.split('/').filter(p => p.length === 6);
+    if (pathParts.length > 0) {
+        libraryId = pathParts[pathParts.length - 1];
     }
     
     if (libraryId) {
-        // FIX: Redirect to wrapper.html with query parameter instead of clean URL
-        const wrapperUrl = `${window.location.origin}/wrapper.html?library=@${libraryId}&source=deeplink`;
-        console.log(`PWA: Mobile redirect to wrapper: ${wrapperUrl}`);
-        window.location.href = wrapperUrl;
+        console.log('PWA: Redirecting to wrapper with library:', libraryId);
+        
+        // Mark that we're attempting redirect
+        sessionStorage.setItem('pwa_redirect_attempt', 'true');
+        
+        // Use replace to prevent back button issues
+        window.location.replace('/wrapper.html?library=@' + libraryId + '&source=mobile_redirect');
     } else {
-        console.log('PWA: No library ID detected in path:', path);
+        console.log('PWA: No library ID found in path');
     }
 })();
 // Source: template
