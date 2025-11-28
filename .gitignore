@@ -3,3 +3,7 @@
 *.keystore
 *.jks
 SHA-256_fingerprint.txt
+# Ignore Android build artifacts for android-app
+android-app/.gradle/
+android-app/**/build/
+android-app/app/build/
