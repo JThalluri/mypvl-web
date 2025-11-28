@@ -167,16 +167,34 @@ body {
     font-size: 22px;
 }
 
+.menu-item.emergency-reset {
+    color: #ff4444;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.menu-item.emergency-reset:hover {
+    background: #3d3d3d;
+    color: #ff6666;
+}
+
 .library-display {
     flex: 1;
     text-align: center;
     padding: 0 15px;
     color: white;
-    font-size: 14px;
-    font-weight: 500;
+    font-size: 16px;
+    font-weight: 600;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+
+    background: #2d2d2d; /* Added background */
+    border-radius: 20px; /* Rounded corners */
+    margin: 0 10px;
+    padding: 8px 15px;
+    border: 1px solid #404040; /* Subtle border */    
 }
 
 .library-name {
@@ -350,13 +368,15 @@ body {
     bottom: 0;
     left: 0;
     right: 0;
-    background: white;
+    background: rgb(49, 49, 49); /* Match library search background */
     border-radius: 20px 20px 0 0;
     z-index: 2001;
     display: none;
     animation: slideUp 0.3s ease;
     max-height: 80vh;
     overflow-y: auto;
+    border: 1px solid #5e5e5e; /* Add border like library search */
+    border-bottom: none; /* Remove bottom border for bottom sheet */
 }
 
 .app-menu-modal.active {
@@ -364,11 +384,17 @@ body {
 }
 
 .menu-header {
-    padding: 20px;
-    border-bottom: 1px solid #eee;
+    padding: 16px 20px 12px 20px; /* Adjusted padding to match library search */
+    border-bottom: 1px solid #5e5e5e; /* Match library search border color */
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.menu-header h2 {
+    margin: 0;
+    color: #dddddd; /* Match library search text color */
+    font-size: 1.2rem; /* Match library search font size */
 }
 
 .menu-content {
@@ -381,19 +407,22 @@ body {
 
 .menu-section h3 {
     margin: 15px 0 10px;
-    color: #666;
+    color: #aaaaaa; /* Lighter gray for section headers */
     font-size: 0.9rem;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    font-weight: 600;
 }
 
 .menu-item {
     display: block;
     padding: 12px 0;
-    color: #1a1a1a;
+    color: #dddddd; /* Match library search text color */
     text-decoration: none;
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid #434343; /* Match library search item borders */
     transition: background 0.2s;
+    cursor: pointer;
+    font-size: 14px; /* Consistent font size */
 }
 
 .menu-item:last-child {
@@ -401,7 +430,44 @@ body {
 }
 
 .menu-item:hover {
-    background: #f8f8f8;
+    background: #5a5a5a; /* Darker hover state to match theme */
+}
+
+/* Emergency Reset specific styles */
+.menu-item.emergency-reset {
+    color: #ff6b6b; /* Red color for emergency actions */
+    font-weight: bold;
+}
+
+.menu-item.emergency-reset:hover {
+    background: #5a3a3a; /* Dark red background on hover */
+    color: #ff8e8e;
+}
+
+/* Policy link styles */
+.menu-item.policy-link {
+    cursor: pointer;
+}
+
+.menu-item.policy-link:hover {
+    background: #5a5a5a;
+}
+
+/* Close button styling to match library search */
+.close-modal {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #5e5e5e; /* Match library search close button */
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.close-modal:hover {
+    color: #dddddd; /* Lighten on hover */
 }
 
 /* Loading States */

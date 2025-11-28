@@ -88,6 +88,7 @@ class PWAWrapper {
             this.loadRecentLibrary();
         }
         console.log('PWA: handleInitialLoad END');
+        // this.updateLibraryDisplay();
     }
 
 
@@ -113,7 +114,7 @@ class PWAWrapper {
         } else {
             console.error(`PWA: FAILED - Library not found: ${libraryId}`);
             console.log('PWA: Available library IDs:', this.search.libraryRegistry.map(lib => lib.id));
-            this.loadRecentLibrary();
+            await this.loadRecentLibrary();
         }
     }
     
@@ -359,6 +360,8 @@ class PWAWrapper {
         this.closeAppMenu.addEventListener('click', () => this.hideAppMenu());
         this.appMenuBackdrop.addEventListener('click', () => this.hideAppMenu());
         this.clearAppData.addEventListener('click', () => this.clearAppDataHandler());
+        this.emergencyReset = document.getElementById('emergencyReset');
+        this.emergencyReset.addEventListener('click', () => this.emergencyResetHandler());        
     }
 
     async onFrameLoad() {
@@ -646,18 +649,31 @@ class PWAWrapper {
     }    
 
     updateLibraryDisplay() {
+        console.log('PWA: updateLibraryDisplay called');
+        console.log('PWA: currentLibraryId:', this.currentLibraryId);
+        
+        if (!this.libraryNameElement) {
+            console.error('PWA: libraryNameElement not found!');
+            return;
+        }
         
         if (this.currentLibraryId && this.search?.isLoaded) {
             const library = this.search.getLibraryById(this.currentLibraryId);
             console.log('PWA: Library found:', library);
             if (library) {
                 this.libraryNameElement.textContent = library.name;
+                this.libraryNameElement.style.opacity = '1';
                 console.log('PWA: Updated library name to:', library.name);
                 return;
             }
         }
+        
+        // Show loading or default state
         this.libraryNameElement.textContent = 'Select a Library';
+        this.libraryNameElement.style.opacity = '0.7';
+        console.log('PWA: Set default library name');
     }
+
     // App Menu functionality
     showAppMenu() {
         this.appMenuBackdrop.classList.add('active');
@@ -772,14 +788,28 @@ class PWAWrapper {
         }
     }
     
-    loadRecentLibrary() {
+    async loadRecentLibrary() {
         try {
             const recent = JSON.parse(localStorage.getItem('pwa_recent_libraries') || '[]');
             if (recent.length > 0) {
-                this.clientFrame.src = recent[0];
+                const recentPath = recent[0];
+                console.log('PWA: Loading recent library:', recentPath);
+                
+                // Extract library ID from path
+                const library = this.search.getLibraryByPath(recentPath);
+                if (library) {
+                    this.currentLibraryId = library.id;
+                    this.updateLibraryDisplay(); // Update display HERE
+                }
+                
+                this.clientFrame.src = recentPath;
+            } else {
+                console.log('PWA: No recent libraries, using default');
+                this.updateLibraryDisplay(); // Update for default state
             }
         } catch (error) {
             console.log('PWA: Could not load recent library', error);
+            this.updateLibraryDisplay(); // Update for error state
         }
     }
 
@@ -971,6 +1001,25 @@ class PWAWrapper {
             }
         }
     }
+
+    emergencyResetHandler() {
+        if (confirm('🚨 EMERGENCY RESET\n\nThis will:\n• Clear all app data\n• Clear all cache\n• Reset to default library\n\nContinue?')) {
+            this.showLoading();
+            console.log('PWA: Emergency reset initiated');
+            
+            // Show reset in progress
+            this.emergencyReset.textContent = 'Resetting...';
+            this.emergencyReset.disabled = true;
+            
+            // Perform reset (we'll add the actual logic later)
+            setTimeout(() => {
+                alert('Emergency reset would clear all data here.\n(Logic to be implemented)');
+                this.emergencyReset.textContent = 'Emergency Reset';
+                this.emergencyReset.disabled = false;
+                this.hideLoading();
+            }, 1000);
+        }
+    }    
 }
 
 document.addEventListener('DOMContentLoaded', () => {
