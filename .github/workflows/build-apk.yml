@@ -15,12 +15,12 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
       
-    - name: Build in Docker container
+    - name: Build with Android Docker image
       run: |
         docker run --rm \
           -v $PWD:/project \
           -w /project/android-app \
-          openjdk:17-jdk \
+          reactnativecommunity/react-native-android:6.0 \
           /bin/bash -c "chmod +x ./gradlew && ./gradlew assembleDebug"
           
     - name: Upload APK
@@ -28,4 +28,3 @@ jobs:
       with:
         name: my-pvl-app-debug
         path: android-app/app/build/outputs/apk/debug/*.apk
-        retention-days: 30
