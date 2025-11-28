@@ -1350,8 +1350,8 @@
     "videoid"
   ],
   "obfuscation_map": {
-    "category-list": "a",
-    "sidebar-collapsed": "b"
+    "sidebar-collapsed": "a",
+    "category-list": "b"
   },
   "stats": {
     "total_obfuscated": 2,
