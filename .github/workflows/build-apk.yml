@@ -5,7 +5,7 @@ on:
     tags:
       - 'v*'
       - 'beta-*'
-  workflow_dispatch: # Allow manual triggers
+  workflow_dispatch:
 
 jobs:
   build:
@@ -21,23 +21,18 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         
-    - name: Cache Gradle packages
-      uses: actions/cache@v4
-      with:
-        path: |
-          ~/.gradle/caches
-          ~/.gradle/wrapper
-        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-        restore-keys: |
-          ${{ runner.os }}-gradle-
-          
-    - name: Build Debug APK
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
+      
+    - name: Build with Gradle
       working-directory: android-app
       run: |
+        # Set Gradle to use the correct Java home
+        echo "org.gradle.java.home=$JAVA_HOME" >> gradle.properties
         chmod +x ./gradlew
-        ./gradlew assembleDebug --stacktrace
+        ./gradlew assembleDebug --no-daemon
         
-    - name: Upload APK artifact
+    - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
         name: my-pvl-app-debug
