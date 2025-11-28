@@ -71,7 +71,7 @@ class PWAWrapper {
     async handleInitialLoad() {
         console.log('PWA: handleInitialLoad START');
         const urlParams = new URLSearchParams(window.location.search);
-        const libraryId = urlParams.get('library');
+        const libraryId = urlParams.get('l') || urlParams.get('library');
         const source = urlParams.get('source');
         
         console.log('PWA: URL parameters:', {
@@ -753,7 +753,7 @@ class PWAWrapper {
         let shareUrl;
         if (library) {
             // Use query parameter format for sharing
-            shareUrl = `${window.location.origin}/wrapper.html?library=${library.id}`;
+            shareUrl = `${window.location.origin}/wrapper.html?l=${library.id}`;
         } else {
             shareUrl = currentUrl;
         }
