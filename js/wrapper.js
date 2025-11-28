@@ -80,16 +80,20 @@ class PWAWrapper {
     }
 
     async loadLibraryById(libraryId) {
+        console.log('PWA: loadLibraryById searching for:', libraryId);
+        
         const library = this.search.getLibraryById(libraryId);
+        console.log('PWA: Library found:', library);
+        
         if (library) {
             console.log(`PWA: Loading library path: ${library.path}`);
             this.currentLibraryId = libraryId;
-            await this.loadClient(library.path);
+            this.loadClient(library.path); // Remove await since loadClient is now simpler
         } else {
             console.error(`PWA: Library not found: ${libraryId}`);
             this.loadRecentLibrary();
         }
-    }    
+    }
     
     // ENHANCED: Loading with improved error detection and success timeout
     // async loadWithRecovery(url, retryCount = 0) {
@@ -758,20 +762,29 @@ class PWAWrapper {
     
     // Client loading and state management
     async loadClient(url) {
-        if (this.isRecovering) {
-            console.log('PWA: Recovery in progress, skipping load');
-            return;
-        }
-        
         this.showLoading();
-        this.retryCount = 0;
+        console.log('PWA: Loading client URL:', url);
         
         try {
-            await this.loadWithRecovery(url);
-            this.hideLoading();
+            this.clientFrame.src = url;
+            
+            // Wait for frame to load
+            await new Promise((resolve) => {
+                this.clientFrame.onload = () => {
+                    this.hideLoading();
+                    this.saveRecentLibrary(url);
+                    resolve();
+                };
+                
+                this.clientFrame.onerror = () => {
+                    this.hideLoading();
+                    console.error('PWA: Failed to load URL:', url);
+                    resolve(); // Still resolve to avoid hanging
+                };
+            });
         } catch (error) {
-            console.error('PWA: All recovery attempts failed', error);
-            await this.handleCriticalError(url);
+            console.error('PWA: Error loading client:', error);
+            this.hideLoading();
         }
     }
     
