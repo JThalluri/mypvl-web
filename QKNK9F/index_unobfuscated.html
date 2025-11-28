@@ -2540,54 +2540,34 @@ button:focus-visible,
         </div>
         <script>
             // Source: template
-// Aggressive Mobile Redirect with Stronger Guards
+// Enhanced Mobile Deep Link Handler - SIMPLIFIED
 (function() {
-    console.log('PWA: MOBILE REDIRECT SCRIPT EXECUTING');
-    
-    // Only redirect mobile devices
+    // Only redirect on mobile devices
     const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+    
     if (!isMobile) {
-        console.log('PWA: Not mobile, skipping redirect');
-        return;
+        return; // Desktop users stay on responsive site
     }
     
-    // STRONGER: Never redirect if we're in wrapper context
-    const isInWrapper = window.location.search.includes('wrapper=true') || 
-                       window.parent !== window ||
-                       window.location.pathname.includes('wrapper.html');
-    
-    if (isInWrapper) {
-        console.log('PWA: Already in wrapper context, skipping redirect');
-        return;
-    }
-    
-    // STRONGER: Check if we just came from a redirect
-    if (sessionStorage.getItem('pwa_redirect_attempt')) {
-        console.log('PWA: Redirect already attempted, stopping loop');
-        sessionStorage.removeItem('pwa_redirect_attempt');
+    // Check if we're already in the wrapper
+    if (window.location.search.includes('wrapper=true') || window.parent !== window) {
         return;
     }
     
     const path = window.location.pathname;
-    console.log('PWA: Current path:', path);
-    
-    // Extract library ID
     let libraryId = null;
+    
+    // Extract library ID from path
     const pathParts = path.split('/').filter(p => p.length === 6);
     if (pathParts.length > 0) {
         libraryId = pathParts[pathParts.length - 1];
     }
     
     if (libraryId) {
-        console.log('PWA: Redirecting to wrapper with library:', libraryId);
-        
-        // Mark that we're attempting redirect
-        sessionStorage.setItem('pwa_redirect_attempt', 'true');
-        
-        // Use replace to prevent back button issues
-        window.location.replace('/wrapper.html?library=@' + libraryId + '&source=mobile_redirect');
-    } else {
-        console.log('PWA: No library ID found in path');
+        // Redirect to wrapper with simple query parameter
+        const wrapperUrl = `${window.location.origin}/wrapper.html?library=${libraryId}&source=mobile`;
+        console.log(`PWA: Mobile redirect to: ${wrapperUrl}`);
+        window.location.replace(wrapperUrl);
     }
 })();
 // Source: template
