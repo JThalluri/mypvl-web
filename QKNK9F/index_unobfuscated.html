@@ -2540,6 +2540,62 @@ button:focus-visible,
         </div>
         <script>
             // Source: template
+// Enhanced Mobile Deep Link Handler - Add to every client's index.html
+(function() {
+    // Only redirect on mobile devices
+    const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+    
+    if (!isMobile) {
+        return; // Desktop users stay on responsive site
+    }
+    
+    // Check if we're already in the wrapper or this is a direct app open
+    const isInWrapper = window.location.search.includes('wrapper=true') || 
+                       window.parent !== window; // In iframe
+    
+    if (isInWrapper) {
+        return; // Already in wrapper, don't redirect
+    }
+    
+    // Extract library ID from current path for ALL URL formats
+    const path = window.location.pathname;
+    let libraryId = null;
+    
+    console.log('PWA: Mobile detection analyzing path:', path);
+    
+    // Format 1: /QKNK9F/index.html → QKNK9F
+    if (path.match(/^\/([A-Z0-9]{6})\/index\.html$/)) {
+        libraryId = path.split('/')[1];
+        console.log('PWA: Detected format 1, libraryId:', libraryId);
+    }
+    // Format 2: /QKNK9F/ → QKNK9F  
+    else if (path.match(/^\/([A-Z0-9]{6})\/$/)) {
+        libraryId = path.split('/')[1];
+        console.log('PWA: Detected format 2, libraryId:', libraryId);
+    }
+    // Format 3: /QKNK9F/BT9R66/index.html → BT9R66
+    else if (path.match(/^\/([A-Z0-9]{6})\/([A-Z0-9]{6})\/index\.html$/)) {
+        const parts = path.split('/').filter(part => part.length === 6);
+        libraryId = parts[1]; // Get the subclient ID
+        console.log('PWA: Detected format 3, libraryId:', libraryId);
+    }
+    // Format 4: /QKNK9F/BT9R66/ → BT9R66
+    else if (path.match(/^\/([A-Z0-9]{6})\/([A-Z0-9]{6})\/$/)) {
+        const parts = path.split('/').filter(part => part.length === 6);
+        libraryId = parts[1]; // Get the subclient ID
+        console.log('PWA: Detected format 4, libraryId:', libraryId);
+    }
+    
+    if (libraryId) {
+        // FIX: Redirect to wrapper.html with query parameter instead of clean URL
+        const wrapperUrl = `${window.location.origin}/wrapper.html?library=@${libraryId}&source=deeplink`;
+        console.log(`PWA: Mobile redirect to wrapper: ${wrapperUrl}`);
+        window.location.href = wrapperUrl;
+    } else {
+        console.log('PWA: No library ID detected in path:', path);
+    }
+})();
+// Source: template
 /* Built: Tue Nov 11 07:26:25 PM UTC 2025 - DO NOT EDIT - generated from modules/ */
 window.PVL = window.PVL || {};
 
@@ -3561,62 +3617,6 @@ window.PVL = window.PVL || {};
 console.log('PVL Video Library loaded (bundled)');
 
 
-// Source: template
-// Enhanced Mobile Deep Link Handler - Add to every client's index.html
-(function() {
-    // Only redirect on mobile devices
-    const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
-    
-    if (!isMobile) {
-        return; // Desktop users stay on responsive site
-    }
-    
-    // Check if we're already in the wrapper or this is a direct app open
-    const isInWrapper = window.location.search.includes('wrapper=true') || 
-                       window.parent !== window; // In iframe
-    
-    if (isInWrapper) {
-        return; // Already in wrapper, don't redirect
-    }
-    
-    // Extract library ID from current path for ALL URL formats
-    const path = window.location.pathname;
-    let libraryId = null;
-    
-    console.log('PWA: Mobile detection analyzing path:', path);
-    
-    // Format 1: /QKNK9F/index.html → QKNK9F
-    if (path.match(/^\/([A-Z0-9]{6})\/index\.html$/)) {
-        libraryId = path.split('/')[1];
-        console.log('PWA: Detected format 1, libraryId:', libraryId);
-    }
-    // Format 2: /QKNK9F/ → QKNK9F  
-    else if (path.match(/^\/([A-Z0-9]{6})\/$/)) {
-        libraryId = path.split('/')[1];
-        console.log('PWA: Detected format 2, libraryId:', libraryId);
-    }
-    // Format 3: /QKNK9F/BT9R66/index.html → BT9R66
-    else if (path.match(/^\/([A-Z0-9]{6})\/([A-Z0-9]{6})\/index\.html$/)) {
-        const parts = path.split('/').filter(part => part.length === 6);
-        libraryId = parts[1]; // Get the subclient ID
-        console.log('PWA: Detected format 3, libraryId:', libraryId);
-    }
-    // Format 4: /QKNK9F/BT9R66/ → BT9R66
-    else if (path.match(/^\/([A-Z0-9]{6})\/([A-Z0-9]{6})\/$/)) {
-        const parts = path.split('/').filter(part => part.length === 6);
-        libraryId = parts[1]; // Get the subclient ID
-        console.log('PWA: Detected format 4, libraryId:', libraryId);
-    }
-    
-    if (libraryId) {
-        // FIX: Redirect to wrapper.html with query parameter instead of clean URL
-        const wrapperUrl = `${window.location.origin}/wrapper.html?library=@${libraryId}&source=deeplink`;
-        console.log(`PWA: Mobile redirect to wrapper: ${wrapperUrl}`);
-        window.location.href = wrapperUrl;
-    } else {
-        console.log('PWA: No library ID detected in path:', path);
-    }
-})();
         </script>
     </body>
     </html>
