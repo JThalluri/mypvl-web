@@ -3316,7 +3316,7 @@ console.log('PVL Video Library loaded (bundled)');
 
 
 // Source: template
-// Mobile Deep Link Handler - Add this to every client's index.html
+// Enhanced Mobile Deep Link Handler - Add to every client's index.html
 (function() {
     // Only redirect on mobile devices
     const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
@@ -3333,25 +3333,42 @@ console.log('PVL Video Library loaded (bundled)');
         return; // Already in wrapper, don't redirect
     }
     
-    // Extract library ID from current path
+    // Extract library ID from current path for ALL URL formats
     const path = window.location.pathname;
     let libraryId = null;
     
-    // Pattern: /QKNK9F/index.html → QKNK9F
-    if (path.match(/\/[A-Z0-9]{6}\/index\.html$/)) {
+    console.log('PWA: Mobile detection analyzing path:', path);
+    
+    // Format 1: /QKNK9F/index.html → QKNK9F
+    if (path.match(/^\/([A-Z0-9]{6})\/index\.html$/)) {
         libraryId = path.split('/')[1];
+        console.log('PWA: Detected format 1, libraryId:', libraryId);
     }
-    // Pattern: /QKNK9F/BT9R66/index.html → BT9R66  
-    else if (path.match(/\/[A-Z0-9]{6}\/[A-Z0-9]{6}\/index\.html$/)) {
+    // Format 2: /QKNK9F/ → QKNK9F  
+    else if (path.match(/^\/([A-Z0-9]{6})\/$/)) {
+        libraryId = path.split('/')[1];
+        console.log('PWA: Detected format 2, libraryId:', libraryId);
+    }
+    // Format 3: /QKNK9F/BT9R66/index.html → BT9R66
+    else if (path.match(/^\/([A-Z0-9]{6})\/([A-Z0-9]{6})\/index\.html$/)) {
         const parts = path.split('/').filter(part => part.length === 6);
         libraryId = parts[1]; // Get the subclient ID
+        console.log('PWA: Detected format 3, libraryId:', libraryId);
+    }
+    // Format 4: /QKNK9F/BT9R66/ → BT9R66
+    else if (path.match(/^\/([A-Z0-9]{6})\/([A-Z0-9]{6})\/$/)) {
+        const parts = path.split('/').filter(part => part.length === 6);
+        libraryId = parts[1]; // Get the subclient ID
+        console.log('PWA: Detected format 4, libraryId:', libraryId);
     }
     
     if (libraryId) {
-        // Redirect to wrapper with deep link
-        const wrapperUrl = `${window.location.origin}/wrapper.html?library=@${libraryId}&source=deeplink`;
-        console.log(`PWA: Mobile redirect to ${wrapperUrl}`);
-        window.location.href = wrapperUrl;
+        // Redirect to clean URL format
+        const cleanUrl = `${window.location.origin}/@${libraryId}`;
+        console.log(`PWA: Mobile redirect to clean URL: ${cleanUrl}`);
+        window.location.href = cleanUrl;
+    } else {
+        console.log('PWA: No library ID detected in path:', path);
     }
 })();
 // Source: template
