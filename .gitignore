@@ -1,2 +1,5 @@
 *.bak
 /QKNK9F/
+*.keystore
+*.jks
+SHA-256_fingerprint.txt

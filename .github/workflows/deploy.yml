@@ -46,11 +46,13 @@ jobs:
           rm -rf gh-pages-target/js  # Remove old js if exists
           rm -rf gh-pages-target/library  # Remove old library file if exists
           rm -rf gh-pages-target/icons
+          rm -rf gh-pages-target/.well-known
           cp -r resources gh-pages-target/
           cp -r css gh-pages-target/  # Add css folder for policy pages and wpa
           cp -r js gh-pages-target/  # Add js folder for policy pages and wpa
           cp -r library gh-pages-target/  # Add library folder for wpa
           cp -r icons gh-pages-target/
+          cp -r .well-known gh-pages-target/
           echo "✅ Updated resources and css folders"
           
           echo "Final gh-pages content:"
@@ -79,6 +81,7 @@ jobs:
           git add icons/ 
           git add js/
           git add library/
+          git add .well-known/
           
           echo "=== FILES BEING COMMITTED ==="
           git status --short
