@@ -1,6 +1,6 @@
 /* pwa-injected-styles.css */
 :root {
-    --header-height: 30px !important;
+    --header-height: 34px !important;
 }
 
 /* Hide unnecessary elements */
@@ -28,6 +28,7 @@ header {
     justify-content: center !important;
     gap: 4px!important;
     align-items: flex-start!important;
+    border: 1px solid #333!important;
 }
 
 #toggleBtn{
@@ -35,7 +36,7 @@ header {
     width: 24px!important;
     padding: 2px!important;
     border: none!important;
-    min-height: 24px!important;
+    min-height: 28px!important;
 }
 
 #clearFiltersBtn{
@@ -52,17 +53,19 @@ header {
 .header-controls #searchBox{
     max-width: 88%!important;
     display: flex!important;
-    height: 24px!important;
+    height: 28px!important;
     border-radius: 12px!important;
     align-items: flex-start!important;
     border: none!important;
+    font-size: 14px!important;
 } 
 
 #mobileClearFiltersBtn{
     display: flex!important;
     width: 36px;
-    height: 24px;
+    height: 28px;
     border-radius: 12px !important;
+    font-size: 18px!important;
 }
 
 .modern-footer{
