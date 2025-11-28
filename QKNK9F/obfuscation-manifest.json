@@ -99,6 +99,7 @@
     "4P2i8aahZMo",
     "5JkPsWsq3E8",
     "5QjwxtTQ02g",
+    "7VZt7gOyDrI",
     "9mx8frWdPFk",
     "CSpSM7J5rA8",
     "DPftohjAJlo",
@@ -192,12 +193,12 @@
     "videoid"
   ],
   "obfuscation_map": {
-    "footer-links": "a",
-    "category-list": "b",
-    "modern-footer": "c"
+    "modern-footer": "a",
+    "footer-links": "b",
+    "category-list": "c"
   },
   "stats": {
     "total_obfuscated": 3,
-    "total_preserved": 176
+    "total_preserved": 177
   }
 }

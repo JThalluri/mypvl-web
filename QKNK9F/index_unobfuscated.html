@@ -2033,7 +2033,7 @@ button:focus-visible,
                             <div class="category-text">
                                 <i class="fas fa-star"></i>
                                 <span>ఇతర వీడియోలు</span>
-                                <span class="video-count" id="count-ఇతర వీడియోలు">9</span>
+                                <span class="video-count" id="count-ఇతర వీడియోలు">10</span>
                             </div>
                         </div>
                         <div class="chevron-container no-children">
@@ -2050,6 +2050,17 @@ button:focus-visible,
                         <p>Try adjusting your search or filter criteria</p>
                     </div>
                     <div class="grid" id="videoGrid">
+                        <div class="card" data-categories="హోమియోపతి;డ్రగ్ పిక్చర్;మెర్క్యురి;ఇతర వీడియోలు" data-keywords="హోమియోపతి డ్రగ్ పిక్చర్ మెర్క్యురి ఇతర వీడియోలు" data-tags="" data-title="Dr Farokh Master - Lecture on Mercury for Homeopathic Treatment" data-videoid="7VZt7gOyDrI">
+                            <div class="card-thumbnail-container">
+                                <img src="https://img.youtube.com/vi/7VZt7gOyDrI/hqdefault.jpg" alt="Thumbnail for Dr Farokh Master - Lecture on Mercury for Homeopathic Treatment" loading="lazy" class="video-thumbnail" onerror="handleImageError(this)">
+                                <div class="play-overlay">
+                                    <i class="fas fa-play"></i>
+                                </div>
+                            </div>
+                            <div class="card-title">
+                                <a href="https://www.youtube.com/watch?v=7VZt7gOyDrI" target="_blank" rel="noopener">Dr Farokh Master - Lecture on Mercury for Homeopathic Treatment</a>
+                            </div>
+                        </div>
                         <div class="card" data-categories="హోమియోపతి;జబ్బులు;ఆర్త్రైటిస్;ఇతర వీడియోలు" data-keywords="హోమియోపతి జబ్బులు ఆర్త్రైటిస్ ఇతర వీడియోలు" data-tags="" data-title="OSTEO ARTHRITIS TREATMENT IN HOMOEOPATHY" data-videoid="Ragrz8UY7-o">
                             <div class="card-thumbnail-container">
                                 <img src="https://img.youtube.com/vi/Ragrz8UY7-o/hqdefault.jpg" alt="Thumbnail for OSTEO ARTHRITIS TREATMENT IN HOMOEOPATHY" loading="lazy" class="video-thumbnail" onerror="handleImageError(this)">
@@ -3551,7 +3562,7 @@ console.log('PVL Video Library loaded (bundled)');
 
 
 // Source: template
-// Mobile Deep Link Handler - Add this to every client's index.html
+// Enhanced Mobile Deep Link Handler - Add to every client's index.html
 (function() {
     // Only redirect on mobile devices
     const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
@@ -3568,25 +3579,42 @@ console.log('PVL Video Library loaded (bundled)');
         return; // Already in wrapper, don't redirect
     }
     
-    // Extract library ID from current path
+    // Extract library ID from current path for ALL URL formats
     const path = window.location.pathname;
     let libraryId = null;
     
-    // Pattern: /QKNK9F/index.html → QKNK9F
-    if (path.match(/\/[A-Z0-9]{6}\/index\.html$/)) {
+    console.log('PWA: Mobile detection analyzing path:', path);
+    
+    // Format 1: /QKNK9F/index.html → QKNK9F
+    if (path.match(/^\/([A-Z0-9]{6})\/index\.html$/)) {
         libraryId = path.split('/')[1];
+        console.log('PWA: Detected format 1, libraryId:', libraryId);
     }
-    // Pattern: /QKNK9F/BT9R66/index.html → BT9R66  
-    else if (path.match(/\/[A-Z0-9]{6}\/[A-Z0-9]{6}\/index\.html$/)) {
+    // Format 2: /QKNK9F/ → QKNK9F  
+    else if (path.match(/^\/([A-Z0-9]{6})\/$/)) {
+        libraryId = path.split('/')[1];
+        console.log('PWA: Detected format 2, libraryId:', libraryId);
+    }
+    // Format 3: /QKNK9F/BT9R66/index.html → BT9R66
+    else if (path.match(/^\/([A-Z0-9]{6})\/([A-Z0-9]{6})\/index\.html$/)) {
         const parts = path.split('/').filter(part => part.length === 6);
         libraryId = parts[1]; // Get the subclient ID
+        console.log('PWA: Detected format 3, libraryId:', libraryId);
+    }
+    // Format 4: /QKNK9F/BT9R66/ → BT9R66
+    else if (path.match(/^\/([A-Z0-9]{6})\/([A-Z0-9]{6})\/$/)) {
+        const parts = path.split('/').filter(part => part.length === 6);
+        libraryId = parts[1]; // Get the subclient ID
+        console.log('PWA: Detected format 4, libraryId:', libraryId);
     }
     
     if (libraryId) {
-        // Redirect to wrapper with deep link
-        const wrapperUrl = `${window.location.origin}/wrapper.html?library=@${libraryId}&source=deeplink`;
-        console.log(`PWA: Mobile redirect to ${wrapperUrl}`);
-        window.location.href = wrapperUrl;
+        // Redirect to clean URL format
+        const cleanUrl = `${window.location.origin}/@${libraryId}`;
+        console.log(`PWA: Mobile redirect to clean URL: ${cleanUrl}`);
+        window.location.href = cleanUrl;
+    } else {
+        console.log('PWA: No library ID detected in path:', path);
     }
 })();
         </script>
