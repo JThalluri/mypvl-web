@@ -2920,7 +2920,20 @@ footer {
 </footer>
     
     <script>
-        // Smooth scrolling with offset for fixed header
+        // Clean URL Router for main domain
+(function() {
+    const path = window.location.pathname;
+    
+    // Handle clean URLs: /@library
+    if (path.startsWith('/@')) {
+        const libraryId = path.substring(2);
+        console.log('PWA: Routing clean URL to wrapper:', libraryId);
+        
+        // Redirect to wrapper with clean URL parameter
+        window.location.href = '/wrapper.html?library=@' + libraryId;
+        return;
+    }
+})();// Smooth scrolling with offset for fixed header
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         e.preventDefault();
