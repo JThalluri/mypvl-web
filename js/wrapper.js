@@ -11,7 +11,9 @@ class PWAWrapper {
         this.socialLinksContainer = document.getElementById('socialLinksContainer');
         
         // Footer elements
-        this.sidepaneToggle = document.getElementById('sidepaneToggle');
+        // this.sidepaneToggle = document.getElementById('sidepaneToggle');
+        this.libraryDisplay = document.getElementById('libraryDisplay');
+        this.libraryNameElement = this.libraryDisplay.querySelector('.library-name');        
         this.librarySearchTrigger = document.getElementById('librarySearchTrigger');
         this.appMenuTrigger = document.getElementById('appMenuTrigger');
         
@@ -107,6 +109,7 @@ class PWAWrapper {
             console.log(`PWA: SUCCESS - Loading library path: ${library.path}`);
             this.currentLibraryId = libraryId;
             this.loadClient(library.path);
+            this.updateLibraryDisplay();
         } else {
             console.error(`PWA: FAILED - Library not found: ${libraryId}`);
             console.log('PWA: Available library IDs:', this.search.libraryRegistry.map(lib => lib.id));
@@ -114,128 +117,6 @@ class PWAWrapper {
         }
     }
     
-    // ENHANCED: Loading with improved error detection and success timeout
-    // async loadWithRecovery(url, retryCount = 0) {
-    //     return new Promise((resolve, reject) => {
-    //         const cleanup = () => {
-    //             this.clientFrame.onload = null;
-    //             this.clientFrame.onerror = null;
-    //             if (this.successTimeout) {
-    //                 clearTimeout(this.successTimeout);
-    //             }
-    //         };
-
-    //         const success = () => {
-    //             cleanup();
-    //             this.retryCount = 0;
-    //             this.isRecovering = false;
-                
-    //             // Update URL to clean format if applicable
-    //             this.updateUrlForSharing(url);
-    //             resolve();
-    //         };
-
-    //         const failure = (error) => {
-    //             cleanup();
-    //             reject(error);
-    //         };
-
-    //         // Setup success timeout (page is OK if no errors detected within 3 seconds)
-    //         const setupSuccessTimeout = () => {
-    //             return new Promise((resolve) => {
-    //                 this.successTimeout = setTimeout(() => {
-    //                     console.log('PWA: Success timeout - page loaded without errors');
-    //                     resolve(true);
-    //                 }, 3000);
-    //             });
-    //         };
-
-    //         this.clientFrame.onload = async () => {
-    //             const successPromise = setupSuccessTimeout();
-                
-    //             // Check for errors after content has settled
-    //             setTimeout(async () => {
-    //                 const timedOut = await successPromise;
-                    
-    //                 if (!timedOut && this.isErrorPage()) {
-    //                     if (retryCount < this.maxRetries) {
-    //                         console.log(`PWA: Error page detected, retry ${retryCount + 1}`);
-    //                         this.clearCacheForUrl(url);
-    //                         setTimeout(() => {
-    //                             this.loadWithRecovery(this.addCacheBuster(url), retryCount + 1)
-    //                                 .then(success)
-    //                                 .catch(failure);
-    //                         }, 1000 * (retryCount + 1));
-    //                     } else {
-    //                         failure(new Error('Max retries reached - error page persists'));
-    //                     }
-    //                 } else {
-    //                     // Clear the success timeout since we're successful
-    //                     if (this.successTimeout) {
-    //                         clearTimeout(this.successTimeout);
-    //                     }
-    //                     success();
-    //                 }
-    //             }, 800); // Increased delay to ensure content is fully initialized
-    //         };
-
-    //         this.clientFrame.onerror = () => {
-    //             if (retryCount < this.maxRetries) {
-    //                 console.log(`PWA: Frame load error, retry ${retryCount + 1}`);
-    //                 this.clearCacheForUrl(url);
-    //                 setTimeout(() => {
-    //                     this.loadWithRecovery(this.addCacheBuster(url), retryCount + 1)
-    //                         .then(success)
-    //                         .catch(failure);
-    //                 }, 1000 * (retryCount + 1));
-    //             } else {
-    //                 failure(new Error('Max retries reached - frame load failed'));
-    //             }
-    //         };
-
-    //         // Handle URL normalization before loading
-    //         const normalizedUrl = this.normalizeUrlForLoading(url);
-    //         this.clientFrame.src = normalizedUrl;
-    //     });
-    // }
-
-    // NEW: URL normalization for loading
-    // normalizeUrlForLoading(url) {
-    //     // Handle clean URLs (@library format)
-    //     if (url.startsWith('/@')) {
-    //         const libraryId = url.substring(2);
-    //         const library = this.search.getLibraryById(libraryId);
-    //         if (library) {
-    //             this.currentLibraryId = libraryId;
-    //             return library.path; // Convert to actual path
-    //         }
-    //     }
-        
-    //     // Handle legacy URLs - extract library ID for tracking
-    //     const library = this.search.getLibraryByPath(new URL(url, window.location.origin).pathname);
-    //     if (library) {
-    //         this.currentLibraryId = library.id;
-    //     }
-        
-    //     return url;
-    // }
-
-    // // NEW: Update URL for clean sharing
-    // updateUrlForSharing(url) {
-    //     this.saveRecentLibrary(url);
-    // //     if (this.currentLibraryId) {
-    // //         const cleanUrl = `/@${this.currentLibraryId}`;
-    // //         window.history.replaceState(null, '', cleanUrl);
-    // //         this.saveRecentLibrary(cleanUrl);
-            
-    // //         // Show app install prompt for Android users coming from deep links
-    // //         this.checkAppInstallPrompt();
-    // //     } else {
-    // //         // Fallback to original URL
-    // //         this.saveRecentLibrary(url);
-    // //     }
-    // }
-
     // NEW: Cache busting for library content
     addCacheBuster(url) {
         if (this.isLibraryUrl(url)) {
@@ -463,7 +344,7 @@ class PWAWrapper {
     
     setupNonCriticalEventListeners() {
         // All other non-essential listeners
-        this.sidepaneToggle.addEventListener('click', () => this.toggleClientSidepane());
+        // this.sidepaneToggle.addEventListener('click', () => this.toggleClientSidepane());
         
         // Header controls (right side)
         this.shareBtn.addEventListener('click', () => this.shareCurrentLibrary());
@@ -700,7 +581,15 @@ class PWAWrapper {
             this.librarySearchResults.querySelectorAll('.search-result-item[data-path]').forEach(item => {
                 item.addEventListener('click', () => {
                     const path = item.getAttribute('data-path');
-                    this.loadClient(path);
+                    
+                    // Find the library by path to get the ID, then use loadLibraryById
+                    const library = this.search.getLibraryByPath(path);
+                    if (library) {
+                        this.loadLibraryById(library.id); // This will update the display
+                    } else {
+                        this.loadClient(path); // Fallback
+                    }
+                    
                     this.hideLibrarySearch();
                 });
             });
@@ -734,11 +623,19 @@ class PWAWrapper {
                 ${recentHtml}
             ` : '<div class="search-result-item no-results">No recent libraries</div>';
             
-            // FIX: Only add click listeners to valid library items with data-path
+            // FIX: Update click handlers to use loadLibraryById
             this.recentLibraries.querySelectorAll('.search-result-item[data-path]').forEach(item => {
                 item.addEventListener('click', () => {
                     const path = item.getAttribute('data-path');
-                    this.loadClient(path);
+                    
+                    // Find the library by path to get the ID
+                    const library = this.search.getLibraryByPath(path);
+                    if (library) {
+                        this.loadLibraryById(library.id); // This will update the display
+                    } else {
+                        this.loadClient(path); // Fallback
+                    }
+                    
                     this.hideLibrarySearch();
                 });
             });
@@ -747,7 +644,20 @@ class PWAWrapper {
             this.recentLibraries.innerHTML = '<div class="search-result-item no-results">Error loading recent libraries</div>';
         }
     }    
-    
+
+    updateLibraryDisplay() {
+        
+        if (this.currentLibraryId && this.search?.isLoaded) {
+            const library = this.search.getLibraryById(this.currentLibraryId);
+            console.log('PWA: Library found:', library);
+            if (library) {
+                this.libraryNameElement.textContent = library.name;
+                console.log('PWA: Updated library name to:', library.name);
+                return;
+            }
+        }
+        this.libraryNameElement.textContent = 'Select a Library';
+    }
     // App Menu functionality
     showAppMenu() {
         this.appMenuBackdrop.classList.add('active');
@@ -768,21 +678,21 @@ class PWAWrapper {
     }
     
     // Client Integration
-    toggleClientSidepane() {
-        console.log('PWA: Sending toggle message to client');
+    // toggleClientSidepane() {
+    //     console.log('PWA: Sending toggle message to client');
         
-        try {
-            this.clientFrame.contentWindow.postMessage({
-                type: 'TOGGLE_SIDEPANE',
-                source: 'pwa-wrapper',
-                timestamp: Date.now()
-            }, '*');
+    //     try {
+    //         this.clientFrame.contentWindow.postMessage({
+    //             type: 'TOGGLE_SIDEPANE',
+    //             source: 'pwa-wrapper',
+    //             timestamp: Date.now()
+    //         }, '*');
             
-            console.log('PWA: Toggle message sent');
-        } catch (error) {
-            console.log('PWA: Failed to send toggle message:', error);
-        }
-    }
+    //         console.log('PWA: Toggle message sent');
+    //     } catch (error) {
+    //         console.log('PWA: Failed to send toggle message:', error);
+    //     }
+    // }
     
     // Client loading and state management
     async loadClient(url) {
@@ -835,8 +745,8 @@ class PWAWrapper {
         const libraryName = library ? library.name : 'Music Video Library';
         
         const shareData = {
-            title: `Music Video Library - ${libraryName}`,
-            text: 'Check out this amazing music video collection!',
+            title: `My Personal Video Library - ${libraryName}`,
+            text: 'Check out this amazing video collection on My PVL!',
             url: shareUrl,
         };
         

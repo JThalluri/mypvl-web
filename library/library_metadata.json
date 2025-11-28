@@ -18,16 +18,16 @@
     {
         "id": "BT9R66",
         "path": "/QKNK9F/BT9R66/index.html",
-        "name": "@amma",
-        "description": "Traditional and classical performances", 
+        "name": "@homeopathy",
+        "description": "Curated collection of homeopathy related videos", 
         "category": "classical",
         "keywords": ["homeopathy"]
     },
     {
         "id": "K8AM96",
         "path": "/QKNK9F/K8AM96/index.html",
-        "name": "Modern Cover Songs",
-        "description": "Contemporary cover versions and remixes",
+        "name": "@music",
+        "description": "Classic Indian music video collection",
         "category": "covers", 
         "keywords": ["covers", "modern", "contemporary", "remix", "coversongs"]
     }
