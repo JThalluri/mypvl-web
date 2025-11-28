@@ -67,30 +67,49 @@ class PWAWrapper {
     }
 
     async handleInitialLoad() {
+        console.log('PWA: handleInitialLoad START');
         const urlParams = new URLSearchParams(window.location.search);
         const libraryId = urlParams.get('library');
+        const source = urlParams.get('source');
+        
+        console.log('PWA: URL parameters:', {
+            library: libraryId,
+            source: source,
+            fullURL: window.location.href
+        });
         
         if (libraryId) {
-            console.log(`PWA: Loading library from query parameter: ${libraryId}`);
+            console.log(`PWA: Attempting to load library: ${libraryId}`);
             await this.loadLibraryById(libraryId);
         } else {
-            // Normal app launch
+            console.log('PWA: No library parameter, loading recent library');
             this.loadRecentLibrary();
         }
+        console.log('PWA: handleInitialLoad END');
     }
 
+
     async loadLibraryById(libraryId) {
-        console.log('PWA: loadLibraryById searching for:', libraryId);
+        console.log('PWA: loadLibraryById called with:', libraryId);
+        console.log('PWA: Search object exists:', !!this.search);
+        console.log('PWA: Search is loaded:', this.search?.isLoaded);
+        
+        if (!this.search || !this.search.isLoaded) {
+            console.error('PWA: LibrarySearch not ready!');
+            this.loadRecentLibrary();
+            return;
+        }
         
         const library = this.search.getLibraryById(libraryId);
-        console.log('PWA: Library found:', library);
+        console.log('PWA: Library search result:', library);
         
         if (library) {
-            console.log(`PWA: Loading library path: ${library.path}`);
+            console.log(`PWA: SUCCESS - Loading library path: ${library.path}`);
             this.currentLibraryId = libraryId;
-            this.loadClient(library.path); // Remove await since loadClient is now simpler
+            this.loadClient(library.path);
         } else {
-            console.error(`PWA: Library not found: ${libraryId}`);
+            console.error(`PWA: FAILED - Library not found: ${libraryId}`);
+            console.log('PWA: Available library IDs:', this.search.libraryRegistry.map(lib => lib.id));
             this.loadRecentLibrary();
         }
     }
@@ -395,8 +414,13 @@ class PWAWrapper {
     }
 
     async loadCriticalResources() {
-        // Load search functionality (needed for recent libraries)
+        // Load search functionality
         this.search = new LibrarySearch();
+        
+        // WAIT for search to load before proceeding
+        console.log('PWA: Waiting for library search to load...');
+        await this.search.loadLibraryRegistry();
+        console.log('PWA: Library search loaded, registry:', this.search.libraryRegistry);
         
         // Initialize basic event listeners
         this.setupCriticalEventListeners();
