@@ -3609,10 +3609,10 @@ console.log('PVL Video Library loaded (bundled)');
     }
     
     if (libraryId) {
-        // Redirect to clean URL format
-        const cleanUrl = `${window.location.origin}/@${libraryId}`;
-        console.log(`PWA: Mobile redirect to clean URL: ${cleanUrl}`);
-        window.location.href = cleanUrl;
+        // FIX: Redirect to wrapper.html with query parameter instead of clean URL
+        const wrapperUrl = `${window.location.origin}/wrapper.html?library=@${libraryId}&source=deeplink`;
+        console.log(`PWA: Mobile redirect to wrapper: ${wrapperUrl}`);
+        window.location.href = wrapperUrl;
     } else {
         console.log('PWA: No library ID detected in path:', path);
     }
