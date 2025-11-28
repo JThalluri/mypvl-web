@@ -66,148 +66,152 @@ class PWAWrapper {
         this.isInitialized = true;
     }
 
-    // NEW: Enhanced initial load handling with URL normalization
     async handleInitialLoad() {
-        // Check for deep link parameters first
         const urlParams = new URLSearchParams(window.location.search);
-        const libraryParam = urlParams.get('library');
+        const libraryId = urlParams.get('library');
         
-        if (libraryParam && libraryParam.startsWith('@')) {
-            // Deep link from mobile redirect
-            const libraryId = libraryParam.substring(1);
-            console.log(`PWA: Loading from deep link - ${libraryId}`);
-            await this.loadClient(`/@${libraryId}`);
-        } else if (window.location.pathname.startsWith('/@')) {
-            // Direct clean URL access
-            const libraryId = window.location.pathname.substring(2);
-            await this.loadClient(`/@${libraryId}`);
+        if (libraryId) {
+            console.log(`PWA: Loading library from query parameter: ${libraryId}`);
+            await this.loadLibraryById(libraryId);
         } else {
             // Normal app launch
             this.loadRecentLibrary();
         }
     }
 
+    async loadLibraryById(libraryId) {
+        const library = this.search.getLibraryById(libraryId);
+        if (library) {
+            console.log(`PWA: Loading library path: ${library.path}`);
+            this.currentLibraryId = libraryId;
+            await this.loadClient(library.path);
+        } else {
+            console.error(`PWA: Library not found: ${libraryId}`);
+            this.loadRecentLibrary();
+        }
+    }    
+    
     // ENHANCED: Loading with improved error detection and success timeout
-    async loadWithRecovery(url, retryCount = 0) {
-        return new Promise((resolve, reject) => {
-            const cleanup = () => {
-                this.clientFrame.onload = null;
-                this.clientFrame.onerror = null;
-                if (this.successTimeout) {
-                    clearTimeout(this.successTimeout);
-                }
-            };
+    // async loadWithRecovery(url, retryCount = 0) {
+    //     return new Promise((resolve, reject) => {
+    //         const cleanup = () => {
+    //             this.clientFrame.onload = null;
+    //             this.clientFrame.onerror = null;
+    //             if (this.successTimeout) {
+    //                 clearTimeout(this.successTimeout);
+    //             }
+    //         };
 
-            const success = () => {
-                cleanup();
-                this.retryCount = 0;
-                this.isRecovering = false;
+    //         const success = () => {
+    //             cleanup();
+    //             this.retryCount = 0;
+    //             this.isRecovering = false;
                 
-                // Update URL to clean format if applicable
-                this.updateUrlForSharing(url);
-                resolve();
-            };
+    //             // Update URL to clean format if applicable
+    //             this.updateUrlForSharing(url);
+    //             resolve();
+    //         };
 
-            const failure = (error) => {
-                cleanup();
-                reject(error);
-            };
+    //         const failure = (error) => {
+    //             cleanup();
+    //             reject(error);
+    //         };
 
-            // Setup success timeout (page is OK if no errors detected within 3 seconds)
-            const setupSuccessTimeout = () => {
-                return new Promise((resolve) => {
-                    this.successTimeout = setTimeout(() => {
-                        console.log('PWA: Success timeout - page loaded without errors');
-                        resolve(true);
-                    }, 3000);
-                });
-            };
+    //         // Setup success timeout (page is OK if no errors detected within 3 seconds)
+    //         const setupSuccessTimeout = () => {
+    //             return new Promise((resolve) => {
+    //                 this.successTimeout = setTimeout(() => {
+    //                     console.log('PWA: Success timeout - page loaded without errors');
+    //                     resolve(true);
+    //                 }, 3000);
+    //             });
+    //         };
 
-            this.clientFrame.onload = async () => {
-                const successPromise = setupSuccessTimeout();
+    //         this.clientFrame.onload = async () => {
+    //             const successPromise = setupSuccessTimeout();
                 
-                // Check for errors after content has settled
-                setTimeout(async () => {
-                    const timedOut = await successPromise;
+    //             // Check for errors after content has settled
+    //             setTimeout(async () => {
+    //                 const timedOut = await successPromise;
                     
-                    if (!timedOut && this.isErrorPage()) {
-                        if (retryCount < this.maxRetries) {
-                            console.log(`PWA: Error page detected, retry ${retryCount + 1}`);
-                            this.clearCacheForUrl(url);
-                            setTimeout(() => {
-                                this.loadWithRecovery(this.addCacheBuster(url), retryCount + 1)
-                                    .then(success)
-                                    .catch(failure);
-                            }, 1000 * (retryCount + 1));
-                        } else {
-                            failure(new Error('Max retries reached - error page persists'));
-                        }
-                    } else {
-                        // Clear the success timeout since we're successful
-                        if (this.successTimeout) {
-                            clearTimeout(this.successTimeout);
-                        }
-                        success();
-                    }
-                }, 800); // Increased delay to ensure content is fully initialized
-            };
+    //                 if (!timedOut && this.isErrorPage()) {
+    //                     if (retryCount < this.maxRetries) {
+    //                         console.log(`PWA: Error page detected, retry ${retryCount + 1}`);
+    //                         this.clearCacheForUrl(url);
+    //                         setTimeout(() => {
+    //                             this.loadWithRecovery(this.addCacheBuster(url), retryCount + 1)
+    //                                 .then(success)
+    //                                 .catch(failure);
+    //                         }, 1000 * (retryCount + 1));
+    //                     } else {
+    //                         failure(new Error('Max retries reached - error page persists'));
+    //                     }
+    //                 } else {
+    //                     // Clear the success timeout since we're successful
+    //                     if (this.successTimeout) {
+    //                         clearTimeout(this.successTimeout);
+    //                     }
+    //                     success();
+    //                 }
+    //             }, 800); // Increased delay to ensure content is fully initialized
+    //         };
 
-            this.clientFrame.onerror = () => {
-                if (retryCount < this.maxRetries) {
-                    console.log(`PWA: Frame load error, retry ${retryCount + 1}`);
-                    this.clearCacheForUrl(url);
-                    setTimeout(() => {
-                        this.loadWithRecovery(this.addCacheBuster(url), retryCount + 1)
-                            .then(success)
-                            .catch(failure);
-                    }, 1000 * (retryCount + 1));
-                } else {
-                    failure(new Error('Max retries reached - frame load failed'));
-                }
-            };
+    //         this.clientFrame.onerror = () => {
+    //             if (retryCount < this.maxRetries) {
+    //                 console.log(`PWA: Frame load error, retry ${retryCount + 1}`);
+    //                 this.clearCacheForUrl(url);
+    //                 setTimeout(() => {
+    //                     this.loadWithRecovery(this.addCacheBuster(url), retryCount + 1)
+    //                         .then(success)
+    //                         .catch(failure);
+    //                 }, 1000 * (retryCount + 1));
+    //             } else {
+    //                 failure(new Error('Max retries reached - frame load failed'));
+    //             }
+    //         };
 
-            // Handle URL normalization before loading
-            const normalizedUrl = this.normalizeUrlForLoading(url);
-            this.clientFrame.src = normalizedUrl;
-        });
-    }
+    //         // Handle URL normalization before loading
+    //         const normalizedUrl = this.normalizeUrlForLoading(url);
+    //         this.clientFrame.src = normalizedUrl;
+    //     });
+    // }
 
     // NEW: URL normalization for loading
-    normalizeUrlForLoading(url) {
-        // Handle clean URLs (@library format)
-        if (url.startsWith('/@')) {
-            const libraryId = url.substring(2);
-            const library = this.search.getLibraryById(libraryId);
-            if (library) {
-                this.currentLibraryId = libraryId;
-                return library.path; // Convert to actual path
-            }
-        }
-        
-        // Handle legacy URLs - extract library ID for tracking
-        const library = this.search.getLibraryByPath(new URL(url, window.location.origin).pathname);
-        if (library) {
-            this.currentLibraryId = library.id;
-        }
-        
-        return url;
-    }
-
-    // NEW: Update URL for clean sharing
-    updateUrlForSharing(url) {
-        this.saveRecentLibrary(url);
-    //     if (this.currentLibraryId) {
-    //         const cleanUrl = `/@${this.currentLibraryId}`;
-    //         window.history.replaceState(null, '', cleanUrl);
-    //         this.saveRecentLibrary(cleanUrl);
-            
-    //         // Show app install prompt for Android users coming from deep links
-    //         this.checkAppInstallPrompt();
-    //     } else {
-    //         // Fallback to original URL
-    //         this.saveRecentLibrary(url);
+    // normalizeUrlForLoading(url) {
+    //     // Handle clean URLs (@library format)
+    //     if (url.startsWith('/@')) {
+    //         const libraryId = url.substring(2);
+    //         const library = this.search.getLibraryById(libraryId);
+    //         if (library) {
+    //             this.currentLibraryId = libraryId;
+    //             return library.path; // Convert to actual path
+    //         }
     //     }
-    }
+        
+    //     // Handle legacy URLs - extract library ID for tracking
+    //     const library = this.search.getLibraryByPath(new URL(url, window.location.origin).pathname);
+    //     if (library) {
+    //         this.currentLibraryId = library.id;
+    //     }
+        
+    //     return url;
+    // }
+
+    // // NEW: Update URL for clean sharing
+    // updateUrlForSharing(url) {
+    //     this.saveRecentLibrary(url);
+    // //     if (this.currentLibraryId) {
+    // //         const cleanUrl = `/@${this.currentLibraryId}`;
+    // //         window.history.replaceState(null, '', cleanUrl);
+    // //         this.saveRecentLibrary(cleanUrl);
+            
+    // //         // Show app install prompt for Android users coming from deep links
+    // //         this.checkAppInstallPrompt();
+    // //     } else {
+    // //         // Fallback to original URL
+    // //         this.saveRecentLibrary(url);
+    // //     }
+    // }
 
     // NEW: Cache busting for library content
     addCacheBuster(url) {
@@ -780,13 +784,13 @@ class PWAWrapper {
     }
     
     async shareCurrentLibrary() {
-        let shareUrl;
         const currentUrl = this.clientFrame.src;
-        
-        // Try to get clean URL for sharing
         const library = this.search.getLibraryByPath(new URL(currentUrl).pathname);
+        
+        let shareUrl;
         if (library) {
-            shareUrl = `${window.location.origin}/@${library.id}`;
+            // Use query parameter format for sharing
+            shareUrl = `${window.location.origin}/wrapper.html?library=${library.id}`;
         } else {
             shareUrl = currentUrl;
         }
@@ -796,7 +800,7 @@ class PWAWrapper {
         const shareData = {
             title: `Music Video Library - ${libraryName}`,
             text: 'Check out this amazing music video collection!',
-            url: shareUrl, // Use clean URL for sharing
+            url: shareUrl,
         };
         
         try {
@@ -809,7 +813,7 @@ class PWAWrapper {
         } catch (error) {
             console.log('PWA: Sharing cancelled', error);
         }
-    }
+    }    
     
     saveRecentLibrary(url) {
         try {
