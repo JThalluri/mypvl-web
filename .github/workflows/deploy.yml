@@ -38,6 +38,7 @@ jobs:
           cp -f dmca_policy.html gh-pages-target/
           cp -f wrapper.html gh-pages-target/
           cp -f manifest.json gh-pages-target/
+          cp -f 404.json gh-pages-target/
           echo "✅ Updated policy pages"
           
           # Remove and replace ONLY the resources folder
@@ -79,6 +80,7 @@ jobs:
           git add icons/ 
           git add js/
           git add library/
+          git add 404.html
           
           echo "=== FILES BEING COMMITTED ==="
           git status --short
