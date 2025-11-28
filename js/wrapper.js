@@ -195,17 +195,18 @@ class PWAWrapper {
 
     // NEW: Update URL for clean sharing
     updateUrlForSharing(url) {
-        if (this.currentLibraryId) {
-            const cleanUrl = `/@${this.currentLibraryId}`;
-            window.history.replaceState(null, '', cleanUrl);
-            this.saveRecentLibrary(cleanUrl);
+        this.saveRecentLibrary(url);
+    //     if (this.currentLibraryId) {
+    //         const cleanUrl = `/@${this.currentLibraryId}`;
+    //         window.history.replaceState(null, '', cleanUrl);
+    //         this.saveRecentLibrary(cleanUrl);
             
-            // Show app install prompt for Android users coming from deep links
-            this.checkAppInstallPrompt();
-        } else {
-            // Fallback to original URL
-            this.saveRecentLibrary(url);
-        }
+    //         // Show app install prompt for Android users coming from deep links
+    //         this.checkAppInstallPrompt();
+    //     } else {
+    //         // Fallback to original URL
+    //         this.saveRecentLibrary(url);
+    //     }
     }
 
     // NEW: Cache busting for library content
