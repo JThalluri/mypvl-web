@@ -317,7 +317,7 @@ class PWAWrapper {
                 this.uiExtractor = new UIExtractor(this);
                 this.setupNonCriticalEventListeners();
                 this.setupScrollBehavior();
-                this.setupPolicyLinks();
+                // this.setupPolicyLinks();
                 this.setupMessageListener();
             });
         } else {
@@ -326,7 +326,7 @@ class PWAWrapper {
                 this.uiExtractor = new UIExtractor(this);
                 this.setupNonCriticalEventListeners();
                 this.setupScrollBehavior();
-                this.setupPolicyLinks();
+                // this.setupPolicyLinks();
                 this.setupMessageListener();
             }, 1000);
         }
@@ -521,31 +521,31 @@ class PWAWrapper {
         });
     }
 
-    setupPolicyLinks() {
-        const policyLinks = document.querySelectorAll('.menu-item[href]');
-        policyLinks.forEach(link => {
-            link.replaceWith(link.cloneNode(true));
-        });
+    // setupPolicyLinks() {
+    //     const policyLinks = document.querySelectorAll('.menu-item[href]');
+    //     policyLinks.forEach(link => {
+    //         link.replaceWith(link.cloneNode(true));
+    //     });
         
-        document.querySelectorAll('.menu-item[href]').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
+    //     document.querySelectorAll('.menu-item[href]').forEach(link => {
+    //         link.addEventListener('click', (e) => {
+    //             e.preventDefault();
+    //             e.stopPropagation();
                 
-                const url = link.href;
-                console.log('PWA: Opening policy link externally:', url);
+    //             const url = link.href;
+    //             console.log('PWA: Opening policy link externally:', url);
                 
-                if (navigator.userAgent.includes('Android') && window.Android) {
-                    window.Android.openInBrowser(url);
-                } else {
-                    const newWindow = window.open(url, '_blank', 'noopener,noreferrer');
-                    if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
-                        window.location.href = url;
-                    }
-                }
-            });
-        });
-    }
+    //             if (navigator.userAgent.includes('Android') && window.Android) {
+    //                 window.Android.openInBrowser(url);
+    //             } else {
+    //                 const newWindow = window.open(url, '_blank', 'noopener,noreferrer');
+    //                 if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+    //                     window.location.href = url;
+    //                 }
+    //             }
+    //         });
+    //     });
+    // }
 
     // Library Search functionality
     showLibrarySearch() {
