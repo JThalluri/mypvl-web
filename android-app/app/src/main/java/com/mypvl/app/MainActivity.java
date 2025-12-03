@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.content.SharedPreferences;
 import android.app.AlertDialog;
 import android.os.Handler;
+import android.os.Looper;
 import android.provider.Settings;
 import android.util.Log;
 
@@ -182,11 +183,6 @@ public class MainActivity extends AppCompatActivity {
     // ===== NATIVE SHARING =====
     private void shareViaAndroidIntent(String url, String title, String description) {
         try {
-            Log.d("NativeShare", "shareViaAndroidIntent called");
-            Log.d("NativeShare", "URL: " + url);
-            Log.d("NativeShare", "Title: " + title);
-            Log.d("NativeShare", "Description: " + description);
-            
             Intent shareIntent = new Intent();
             shareIntent.setAction(Intent.ACTION_SEND);
             shareIntent.setType("text/plain");
@@ -195,10 +191,7 @@ public class MainActivity extends AppCompatActivity {
             
             // Create chooser with title
             Intent chooser = Intent.createChooser(shareIntent, "Share Library");
-            Log.d("NativeShare", "Starting chooser activity");
             startActivity(chooser);
-            
-            Log.d("NativeShare", "Opened Android share sheet for: " + url);
         } catch (Exception e) {
             Log.e("NativeShare", "Error opening share intent: " + e.getMessage());
             e.printStackTrace();
