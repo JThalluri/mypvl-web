@@ -517,6 +517,199 @@ body {
     100% { transform: rotate(360deg); }
 }
 
+/* ===== COLLAPSIBLE MENU SECTIONS ===== */
+.collapsible-header {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    user-select: none;
+    transition: color 0.2s;
+}
+
+.collapsible-header:hover {
+    color: #ddd;
+}
+
+.collapsible-header .fa-chevron-right {
+    transition: transform 0.3s ease;
+    font-size: 0.9em;
+}
+
+.collapsible-header.active .fa-chevron-right {
+    transform: rotate(90deg);
+}
+
+.collapsible-content {
+    padding-left: 10px;
+    border-left: 2px solid #333;
+    margin-left: 5px;
+    margin-top: 5px;
+}
+
+.collapsible-content .menu-item {
+    padding-left: 25px;
+    position: relative;
+}
+
+.collapsible-content .menu-item:before {
+    content: "•";
+    position: absolute;
+    left: 10px;
+    color: #666;
+}
+
+/* ===== LINK SETTINGS MODAL ===== */
+.link-settings-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 450px;
+    background: #1a1a1a;
+    border-radius: 15px;
+    z-index: 2001;
+    display: none;
+    animation: slideUp 0.3s ease;
+    border: 1px solid #333;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.link-settings-modal.active {
+    display: block;
+}
+
+.link-settings-modal .modal-header {
+    padding: 20px;
+    border-bottom: 1px solid #333;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #202020;
+}
+
+.link-settings-modal .modal-header h2 {
+    margin: 0;
+    color: white;
+    font-size: 1.3rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.link-settings-modal .modal-content {
+    padding: 20px;
+}
+
+.instruction-step {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 12px;
+    background: #252525;
+    border-radius: 10px;
+    border-left: 4px solid #1a73e8;
+    transition: transform 0.2s;
+}
+
+.instruction-step:hover {
+    transform: translateX(5px);
+}
+
+.step-number {
+    width: 30px;
+    height: 30px;
+    background: #1a73e8;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-right: 15px;
+    flex-shrink: 0;
+    font-size: 14px;
+}
+
+.step-text {
+    color: #ddd;
+    font-size: 15px;
+    flex: 1;
+}
+
+.instruction-note {
+    color: #aaa;
+    font-size: 14px;
+    margin-top: 20px;
+    padding: 12px;
+    background: #252525;
+    border-radius: 8px;
+    border-left: 4px solid #34a853;
+    line-height: 1.5;
+}
+
+.link-settings-modal .modal-actions {
+    padding: 20px;
+    border-top: 1px solid #333;
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    background: #202020;
+}
+
+.modal-btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-width: 120px;
+    transition: all 0.2s;
+    font-weight: 500;
+}
+
+.modal-btn.primary {
+    background: #1a73e8;
+    color: white;
+}
+
+.modal-btn.primary:hover {
+    background: #0d62d9;
+    transform: translateY(-1px);
+}
+
+.modal-btn.secondary {
+    background: #333;
+    color: #ccc;
+    border: 1px solid #444;
+}
+
+.modal-btn.secondary:hover {
+    background: #3a3a3a;
+}
+
+/* Menu item icons */
+.menu-item i {
+    width: 20px;
+    text-align: center;
+}
+
+/* Warning action style */
+.menu-item.warning-action {
+    color: #ff9800;
+    border-left: 3px solid #ff9800;
+}
+
+.menu-item.warning-action:hover {
+    background: rgba(255, 152, 0, 0.1);
+}
+
 /* Mobile Optimizations */
 @media (max-width: 768px) {
     .app-header {
