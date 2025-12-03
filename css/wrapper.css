@@ -5,7 +5,7 @@
 }
 
 :root {
-    --wrapper-header-height: 55px; /* Reduced height for app */
+    --wrapper-header-height: 54px; /* Reduced height for app */
 }
 
 body {
@@ -22,14 +22,14 @@ body {
     background: #000000;
     color: #202020;
     z-index: 1000;
-    padding: 10px 15px;
+    padding: 12px 15px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.3);
     display: flex;
     align-items: center;
     justify-content: space-between;
     height: var(--wrapper-header-height);
     transition: transform 0.3s ease;
-    border-bottom: 1px solid #333333;
+    border-bottom: none;
 }
 
 .app-header.hidden {

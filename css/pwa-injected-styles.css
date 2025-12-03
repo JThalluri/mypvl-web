@@ -1,6 +1,6 @@
 /* pwa-injected-styles.css */
 :root {
-    --header-height: 34px !important;
+    --header-height: 36px !important;
 }
 
 /* Hide unnecessary elements */
@@ -17,7 +17,8 @@ header {
     height: var(--header-height);
     justify-content: center!important;
     align-items: flex-start!important;
-    background-color: #202020 !important;
+    background-color: #000000!important;
+    border-bottom: 1px solid #333!important;
 }
 
 .header-controls {
@@ -28,7 +29,7 @@ header {
     justify-content: center !important;
     gap: 4px!important;
     align-items: flex-start!important;
-    border: 1px solid #333!important;
+    /* border: 1px solid #333!important; */
 }
 
 #toggleBtn{
@@ -66,6 +67,16 @@ header {
     height: 28px;
     border-radius: 12px !important;
     font-size: 18px!important;
+}
+
+#content{
+    background-color: black!important;
+}
+
+.card-title a{
+    font-size: 14px!important;
+    color: #ffffff!important;
+    font-weight: 600!important;
 }
 
 .modern-footer{
