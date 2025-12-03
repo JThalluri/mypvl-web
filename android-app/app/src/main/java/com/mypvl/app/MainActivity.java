@@ -73,6 +73,8 @@ public class MainActivity extends AppCompatActivity {
         
         // 5. Add JavaScript interface for menu item ONLY
         webView.addJavascriptInterface(new WebAppInterface(), "Android");
+        // Also register as 'AndroidInterface' for compatibility with new wrapper.js
+        webView.addJavascriptInterface(new WebAppInterface(), "AndroidInterface");
         
         // 6. Custom WebViewClient - handle all link navigation
         webView.setWebViewClient(new WebViewClient() {
@@ -155,6 +157,13 @@ public class MainActivity extends AppCompatActivity {
                 openLinkSettingsIntent();
             });
         }
+
+        @android.webkit.JavascriptInterface
+        public void shareLibrary(String url, String title, String description) {
+            runOnUiThread(() -> {
+                shareViaAndroidIntent(url, title, description);
+            });
+        }
     }
 
     // ===== HELPER METHOD =====
@@ -167,6 +176,32 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
             intent.setData(Uri.parse("package:" + getPackageName()));
             startActivity(intent);
+        }
+    }
+
+    // ===== NATIVE SHARING =====
+    private void shareViaAndroidIntent(String url, String title, String description) {
+        try {
+            Log.d("NativeShare", "shareViaAndroidIntent called");
+            Log.d("NativeShare", "URL: " + url);
+            Log.d("NativeShare", "Title: " + title);
+            Log.d("NativeShare", "Description: " + description);
+            
+            Intent shareIntent = new Intent();
+            shareIntent.setAction(Intent.ACTION_SEND);
+            shareIntent.setType("text/plain");
+            shareIntent.putExtra(Intent.EXTRA_SUBJECT, title);
+            shareIntent.putExtra(Intent.EXTRA_TEXT, description + "\n\n" + url);
+            
+            // Create chooser with title
+            Intent chooser = Intent.createChooser(shareIntent, "Share Library");
+            Log.d("NativeShare", "Starting chooser activity");
+            startActivity(chooser);
+            
+            Log.d("NativeShare", "Opened Android share sheet for: " + url);
+        } catch (Exception e) {
+            Log.e("NativeShare", "Error opening share intent: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 

@@ -1,3 +1,6 @@
+    // --- History stack for iframe navigation ---
+    iframeHistory = [];
+    historyPointer = -1;
 class PWAWrapper {
     constructor() {
         this.APP_VERSION = '3.2.0'; 
@@ -349,6 +352,11 @@ class PWAWrapper {
         // Header controls (right side)
         this.shareBtn.addEventListener('click', () => this.shareCurrentLibrary());
         this.reloadBtn.addEventListener('click', () => this.clientFrame.src = this.clientFrame.src);
+        // Back button navigation
+        const backBtn = document.getElementById('backBtn');
+        if (backBtn) {
+            backBtn.addEventListener('click', () => this.handleBackNavigation());
+        }
         
         // Library search modal
         this.librarySearchInput.addEventListener('input', (e) => this.handleLibrarySearch(e.target.value));
@@ -762,33 +770,197 @@ class PWAWrapper {
     async shareCurrentLibrary() {
         const currentUrl = this.clientFrame.src;
         const library = this.search.getLibraryByPath(new URL(currentUrl).pathname);
-        
         let shareUrl;
         if (library) {
-            // Use query parameter format for sharing
-            shareUrl = `${window.location.origin}/wrapper.html?l=${library.id}`;
+            // Use query parameter format for sharing - full deep link with domain
+            shareUrl = `https://my-pvl.com/wrapper.html?l=${library.id}`;
         } else {
             shareUrl = currentUrl;
         }
-        
         const libraryName = library ? library.name : 'Music Video Library';
-        
-        const shareData = {
-            title: `My Personal Video Library - ${libraryName}`,
-            text: 'Check out this amazing video collection on My PVL!',
-            url: shareUrl,
-        };
-        
+        const shareTitle = `My Personal Video Library - ${libraryName}`;
+        const shareText = 'Check out this amazing video collection on My PVL!';
         try {
+            // Prefer Android native share if available
+            if (window.AndroidInterface && typeof window.AndroidInterface.shareLibrary === 'function') {
+                setTimeout(() => {
+                    window.AndroidInterface.shareLibrary(shareUrl, shareTitle, shareText);
+                }, 0);
+                return;
+            }
+            if (typeof Android !== 'undefined' && Android && typeof Android.shareLibrary === 'function') {
+                Android.shareLibrary(shareUrl, shareTitle, shareText);
+                return;
+            } else if (window.Android && typeof window.Android.shareLibrary === 'function') {
+                window.Android.shareLibrary(shareUrl, shareTitle, shareText);
+                return;
+            }
+            // Fallback to Web Share API
+            const shareData = {
+                title: shareTitle,
+                text: shareText,
+                url: shareUrl,
+            };
             if (navigator.share) {
+                await navigator.share(shareData);
+            } else if (navigator.canShare && navigator.canShare(shareData)) {
                 await navigator.share(shareData);
             } else {
                 await navigator.clipboard.writeText(shareUrl);
                 alert('Library URL copied to clipboard!');
             }
         } catch (error) {
-            console.log('PWA: Sharing cancelled', error);
+            console.error('PWA: Share error:', error);
+            if (error.name !== 'AbortError') {
+                console.error('PWA: Share error (not abort):', error);
+            }
         }
+    }
+
+    showShareFallback(url, title, text) {
+        // Try Android native share one more time as fallback
+        if (typeof Android !== 'undefined' && Android && typeof Android.shareLibrary === 'function') {
+            console.log('PWA: Fallback using Android native share');
+            Android.shareLibrary(url, title, text);
+            return;
+        }
+        
+        // Create WhatsApp, Email, and copy options
+        const whatsappLink = `https://wa.me/?text=${encodeURIComponent(text + '\n' + url)}`;
+        const emailLink = `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(text + '\n\n' + url)}`;
+        
+        // Create a simple share menu
+        const shareMenu = document.createElement('div');
+        shareMenu.style.cssText = `
+            position: fixed;
+            try {
+                // Push current src to history before navigating
+                if (this.clientFrame.src) {
+                    if (this.historyPointer === -1 || this.clientFrame.src !== this.iframeHistory[this.historyPointer]) {
+                        this.iframeHistory.push(this.clientFrame.src);
+                        this.historyPointer = this.iframeHistory.length - 1;
+                    }
+                }
+                this.clientFrame.src = url;
+                // Wait for frame to load
+                await new Promise((resolve) => {
+                    this.clientFrame.onload = () => {
+                        this.hideLoading();
+                        this.saveRecentLibrary(url);
+                        resolve();
+                    };
+                    this.clientFrame.onerror = () => {
+                        this.hideLoading();
+                        console.error('PWA: Failed to load URL:', url);
+                        resolve();
+                    };
+                });
+            } catch (error) {
+                console.error('PWA: Error loading client:', error);
+                this.hideLoading();
+            }
+            handleBackNavigation() {
+                if (this.clientFrame && this.historyPointer > -1) {
+                    this.clientFrame.src = this.iframeHistory[this.historyPointer];
+                    this.historyPointer--;
+                } else {
+                    // Fallback: reload default library
+                    this.loadRecentLibrary();
+                }
+            }
+        `;
+        
+        const title_el = document.createElement('h3');
+        title_el.textContent = 'Share Library';
+        title_el.style.cssText = 'margin: 0 0 15px 0; font-size: 18px;';
+        shareMenu.appendChild(title_el);
+        
+        const options = [
+            {
+                name: 'WhatsApp',
+                icon: '💬',
+                action: () => window.open(whatsappLink, '_blank')
+            },
+            {
+                name: 'Email',
+                icon: '✉️',
+                action: () => window.open(emailLink)
+            },
+            {
+                name: 'Copy Link',
+                icon: '📋',
+                action: () => {
+                    navigator.clipboard.writeText(url);
+                    alert('Link copied to clipboard!');
+                }
+            }
+        ];
+        
+        options.forEach(option => {
+            const btn = document.createElement('button');
+            btn.style.cssText = `
+                display: flex;
+                align-items: center;
+                width: 100%;
+                padding: 12px;
+                margin-bottom: 10px;
+                border: none;
+                border-radius: 8px;
+                background: #f0f0f0;
+                cursor: pointer;
+                font-size: 14px;
+                transition: background 0.2s;
+            `;
+            btn.innerHTML = `<span style="font-size: 20px; margin-right: 10px;">${option.icon}</span>${option.name}`;
+            btn.onmouseover = () => btn.style.background = '#e0e0e0';
+            btn.onmouseout = () => btn.style.background = '#f0f0f0';
+            btn.onclick = () => {
+                option.action();
+                cleanup();
+            };
+            shareMenu.appendChild(btn);
+        });
+        
+        const closeBtn = document.createElement('button');
+        closeBtn.textContent = 'Cancel';
+        closeBtn.style.cssText = `
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            background: #ddd;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 5px;
+        `;
+        closeBtn.onclick = cleanup;
+        shareMenu.appendChild(closeBtn);
+        
+        const cleanup = () => {
+            overlay.remove();
+            shareMenu.remove();
+        };
+        
+        overlay.onclick = cleanup;
+        
+        document.body.appendChild(overlay);
+        document.body.appendChild(shareMenu);
+        
+        // Add animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideUp {
+                from {
+                    opacity: 0;
+                    transform: translate(-50%, -40%);
+                }
+                to {
+                    opacity: 1;
+                    transform: translate(-50%, -50%);
+                }
+            }
+        `;
+        document.head.appendChild(style);
     }    
     
     saveRecentLibrary(url) {
