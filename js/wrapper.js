@@ -772,48 +772,26 @@ class PWAWrapper {
         const library = this.search.getLibraryByPath(new URL(currentUrl).pathname);
         let shareUrl;
         if (library) {
-            // Use query parameter format for sharing - full deep link with domain
-            shareUrl = `https://my-pvl.com/wrapper.html?l=${library.id}`;
+            // Use query parameter format for sharing
+            shareUrl = `${window.location.origin}/wrapper.html?l=${library.id}`;
         } else {
             shareUrl = currentUrl;
         }
         const libraryName = library ? library.name : 'Music Video Library';
-        const shareTitle = `My Personal Video Library - ${libraryName}`;
-        const shareText = 'Check out this amazing video collection on My PVL!';
+        const shareData = {
+            title: `My Personal Video Library - ${libraryName}`,
+            text: 'Check out this amazing video collection on My PVL!',
+            url: shareUrl,
+        };
         try {
-            // Prefer Android native share if available
-            if (window.AndroidInterface && typeof window.AndroidInterface.shareLibrary === 'function') {
-                setTimeout(() => {
-                    window.AndroidInterface.shareLibrary(shareUrl, shareTitle, shareText);
-                }, 0);
-                return;
-            }
-            if (typeof Android !== 'undefined' && Android && typeof Android.shareLibrary === 'function') {
-                Android.shareLibrary(shareUrl, shareTitle, shareText);
-                return;
-            } else if (window.Android && typeof window.Android.shareLibrary === 'function') {
-                window.Android.shareLibrary(shareUrl, shareTitle, shareText);
-                return;
-            }
-            // Fallback to Web Share API
-            const shareData = {
-                title: shareTitle,
-                text: shareText,
-                url: shareUrl,
-            };
             if (navigator.share) {
-                await navigator.share(shareData);
-            } else if (navigator.canShare && navigator.canShare(shareData)) {
                 await navigator.share(shareData);
             } else {
                 await navigator.clipboard.writeText(shareUrl);
                 alert('Library URL copied to clipboard!');
             }
         } catch (error) {
-            console.error('PWA: Share error:', error);
-            if (error.name !== 'AbortError') {
-                console.error('PWA: Share error (not abort):', error);
-            }
+            console.log('PWA: Sharing cancelled', error);
         }
     }
 
