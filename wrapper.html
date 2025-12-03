@@ -193,6 +193,32 @@
         </div>
     </div>
 
+    <!-- Confirmation Modal -->
+    <div class="overlay-backdrop" id="confirmBackdrop"></div>
+    <div class="link-settings-modal" id="confirmModal">
+        <div class="modal-header">
+            <h2 id="confirmTitle"><i class="fa-solid fa-question-circle"></i> Confirm Action</h2>
+            <button class="close-modal" id="closeConfirmModal">
+                <i class="fa-solid fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="modal-content">
+            <p id="confirmMessage" style="color: #ddd; font-size: 15px; line-height: 1.5; white-space: pre-line;">
+                Are you sure you want to continue?
+            </p>
+        </div>
+        
+        <div class="modal-actions">
+            <button class="modal-btn secondary" id="confirmCancel">
+                Cancel
+            </button>
+            <button class="modal-btn primary" id="confirmOK">
+                OK
+            </button>
+        </div>
+    </div>
+
     <script src="/js/librarySearch.js?v=1.3.0"></script>
     <script src="/js/uiExtractor.js?v=1.3.0"></script>
     <script src="/js/styleInjector.js?v=1.3.1"></script>

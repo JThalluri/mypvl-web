@@ -129,7 +129,6 @@ class PWAWrapper {
 
     isLibraryUrl(url) {
         return url.includes('/QKNK9F/') || 
-            url.includes('/ABDC1F/') ||
             url.match(/\/[A-Z0-9]{6}\//) ||
             url.startsWith('/@');
     }
@@ -686,39 +685,44 @@ class PWAWrapper {
     }
     
     clearPreferencesHandler() {
-        if (confirm('Clear preferences?\n\nThis will:\n• Reset your app settings\n• Clear search history\n• Keep your recent libraries')) {
-            this.showLoading();
-            console.log('PWA: Clearing preferences...');
-            
-            // Clear ONLY preferences, keep recent libraries
-            const recentLibraries = localStorage.getItem('pwa_recent_libraries');
-            const currentLibrary = localStorage.getItem('pwa_current_library');
-            
-            // Clear localStorage but preserve essential data
-            localStorage.clear();
-            
-            // Restore what we want to keep
-            if (recentLibraries) {
-                localStorage.setItem('pwa_recent_libraries', recentLibraries);
-            }
-            if (currentLibrary) {
-                localStorage.setItem('pwa_current_library', currentLibrary);
-            }
-            
-            // Always keep version
-            localStorage.setItem('pwa_version', this.APP_VERSION);
-            
-            this.hideAppMenu();
-            this.hideLoading();
-            alert('Preferences cleared successfully!');
-            
-            // Optional: Refresh current view
-            setTimeout(() => {
-                this.reloadCurrentLibrary();
-            }, 500);
-        }
+        openConfirmationModal(
+            'Clear preferences?',
+            'This will:\n• Reset your app settings\n• Clear search history\n• Keep your recent libraries',
+            () => {
+                // Clear preferences logic
+                const recentLibraries = localStorage.getItem('pwa_recent_libraries');
+                
+                localStorage.clear();
+                
+                if (recentLibraries) {
+                    localStorage.setItem('pwa_recent_libraries', recentLibraries);
+                }
+                
+                localStorage.setItem('pwa_version', this.APP_VERSION);
+                
+                this.hideAppMenu();
+                
+                // Show success
+                openConfirmationModal(
+                    'Success',
+                    'Preferences cleared successfully!\n\nLoading default library...',
+                    () => {
+                        window.location.href = '/wrapper.html';
+                    },
+                    null,
+                    'success'
+                );
+            },
+            null,
+            'warning'
+        );
     }
-    
+        
+    hideConfirmationModal() {
+        document.getElementById('confirmBackdrop').classList.remove('active');
+        document.getElementById('confirmModal').classList.remove('active');
+    }
+
     // Client loading and state management
     async loadClient(url) {
         this.showLoading();
@@ -998,53 +1002,43 @@ class PWAWrapper {
     }
 
     fullResetHandler() {
-        if (confirm('Full reset?\n\nThis will:\n• Clear ALL app data\n• Clear ALL cache\n• Reset to main site\n• Requires internet connection\n\nContinue?')) {
-            this.showLoading();
-            console.log('PWA: FULL RESET initiated');
-            
-            // Show reset in progress
-            const resetBtn = document.getElementById('fullReset');
-            const originalText = resetBtn.innerHTML;
-            resetBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Resetting...';
-            resetBtn.disabled = true;
-            
-            // 1. Clear ALL localStorage (no preservation)
-            localStorage.clear();
-            console.log('PWA: Cleared localStorage');
-            
-            // 2. Clear IndexedDB
-            this.clearAllIndexedDB();
-            
-            // 3. Clear sessionStorage
-            sessionStorage.clear();
-            
-            // 4. Unregister Service Worker
-            this.unregisterServiceWorker();
-            
-            // 5. Clear all caches
-            this.clearAllCaches();
-            
-            // 6. Set fresh version
-            localStorage.setItem('pwa_version', this.APP_VERSION);
-            
-            // 7. Wait and redirect to main site
-            setTimeout(() => {
-                console.log('PWA: Full reset complete, redirecting...');
+        openConfirmationModal(
+            'Full reset?',
+            'This will:\n• Clear ALL app data\n• Clear ALL cache\n• Reset to main site\n• Requires internet connection',
+            () => {
+                this.showLoading();
+                const resetBtn = document.getElementById('fullReset');
+                const originalText = resetBtn.innerHTML;
+                resetBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Resetting...';
+                resetBtn.disabled = true;
                 
-                // Restore button
-                resetBtn.innerHTML = originalText;
-                resetBtn.disabled = false;
+                // Clear everything
+                localStorage.clear();
+                sessionStorage.clear();
                 
-                this.hideLoading();
+                this.clearAllIndexedDB();
+                this.unregisterServiceWorker();
+                this.clearAllCaches();
                 
-                // Show confirmation
-                alert('✅ Full reset complete!\n\nApp will restart and load fresh from server.');
-                
-                // Force hard redirect to main site
-                window.location.href = 'https://my-pvl.com/';
-                
-            }, 2000);
-        }
+                setTimeout(() => {
+                    resetBtn.innerHTML = originalText;
+                    resetBtn.disabled = false;
+                    this.hideLoading();
+                    
+                    openConfirmationModal(
+                        'Reset Complete',
+                        '✅ Full reset complete!\n\nLoading fresh from server...',
+                        () => {
+                            window.location.href = '/wrapper.html';
+                        },
+                        null,
+                        'success'
+                    );
+                }, 2000);
+            },
+            null,
+            'danger'
+        );
     }
 
     clearAllIndexedDB() {
@@ -1089,6 +1083,49 @@ class PWAWrapper {
             });
         }
     }    
+}
+
+function openConfirmationModal(title, message, confirmCallback, cancelCallback, modalType = '') {
+    // Set content
+    document.getElementById('confirmTitle').innerHTML = 
+        `<i class="fa-solid fa-question-circle"></i> ${title}`;
+    document.getElementById('confirmMessage').textContent = message;
+    
+    // Set modal type for styling
+    const modal = document.getElementById('confirmModal');
+    modal.className = 'link-settings-modal'; // Reset classes
+    if (modalType) {
+        modal.classList.add(modalType);
+    }
+    
+    // Show modal
+    document.getElementById('confirmBackdrop').classList.add('active');
+    modal.classList.add('active');
+    
+    // Setup close handlers
+    const closeModal = () => {
+        document.getElementById('confirmBackdrop').classList.remove('active');
+        document.getElementById('confirmModal').classList.remove('active');
+        removeEventListeners();
+        if (cancelCallback) cancelCallback();
+    };
+    
+    document.getElementById('closeConfirmModal').addEventListener('click', closeModal);
+    document.getElementById('confirmCancel').addEventListener('click', closeModal);
+    document.getElementById('confirmBackdrop').addEventListener('click', closeModal);
+    
+    // OK Button
+    document.getElementById('confirmOK').addEventListener('click', function() {
+        document.getElementById('confirmBackdrop').classList.remove('active');
+        document.getElementById('confirmModal').classList.remove('active');
+        removeEventListeners();
+        if (confirmCallback) confirmCallback();
+    });
+    
+    // Store references to remove later (following your pattern)
+    function removeEventListeners() {
+        // Event listeners will be garbage collected
+    }
 }
 
 // ===== COLLAPSIBLE MENU FUNCTIONALITY =====

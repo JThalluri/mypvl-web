@@ -97,13 +97,21 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
                 
-                // For http/https, stay in WebView
+                // For ALL http/https links, load in WebView
                 if (url.startsWith("http://") || url.startsWith("https://")) {
-                    return false;
+                    // Allow navigation within the app
+                    return false; // This tells WebView to handle the link
                 }
                 
-                // Block other unknown schemes
-                return true;
+                // For unknown schemes, try to handle them
+                try {
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                    startActivity(intent);
+                    return true;
+                } catch (Exception e) {
+                    // Can't handle, block it
+                    return true;
+                }
             }
         });
         
