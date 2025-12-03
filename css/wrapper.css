@@ -694,6 +694,31 @@ body {
     background: #3a3a3a;
 }
 
+/* Small additions for confirmation modal */
+#confirmModal .modal-header {
+    border-bottom-color: #444; /* Default neutral color */
+}
+
+#confirmModal.warning .modal-header {
+    border-bottom-color: #ff9800; /* Orange for warnings */
+}
+
+#confirmModal.danger .modal-header {
+    border-bottom-color: #ea4335; /* Red for dangerous actions */
+}
+
+#confirmModal.success .modal-header {
+    border-bottom-color: #34a853; /* Green for success */
+}
+
+#confirmModal .modal-content p {
+    color: #ddd;
+    font-size: 15px;
+    line-height: 1.5;
+    margin: 0;
+    white-space: pre-line;
+}
+
 /* Menu item icons */
 .menu-item i {
     width: 20px;
