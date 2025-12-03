@@ -42,8 +42,8 @@ android {
         applicationId "com.mypvl.app"
         minSdk 21
         targetSdk 35
-        versionCode 8  // Increment this for each release
-        versionName "1.0.7"
+        versionCode 9  // Increment this for each release
+        versionName "1.0.8"
     }
     
     signingConfigs {
