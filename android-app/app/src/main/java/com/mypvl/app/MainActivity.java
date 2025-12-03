@@ -5,6 +5,10 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import androidx.appcompat.app.AppCompatActivity;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.graphics.Color;
+import android.view.View;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -14,33 +18,47 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        // Remove the Android ActionBar/TitleBar
+        // 1. Hide Android ActionBar
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
         
-        webView = new WebView(this);
-        setContentView(webView);
+        // 3. Create container with proper insets handling
+        FrameLayout container = new FrameLayout(this);
+        setContentView(container);
         
-        // Configure WebView for full PWA support
+        // 4. Create WebView with layout params
+        webView = new WebView(this);
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+            FrameLayout.LayoutParams.MATCH_PARENT,
+            FrameLayout.LayoutParams.MATCH_PARENT
+        );
+        
+        // 5. Apply system window insets
+        container.setOnApplyWindowInsetsListener((v, insets) -> {
+            params.topMargin = insets.getSystemWindowInsetTop();
+            params.bottomMargin = insets.getSystemWindowInsetBottom();
+            webView.setLayoutParams(params);
+            return insets;
+        });
+        
+        container.addView(webView);
+        
+        // 6. Configure WebView
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
-        webSettings.setDomStorageEnabled(true); // Local storage
+        webSettings.setDomStorageEnabled(true);
         webSettings.setDatabaseEnabled(true);
         webSettings.setLoadWithOverviewMode(true);
         webSettings.setUseWideViewPort(true);
-        webSettings.setMediaPlaybackRequiresUserGesture(false); // Auto-play audio
+        webSettings.setMediaPlaybackRequiresUserGesture(false);
         
-        // Handle links within WebView (not external browser)
         webView.setWebViewClient(new WebViewClient());
-        
-        // Load your PWA
         webView.loadUrl("https://my-pvl.com/wrapper.html");
     }
 
     @Override
     public void onBackPressed() {
-        // Handle back button in WebView
         if (webView.canGoBack()) {
             webView.goBack();
         } else {

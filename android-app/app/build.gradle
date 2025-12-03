@@ -2,20 +2,63 @@ plugins {
     id 'com.android.application'
 }
 
+// android {
+//     namespace 'com.mypvl.app'
+//     compileSdk 34
+    
+//     defaultConfig {
+//         applicationId "com.mypvl.app"
+//         minSdk 21
+//         targetSdk 34
+//         versionCode 1
+//         versionName "1.0"
+//     }
+    
+//     buildTypes {
+//         release {
+//             minifyEnabled false
+//             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+//         }
+//     }
+    
+//     compileOptions {
+//         sourceCompatibility JavaVersion.VERSION_17
+//         targetCompatibility JavaVersion.VERSION_17
+//     }
+// }
+
+// dependencies {
+//     implementation 'androidx.appcompat:appcompat:1.6.1'
+//     implementation 'com.google.android.material:material:1.10.0'
+//     implementation 'androidx.browser:browser:1.6.0'
+//     implementation 'com.google.androidbrowserhelper:androidbrowserhelper:2.5.0'
+// }
+
 android {
     namespace 'com.mypvl.app'
-    compileSdk 34
+    compileSdk 35
     
     defaultConfig {
         applicationId "com.mypvl.app"
         minSdk 21
-        targetSdk 34
-        versionCode 1
-        versionName "1.0"
+        targetSdk 35
+        versionCode 6  // Increment this for each release
+        versionName "1.0.5"
+    }
+    
+    signingConfigs {
+        release {
+            // Use your existing keystore (relative path from android-app/)
+            storeFile file('../mypvl.keystore')
+            storePassword 'tinkoo01'
+            keyAlias 'mypvl'
+            keyPassword 'tinkoo01'
+        }
     }
     
     buildTypes {
         release {
+            signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
