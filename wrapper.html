@@ -108,21 +108,88 @@
         </div>
         
         <div class="menu-content">
+            <!-- App Actions (Top - Most Used) -->
             <div class="menu-section">
-                <h3>Legal & Policies</h3>
-                <a href="/privacy_policy.html" class="menu-item" target="_blank">Privacy Policy</a>
-                <a href="/terms_of_use.html" class="menu-item" target="_blank">Terms of Use</a>
-                <a href="/cookies_policy.html" class="menu-item" target="_blank">Cookies Policy</a>
-                <a href="/dmca_policy.html" class="menu-item" target="_blank">DMCA Policy</a>
-                <a href="/thirdparty_attributions.html" class="menu-item" target="_blank">Third Party Attributions</a>
+                <h3>App Actions</h3>
+                <div class="menu-item" id="openLinkSettings">
+                    <i class="fa-solid fa-external-link-alt" style="margin-right: 10px;"></i>
+                    Open libraries directly in app
+                </div>
+                <div class="menu-item" id="clearPreferences">
+                    <i class="fa-solid fa-sliders"></i>
+                    Clear Preferences
+                </div>
+
+                <div class="menu-item warning-reset" id="fullReset">
+                    <i class="fa-solid fa-broom"></i>
+                    Full Reset
+                </div>
             </div>
             
+            <!-- Support -->
             <div class="menu-section">
                 <h3>Support</h3>
-                <a href="/contact_us.html" class="menu-item" target="_blank">Contact Us</a>
-                <div class="menu-item" id="clearAppData">Clear App Data</div>
-                <div class="menu-item emergency-reset" id="emergencyReset">Emergency Reset</div>
+                <a href="/contact_us.html" class="menu-item" target="_blank">
+                    <i class="fa-solid fa-envelope" style="margin-right: 10px;"></i>
+                    Contact Us
+                </a>
             </div>
+            
+            <!-- Legal & Policies (Collapsible) -->
+            <div class="menu-section collapsible">
+                <h3 class="collapsible-header">
+                    <i class="fa-solid fa-chevron-right"></i>
+                    Legal & Policies
+                </h3>
+                <div class="collapsible-content" style="display: none;">
+                    <a href="/privacy_policy.html" class="menu-item" target="_blank">Privacy Policy</a>
+                    <a href="/terms_of_use.html" class="menu-item" target="_blank">Terms of Use</a>
+                    <a href="/cookies_policy.html" class="menu-item" target="_blank">Cookies Policy</a>
+                    <a href="/dmca_policy.html" class="menu-item" target="_blank">DMCA Policy</a>
+                    <a href="/thirdparty_attributions.html" class="menu-item" target="_blank">Third Party Attributions</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Link Settings Modal -->
+    <div class="overlay-backdrop" id="linkSettingsBackdrop"></div>
+    <div class="link-settings-modal" id="linkSettingsModal">
+        <div class="modal-header">
+            <h2><i class="fa-solid fa-link"></i> Open Links in App</h2>
+            <button class="close-modal" id="closeLinkSettings">
+                <i class="fa-solid fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="modal-content">
+            <div class="instruction-step">
+                <div class="step-number">1</div>
+                <div class="step-text">Tap the button below</div>
+            </div>
+            
+            <div class="instruction-step">
+                <div class="step-number">2</div>
+                <div class="step-text">Tap "Open supported links"</div>
+            </div>
+            
+            <div class="instruction-step">
+                <div class="step-number">3</div>
+                <div class="step-text">Enable "Open in this app"</div>
+            </div>
+            
+            <p class="instruction-note">
+                This ensures library links from messages, emails, and other apps open directly here.
+            </p>
+        </div>
+        
+        <div class="modal-actions">
+            <button class="modal-btn secondary" id="cancelLinkSettings">
+                Cancel
+            </button>
+            <button class="modal-btn primary" id="openAndroidSettings">
+                <i class="fa-solid fa-gear"></i> Open Settings
+            </button>
         </div>
     </div>
 

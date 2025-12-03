@@ -28,7 +28,7 @@ class PWAWrapper {
         this.appMenuBackdrop = document.getElementById('appMenuBackdrop');
         this.appMenuModal = document.getElementById('appMenuModal');
         this.closeAppMenu = document.getElementById('closeAppMenu');
-        this.clearAppData = document.getElementById('clearAppData');
+        this.clearAppData = document.getElementById('clearPreferences');
         
         // Scroll behavior variables
         this.lastScrollTop = 0;
@@ -359,9 +359,9 @@ class PWAWrapper {
         // App menu modal
         this.closeAppMenu.addEventListener('click', () => this.hideAppMenu());
         this.appMenuBackdrop.addEventListener('click', () => this.hideAppMenu());
-        this.clearAppData.addEventListener('click', () => this.clearAppDataHandler());
-        this.emergencyReset = document.getElementById('emergencyReset');
-        this.emergencyReset.addEventListener('click', () => this.emergencyResetHandler());        
+        this.clearAppData.addEventListener('click', () => this.clearPreferencesHandler());
+        this.fullReset = document.getElementById('fullReset');
+        this.fullReset.addEventListener('click', () => this.fullResetHandler());        
     }
 
     async onFrameLoad() {
@@ -685,30 +685,39 @@ class PWAWrapper {
         this.appMenuModal.classList.remove('active');
     }
     
-    clearAppDataHandler() {
-        if (confirm('Clear all app data? This will reset your recent libraries.')) {
+    clearPreferencesHandler() {
+        if (confirm('Clear preferences?\n\nThis will:\n• Reset your app settings\n• Clear search history\n• Keep your recent libraries')) {
+            this.showLoading();
+            console.log('PWA: Clearing preferences...');
+            
+            // Clear ONLY preferences, keep recent libraries
+            const recentLibraries = localStorage.getItem('pwa_recent_libraries');
+            const currentLibrary = localStorage.getItem('pwa_current_library');
+            
+            // Clear localStorage but preserve essential data
             localStorage.clear();
+            
+            // Restore what we want to keep
+            if (recentLibraries) {
+                localStorage.setItem('pwa_recent_libraries', recentLibraries);
+            }
+            if (currentLibrary) {
+                localStorage.setItem('pwa_current_library', currentLibrary);
+            }
+            
+            // Always keep version
+            localStorage.setItem('pwa_version', this.APP_VERSION);
+            
             this.hideAppMenu();
-            alert('App data cleared successfully.');
+            this.hideLoading();
+            alert('Preferences cleared successfully!');
+            
+            // Optional: Refresh current view
+            setTimeout(() => {
+                this.reloadCurrentLibrary();
+            }, 500);
         }
     }
-    
-    // Client Integration
-    // toggleClientSidepane() {
-    //     console.log('PWA: Sending toggle message to client');
-        
-    //     try {
-    //         this.clientFrame.contentWindow.postMessage({
-    //             type: 'TOGGLE_SIDEPANE',
-    //             source: 'pwa-wrapper',
-    //             timestamp: Date.now()
-    //         }, '*');
-            
-    //         console.log('PWA: Toggle message sent');
-    //     } catch (error) {
-    //         console.log('PWA: Failed to send toggle message:', error);
-    //     }
-    // }
     
     // Client loading and state management
     async loadClient(url) {
@@ -917,26 +926,22 @@ class PWAWrapper {
         
         // Handle first load or corrupted version
         if (!storedVersion || storedVersion === 'undefined' || storedVersion === 'null') {
-            console.log('PWA: First load or corrupted version, setting to', this.APP_VERSION);
+            console.log('PWA: First load, setting version to', this.APP_VERSION);
             localStorage.setItem('pwa_version', this.APP_VERSION);
             return; // Don't trigger update on first load
         }
         
         // Version changed - handle update
         if (storedVersion !== this.APP_VERSION) {
-            console.log(`PWA: New version detected (${storedVersion} -> ${this.APP_VERSION}). Updating...`);
+            console.log(`PWA: New version detected (${storedVersion} -> ${this.APP_VERSION}). Clearing caches...`);
             
             // Update version FIRST to prevent infinite loop
             localStorage.setItem('pwa_version', this.APP_VERSION);
             
-            // Clear caches
+            // Clear caches (milder than full reset)
             await this.clearAllCaches();
             
-            // Don't try to update service worker if it doesn't exist
-            console.log('PWA: Skipping service worker update (file not found)');
-            
-            // Reload to apply update
-            console.log('PWA: Reloading to apply update...');
+            console.log('PWA: Version update complete, reloading...');
             setTimeout(() => window.location.reload(), 1000);
         } else {
             console.log('PWA: Version is current:', this.APP_VERSION);
@@ -949,28 +954,18 @@ class PWAWrapper {
             if ('caches' in window) {
                 const cacheNames = await caches.keys();
                 await Promise.all(
-                    cacheNames.map(cacheName => caches.delete(cacheName))
+                    cacheNames.map(cacheName => {
+                        console.log(`PWA: Deleting cache: ${cacheName}`);
+                        return caches.delete(cacheName);
+                    })
                 );
             }
-            
-            // Clear localStorage items (except recent libraries)
-            const recentLibraries = localStorage.getItem('pwa_recent_libraries');
-            localStorage.clear();
-            if (recentLibraries) {
-                localStorage.setItem('pwa_recent_libraries', recentLibraries);
-            }
-            
-            // Re-store the current version after clearing
-            localStorage.setItem('pwa_version', this.APP_VERSION);
-            
-            // Clear sessionStorage
-            sessionStorage.clear();
             
             console.log('PWA: All caches cleared');
         } catch (error) {
             console.error('PWA: Error clearing caches', error);
         }
-    }    
+    }
 
     async forceSWUpdate() {
         if ('serviceWorker' in navigator) {
@@ -1002,27 +997,169 @@ class PWAWrapper {
         }
     }
 
-    emergencyResetHandler() {
-        if (confirm('🚨 EMERGENCY RESET\n\nThis will:\n• Clear all app data\n• Clear all cache\n• Reset to default library\n\nContinue?')) {
+    fullResetHandler() {
+        if (confirm('Full reset?\n\nThis will:\n• Clear ALL app data\n• Clear ALL cache\n• Reset to main site\n• Requires internet connection\n\nContinue?')) {
             this.showLoading();
-            console.log('PWA: Emergency reset initiated');
+            console.log('PWA: FULL RESET initiated');
             
             // Show reset in progress
-            this.emergencyReset.textContent = 'Resetting...';
-            this.emergencyReset.disabled = true;
+            const resetBtn = document.getElementById('fullReset');
+            const originalText = resetBtn.innerHTML;
+            resetBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Resetting...';
+            resetBtn.disabled = true;
             
-            // Perform reset (we'll add the actual logic later)
+            // 1. Clear ALL localStorage (no preservation)
+            localStorage.clear();
+            console.log('PWA: Cleared localStorage');
+            
+            // 2. Clear IndexedDB
+            this.clearAllIndexedDB();
+            
+            // 3. Clear sessionStorage
+            sessionStorage.clear();
+            
+            // 4. Unregister Service Worker
+            this.unregisterServiceWorker();
+            
+            // 5. Clear all caches
+            this.clearAllCaches();
+            
+            // 6. Set fresh version
+            localStorage.setItem('pwa_version', this.APP_VERSION);
+            
+            // 7. Wait and redirect to main site
             setTimeout(() => {
-                alert('Emergency reset would clear all data here.\n(Logic to be implemented)');
-                this.emergencyReset.textContent = 'Emergency Reset';
-                this.emergencyReset.disabled = false;
+                console.log('PWA: Full reset complete, redirecting...');
+                
+                // Restore button
+                resetBtn.innerHTML = originalText;
+                resetBtn.disabled = false;
+                
                 this.hideLoading();
-            }, 1000);
+                
+                // Show confirmation
+                alert('✅ Full reset complete!\n\nApp will restart and load fresh from server.');
+                
+                // Force hard redirect to main site
+                window.location.href = 'https://my-pvl.com/';
+                
+            }, 2000);
+        }
+    }
+
+    clearAllIndexedDB() {
+        if (window.indexedDB) {
+            // Modern browsers
+            if (indexedDB.databases) {
+                indexedDB.databases().then(databases => {
+                    databases.forEach(db => {
+                        indexedDB.deleteDatabase(db.name);
+                        console.log(`PWA: Deleted IndexedDB: ${db.name}`);
+                    });
+                }).catch(() => {
+                    this.fallbackClearIndexedDB();
+                });
+            } else {
+                // Fallback for older browsers
+                this.fallbackClearIndexedDB();
+            }
+        }
+    }
+
+    fallbackClearIndexedDB() {
+        // Try to delete known database names
+        const knownDBs = ['pwa-wrapper', 'library-cache', 'video-cache', 'app-database'];
+        knownDBs.forEach(dbName => {
+            try {
+                indexedDB.deleteDatabase(dbName);
+                console.log(`PWA: Deleted IndexedDB: ${dbName}`);
+            } catch (e) {
+                console.log(`PWA: Could not delete ${dbName}:`, e);
+            }
+        });
+    }
+
+    unregisterServiceWorker() {
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(registrations => {
+                registrations.forEach(registration => {
+                    registration.unregister();
+                    console.log('PWA: Unregistered service worker');
+                });
+            });
         }
     }    
 }
 
+// ===== COLLAPSIBLE MENU FUNCTIONALITY =====
+function initCollapsibleMenu() {
+    const collapsibleHeaders = document.querySelectorAll('.collapsible-header');
+    
+    collapsibleHeaders.forEach(header => {
+        header.addEventListener('click', function() {
+            this.classList.toggle('active');
+            const content = this.nextElementSibling;
+            if (content.style.display === 'block') {
+                content.style.display = 'none';
+            } else {
+                content.style.display = 'block';
+            }
+        });
+    });
+}
+
+// ===== LINK SETTINGS MODAL FUNCTIONALITY =====
+function initLinkSettingsModal() {
+    const openLinkSettingsBtn = document.getElementById('openLinkSettings');
+    if (openLinkSettingsBtn) {
+        openLinkSettingsBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            openLinkSettingsModal();
+        });
+    }
+}
+
+function openLinkSettingsModal() {
+    // Show modal
+    document.getElementById('linkSettingsBackdrop').classList.add('active');
+    document.getElementById('linkSettingsModal').classList.add('active');
+    
+    // Setup close handlers
+    const closeModal = () => {
+        document.getElementById('linkSettingsBackdrop').classList.remove('active');
+        document.getElementById('linkSettingsModal').classList.remove('active');
+        removeEventListeners();
+    };
+    
+    document.getElementById('closeLinkSettings').addEventListener('click', closeModal);
+    document.getElementById('cancelLinkSettings').addEventListener('click', closeModal);
+    document.getElementById('linkSettingsBackdrop').addEventListener('click', closeModal);
+    
+    // CTA Button - OPEN ANDROID SETTINGS
+    document.getElementById('openAndroidSettings').addEventListener('click', function() {
+        if (/; wv\)/.test(navigator.userAgent)) {
+            // In Android app - open settings directly
+            if (window.Android && typeof window.Android.openLinkSettings === 'function') {
+                window.Android.openLinkSettings();
+            } else {
+                alert('Android interface not available. Please manually enable "Open supported links" in app settings.');
+            }
+        } else {
+            // In browser
+            alert('Please install the My PVL app from Play Store, then enable "Open supported links" in app settings.');
+        }
+        closeModal();
+    });
+    
+    // Store references to remove later
+    function removeEventListeners() {
+        // Event listeners will be garbage collected when modal is removed from DOM
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+    initCollapsibleMenu();
+    initLinkSettingsModal();
     window.pwaWrapper = new PWAWrapper(); 
 });
 
