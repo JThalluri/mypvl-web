@@ -214,28 +214,34 @@ public class MainActivity extends AppCompatActivity {
         
         Log.d("DeepLink", "Intent action: " + intent.getAction());
         Log.d("DeepLink", "Intent data: " + deepLinkUri);
+        Log.d("DeepLink", "Intent flags: " + intent.getFlags());
         
-        // If we have deep link data, use it
+        // Check for explicit deep link
         if (deepLinkUri != null) {
             String fullUrl = deepLinkUri.toString();
             Log.d("DeepLink", "Deep link detected: " + fullUrl);
             
-            // If the deep link is already to our domain with parameters, use it as-is
+            // Handle various deep link formats for my-pvl.com
             if (fullUrl.contains("my-pvl.com")) {
-                // Ensure it has query parameters for library ID
+                // Format 1: https://my-pvl.com/wrapper.html?l=QKNK9F (with query params)
                 if (fullUrl.contains("?")) {
+                    Log.d("DeepLink", "Using deep link as-is (has query params): " + fullUrl);
                     return fullUrl;
-                } else if (fullUrl.contains("/")) {
-                    // Extract library ID from path like: https://my-pvl.com/wrapper.html?l=QKNK9F
+                }
+                // Format 2: https://my-pvl.com/QKNK9F/ (path-based)
+                else if (fullUrl.contains("/")) {
                     String libraryId = extractLibraryIdFromPath(fullUrl);
                     if (libraryId != null && !libraryId.isEmpty()) {
-                        return "https://my-pvl.com/wrapper.html?l=" + libraryId;
+                        String result = "https://my-pvl.com/wrapper.html?l=" + libraryId;
+                        Log.d("DeepLink", "Converted path format to query param: " + result);
+                        return result;
                     }
                 }
             }
         }
         
         // Fallback to default wrapper
+        Log.d("DeepLink", "No deep link found, using default wrapper");
         return "https://my-pvl.com/wrapper.html";
     }
 
