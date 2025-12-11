@@ -1,0 +1,200 @@
+/* Header Layout - Mobile First - EXACTLY as in original */
+
+.app-header {
+    background: var(--surface-color);
+    border-bottom: 1px solid var(--border-color);
+    padding: var(--space-2);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+}
+
+.header-title {
+    display: none;
+}
+
+/* Header actions - now the main container */
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    width: 100%;
+    justify-content: flex-end;
+}
+
+/* Search container */
+.search-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex: 1;
+    max-width: 300px;
+    margin: 0 var(--space-3);
+}
+
+#searchBox {
+    width: 100%;
+    padding: 8px 36px 8px 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-size: var(--font-size-sm);
+}
+
+#searchBox:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(247, 156, 25, 0.2);
+}
+
+.clear-search {
+    position: absolute;
+    right: 8px;
+    background: none;
+    border: none;
+    color: var(--text-tertiary);
+    cursor: pointer;
+    padding: 4px;
+}
+
+.clear-search:hover {
+    color: var(--text-secondary);
+}
+
+/* Clear filters button */
+.clear-filters {
+    opacity: 0;
+    transform: translateX(-10px);
+    pointer-events: none;
+}
+
+.clear-filters.visible {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: all;
+}
+
+/* Video count in header */
+.video-count-display.header-count {
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    background: rgba(255, 255, 255, 0.05);
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    white-space: nowrap;
+    margin: 0 var(--space-2);
+    transition: all var(--transition-base) ease;
+}
+
+.video-count-display.header-count:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-primary);
+}
+
+#visibleCount {
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+#totalCount {
+    font-weight: 500;
+}
+
+/* Menu toggle specific */
+.menu-toggle {
+    margin-right: auto;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+/* Mobile Optimizations - From original */
+@media (max-width: 767px) {
+    .app-header {
+        padding: var(--space-2);
+    }
+
+    .header-actions {
+        gap: var(--space-2);
+    }
+
+    .search-container {
+        max-width: 200px;
+        margin: 0 var(--space-2);
+    }
+
+    #searchBox {
+        padding: 6px 32px 6px 10px;
+        font-size: var(--font-size-sm);
+    }
+
+    /* Hide text, show only icons on mobile */
+    .action-text {
+        display: none;
+    }
+
+    .clear-filters .action-text {
+        display: none;
+    }
+
+    .video-count-display.header-count {
+        font-size: var(--font-size-xs);
+        padding: 3px 6px;
+        margin: 0 var(--space-1);
+    }
+
+    /* Hide on very small screens if needed */
+    @media (max-width: 360px) {
+        .video-count-display.header-count {
+            display: none;
+        }
+    }
+}
+
+/* Desktop Optimizations - From original */
+@media (min-width: 768px) {
+    .action-text {
+        display: inline;
+    }
+
+    /* Optional: Add subtle animation for search expansion */
+    .search-container {
+        transition: max-width 0.3s ease;
+    }
+
+    .search-container:focus-within {
+        max-width: 400px;
+    }
+
+    .video-count-display.header-count {
+        font-size: var(--font-size-md);
+        padding: 6px 10px;
+    }
+}
+
+/* Tablet: Show text for clear filters */
+@media (min-width: 640px) {
+    .clear-filters .action-text {
+        display: inline;
+    }
+}
+
+/* Large desktop */
+@media (min-width: 1024px) {
+    .header-actions {
+        gap: var(--space-4);
+    }
+
+    .search-container {
+        max-width: 400px;
+    }
+}

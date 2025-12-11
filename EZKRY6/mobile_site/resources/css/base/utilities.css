@@ -1,0 +1,96 @@
+/* Base Utilities - Combined animations and accessibility */
+
+/* ===== ANIMATIONS ===== */
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes countPulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.spinner {
+    display: inline-block;
+    width: var(--spinner-size, 40px);
+    height: var(--spinner-size, 40px);
+    border: 3px solid rgba(247, 156, 25, 0.3);
+    border-radius: 50%;
+    border-top-color: var(--primary-color);
+    animation: spin 1s ease-in-out infinite;
+}
+
+.count-updated {
+    animation: countPulse 0.3s ease;
+}
+
+/* ===== ACCESSIBILITY ===== */
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 6px;
+    background: var(--primary-color);
+    color: white;
+    padding: 8px;
+    text-decoration: none;
+    border-radius: var(--radius-sm);
+    z-index: 10000;
+    transition: top 0.3s;
+}
+
+.skip-link:focus {
+    top: 6px;
+}
+
+/* Focus visibility */
+.social-link:focus-visible,
+.brand-link:focus-visible {
+    outline: 2px solid white;
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+}
+
+/* Focus States for Category Tree */
+.category-item:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.chevron-container:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+/* ===== REDUCED MOTION ===== */
+@media (prefers-reduced-motion: reduce) {
+    .social-link,
+    .banner-image,
+    .brand-logo-img,
+    .brand-link,
+    .video-card,
+    .header-action-button,
+    .category-item {
+        transition: none;
+    }
+    
+    .social-link:hover,
+    .social-link:focus-visible {
+        transform: none;
+    }
+    
+    .spinner,
+    .count-updated {
+        animation: none;
+    }
+}

@@ -1,0 +1,24 @@
+/* Base Reset and Mobile-First Body Styles */
+
+/* Mobile-first base styles */
+body.mobile-first-app {
+    margin: 0;
+    padding: 0;
+    font-family: 'Noto Sans Telugu', sans-serif;
+    background: var(--background-color);
+    color: var(--text-primary);
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* Loading indicator */
+.loading-indicator {
+    text-align: center;
+    padding: 40px;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-secondary);
+}

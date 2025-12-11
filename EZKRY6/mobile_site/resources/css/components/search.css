@@ -1,0 +1,66 @@
+/* Search Component - Mobile First */
+
+.search-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+#searchBox {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-size: var(--font-size-sm);
+    transition: all var(--transition-base) ease;
+}
+
+#searchBox:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(247, 156, 25, 0.2);
+}
+
+/* DESKTOP (≥ 768px) */
+@media (min-width: 768px) {
+    .search-container {
+        transition: max-width 0.3s ease;
+    }
+    
+    .search-container:focus-within {
+        max-width: 400px;
+    }
+}
+
+
+/* Search box specific styles */
+#searchBox {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-size: var(--font-size-sm);
+    transition: all var(--transition-base) ease;
+    
+    /* Remove built-in clear button for WebKit browsers (Chrome, Safari, Edge) */
+    &::-webkit-search-cancel-button,
+    &::-webkit-search-decoration {
+        -webkit-appearance: none;
+        appearance: none;
+    }
+    
+    /* Remove clear button for IE and Edge */
+    &::-ms-clear {
+        display: none;
+        width: 0;
+        height: 0;
+    }
+    
+    /* Remove clear button for Firefox - using standard property */
+    &[type="search"] {
+        appearance: none; /* Standard property */
+        -moz-appearance: none; /* Legacy Firefox support - optional */
+    }
+}

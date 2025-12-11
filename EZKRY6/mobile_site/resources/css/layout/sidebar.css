@@ -1,0 +1,154 @@
+/* Sidebar Layout - Mobile First */
+
+/* MOBILE (< 768px) */
+/* Mobile sidebar - slides in/out */
+.app-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 280px;
+    max-width: 85%;
+    height: 100vh;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    z-index: 1000;
+    background: rgb(26, 25, 25);
+    box-shadow: none;
+    overflow-y: auto;
+}
+
+.app-sidebar.active {
+    transform: translateX(0);
+    box-shadow: 2px 0 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Mobile overlay */
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    backdrop-filter: blur(2px);
+}
+
+.sidebar-overlay.active {
+    display: block;
+    opacity: 1;
+}
+
+/* Mobile close button inside sidebar */
+.close-sidebar {
+    display: block;
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 20px;
+    cursor: pointer;
+    z-index: 1001;
+}
+
+/* TABLET & DESKTOP (≥ 768px) */
+@media (min-width: 768px) {
+    /* Sidebar - always visible, collapsible */
+    .app-sidebar {
+        position: relative;
+        width: 280px;
+        min-width: 280px;
+        max-width: 280px;
+        height: 100%;
+        background: var(--surface-color);
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
+        overflow-y: auto;
+        transition: all 0.3s ease;
+        transform: none !important;
+        box-shadow: none !important;
+    }
+
+    /* Hide mobile overlay and close button on desktop */
+    .sidebar-overlay,
+    .close-sidebar {
+        display: none !important;
+    }
+    
+    .app-sidebar:not(.collapsed) .category-tree {
+        padding: var(--space-2) var(--space-1);
+    }
+
+    /* Collapsed sidebar state */
+    .app-sidebar.collapsed {
+        width: 60px !important;
+        min-width: 60px !important;
+        max-width: 60px !important;
+    }
+
+    .app-sidebar.collapsed .category-tree {
+        padding: var(--space-2) 0;
+    }
+
+    .app-sidebar.collapsed .category-item {
+        padding: 0 var(--space-2);
+        justify-content: center;
+    }
+
+    .app-sidebar.collapsed .category-content {
+        justify-content: center;
+    }
+
+    .app-sidebar.collapsed .category-text,
+    .app-sidebar.collapsed .category-count,
+    .app-sidebar.collapsed .chevron-container,
+    .app-sidebar.collapsed .category-children {
+        display: none !important;
+    }
+
+    .app-sidebar.collapsed .category-icon {
+        margin: 0;
+    }
+
+    .app-sidebar.collapsed .category-icon i {
+        font-size: var(--font-size-lg);
+    }
+    
+    /* Hide text when collapsed */
+    .app-sidebar.collapsed .category-name,
+    .app-sidebar.collapsed h2 {
+        display: none !important;
+    }
+}
+
+/* Most precise fix - find the right container */
+@media (max-width: 767px) {
+    /* Try these selectors in order of specificity */
+    
+    /* Option 1: The main sidebar container */
+    .app-sidebar.active {
+        padding-bottom: 10px;
+    }
+    
+    /* Option 2: The content wrapper */
+    .app-sidebar.active .sidebar-content {
+        padding-bottom: 10px;
+    }
+    
+    /* Option 3: The category tree specifically */
+    .app-sidebar.active #categoryList,
+    .app-sidebar.active .category-tree {
+        padding-bottom: 10px;
+    }
+    
+    /* Safe area for iOS */
+    @supports (padding: env(safe-area-inset-bottom)) {
+        .app-sidebar.active {
+            padding-bottom: calc(50px + env(safe-area-inset-bottom));
+        }
+    }
+}

@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+    <html lang="te" class="mobile-first">
+    <head>
+        <meta charset="UTF-8">
+        <title>Mobile Video Library</title>
+        
+        <!-- MOBILE-FIRST VIEWPORT -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, 
+            maximum-scale=5.0, minimum-scale=1.0, user-scalable=yes,
+            viewport-fit=cover">
+        
+        <!-- THEME & PWA -->
+        <meta name="theme-color" content="#F79C19">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="format-detection" content="telephone=no">
+        
+        <!-- FAVICON -->
+        <link rel="icon" type="image/x-icon" href="/EZKRY6/resources/images/favicon.ico">
+        
+        <!-- FONTS -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@400;500;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        
+        <!-- APP CSS -->
+        <link rel="stylesheet" href="./resources/css/core.css">
+    </head>
+    <body class="mobile-first-app" data-client="EZKRY6" data-video-count="1031">
+        
+        <!-- SKIP LINK -->
+        <a href="#main-content" class="skip-link">Skip to main content</a>
+        
+        
+        <!-- BRANDING AREA (Desktop/Tablet only) -->
+        <div class="branding-area" id="brandingArea">
+            <!-- Banner Image -->
+            <div class="site-banner">
+                <div class="banner-content">
+                    <img src="./resources/images/banner.jpeg" alt="Mobile Video Library" class="banner-image" loading="lazy">
+                </div>
+            </div>
+            
+            <!-- Branding Container (Social + Logo) -->
+            <div class="branding-container">
+                <!-- Social Links -->
+                <div class="social-links">
+                <a href="https://www.facebook.com/koumudi.kiranprabha/" class="social-link facebook" 
+                target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+            
+                <a href="https://www.youtube.com/@KoumudiKiranprabha/" class="social-link youtube" 
+                target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+                    <i class="fab fa-youtube"></i>
+                </a>
+            </div>
+                
+                <!-- Brand Logo -->
+                <div class="brand-logo">
+                    <a href="https://my-pvl.com/index.html" 
+                    target="_blank" rel="noopener noreferrer"
+                    class="brand-link" aria-label="Powered by PVL">
+                        <span class="powered-by">Powered By</span>
+                        <img src="./resources/images/logo.png" alt="PVL Logo" class="brand-logo-img" loading="lazy">
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+    
+    <!-- APP HEADER -->
+    <header class="app-header" role="banner">
+        <div class="header-content">
+            <div class="header-actions">
+                <!-- Menu Toggle -->
+                <button id="menuToggle" class="header-action-button menu-toggle" aria-label="Toggle menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <!-- Search area -->
+                <div class="search-container">
+                    <input type="search" id="searchBox" placeholder="Search videos..." aria-label="Search">
+                    <button id="clearSearch" class="clear-search" aria-label="Clear search">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <!-- Clear filters button -->
+                <button id="clearFilters" class="header-action-button clear-filters">
+                    <i class="fas fa-times-circle"></i>
+                    <span class="action-text">Clear Filters</span>
+                </button>
+
+                <!-- Video Count Display (moved to header) -->
+                <div class="video-count-display header-count">
+                    <span id="visibleCount">0</span>/<span id="totalCount">1031</span>
+                </div>                
+            </div>
+        </div>
+    </header>
+    
+    <!-- MAIN LAYOUT -->
+    <div class="app-layout">
+        
+        <!-- SIDEBAR -->
+        <aside class="app-sidebar" id="sidebar" role="navigation" aria-label="Categories">
+            <div class="sidebar-header">
+                <h2>Categories</h2>
+                <button class="close-sidebar" id="closeSidebar" aria-label="Close menu">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="sidebar-content" id="categoryList">
+                <!-- Categories loaded from categories.json -->
+            </div>
+        </aside>
+        
+        <!-- OVERLAY (MOBILE) -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+        
+        <!-- MAIN CONTENT -->
+        <main class="app-content" id="main-content" role="main">
+            
+            <!-- VIDEO GRID -->
+            <div class="video-grid" id="videoGrid">
+                <!-- Videos loaded from videos.json -->
+            </div>
+            
+            <!-- LOADING -->
+            <div class="loading-indicator" id="loadingIndicator">
+                <div class="spinner"></div>
+                <p>Loading videos...</p>
+            </div>
+            
+            <!-- EMPTY STATE -->
+            <div class="empty-state" id="emptyState">
+                <i class="fas fa-search"></i>
+                <h3>No videos found</h3>
+                <p>Try adjusting your search or filter</p>
+                <button id="resetFilters">Reset Filters</button>
+            </div>
+            
+            <!-- PAGINATION -->
+            <div class="pagination" id="pagination"></div>
+        </main>
+    </div>
+    
+    <!-- FOOTER -->
+    <footer class="modern-footer" id="modernFooter">
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="/privacy_policy.html" target="_blank">Privacy Policy</a>
+                <span class="separator">|</span>
+                <a href="/cookies_policy.html" target="_blank">Cookie Policy</a>
+                <span class="separator">|</span>
+                <a href="/terms_of_use.html" target="_blank">Terms Of Use</a>
+                <span class="separator">|</span>
+                <a href="/dmca_policy.html" target="_blank">DMCA Policy</a>
+                <span class="separator">|</span>
+                <a href="/thirdparty_attributions.html" target="_blank">Third-Party Credits</a>
+                <span class="separator">|</span>
+                <a href="/contact_us.html" target="_blank">Contact</a>
+                <span class="separator">|</span>
+                <a href="#" class="disclaimer-link" id="disclaimerLink">Disclaimer</a>
+            </div>
+            <div class="footer-copyright">
+                © 2025 My Personal Video Library. All rights reserved.
+            </div>
+        </div>
+    </footer>
+    
+    <!-- DISCLAIMER MODAL -->
+    <div class="disclaimer-modal" id="disclaimerModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Disclaimer</h3>
+                <button class="modal-close" id="modalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>This site organizes and distributes embedded video content from platforms such as YouTube and Vimeo for ease of access. We do not host or upload any videos directly, and we are not responsible for the accuracy, legality, or compliance of embedded content. All responsibility for video content lies with the original creators and hosting platforms.</p>
+                
+                <p>If you believe that any embedded video on this site infringes your copyright, please notify us in accordance with our <a href="/dmca_policy.html" style="color: var(--primary-color); font-weight: 600;">DMCA Policy</a>. Upon receiving a valid complaint, we will promptly review the claim and, if appropriate, remove the infringing content from our platform.</p>
+                
+                <p>We may earn a commission at no extra cost to you from affiliate links displayed on this site.</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Video Player Modal -->
+    <div class="video-modal" id="videoModal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 class="video-title" id="videoModalTitle">Playing Video</h3>
+                <button class="modal-close" id="videoModalClose" aria-label="Close player">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="player-wrapper">
+                    <div class="youtube-player-container" id="youtubePlayerContainer">
+                        <!-- YouTube iframe will be injected here -->
+                    </div>
+                </div>
+                <div class="video-controls">
+                    <button class="control-btn prev-btn" aria-label="Previous video">
+                        <i class="fas fa-step-backward"></i>
+                    </button>
+                    <button class="control-btn play-btn" aria-label="Play/Pause">
+                        <i class="fas fa-play"></i>
+                    </button>
+                    <button class="control-btn next-btn" aria-label="Next video">
+                        <i class="fas fa-step-forward"></i>
+                    </button>
+                    <button class="control-btn fullscreen-btn" aria-label="Fullscreen">
+                        <i class="fas fa-expand"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="playlist-info" id="playlistInfo">
+                    <!-- Playlist info will go here when playing a playlist -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="playlist-view" id="playlistView">
+        <div class="playlist-header">
+            <h3>Playlists</h3>
+            <button class="playlist-close" id="playlistClose">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="playlist-content">
+            <div class="playlist-tabs">
+                <button class="playlist-tab active" data-playlist="watch_later">
+                    <i class="fas fa-clock"></i>
+                    <span>Watch Later</span>
+                    <span class="playlist-count" id="watchLaterCount">0</span>
+                </button>
+                <button class="playlist-tab" data-playlist="favorites">
+                    <i class="fas fa-heart"></i>
+                    <span>Favorites</span>
+                    <span class="playlist-count" id="favoritesCount">0</span>
+                </button>
+            </div>
+
+            <div class="playlist-videos" id="playlistVideos">
+                <!-- Playlist videos will be loaded here -->
+                <div class="empty-playlist">
+                    <i class="fas fa-list"></i>
+                    <p>No videos in this playlist</p>
+                </div>
+            </div>
+
+            <div class="playlist-actions">
+                <button class="playlist-action-btn play-all-btn" id="playAllBtn">
+                    <i class="fas fa-play"></i> Play All
+                </button>
+                <button class="playlist-action-btn clear-playlist-btn" id="clearPlaylistBtn">
+                    <i class="fas fa-trash"></i> Clear
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- APP DATA -->
+    <script type="application/json" id="appConfig">
+    {
+        "clientId": "EZKRY6",
+        "dataBaseUrl": "./data/",
+        "totalVideos": 1031
+    }
+    </script>
+    
+    <!-- APP JS -->
+    <script src="./resources/js/core.js"></script>
+    <script src="./resources/js/core/VideoCore.js"></script>
+    <script src="./resources/js/ui/CategoryTree.js"></script>
+    <script src="./resources/js/ui/VideoGrid.js"></script>
+    <script src="./resources/js/ui/YouTubePlayer.js"></script>
+    <script src="./resources/js/ui/VideoPlayer.js"></script>
+    <script src="./resources/js/ui/PlaylistManager.js"></script>
+    <script src="./resources/js/app.js"></script>
+    <script src="./resources/js/utils/LayoutManager.js"></script>
+    <script src="./resources/js/ui/footer.js"></script>
+    <script src="./resources/js/initLayoutMgr.js"></script>
+    
+    <!-- INIT SCRIPT -->
+    <script>
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            const config = JSON.parse(document.getElementById('appConfig').textContent);
+            if (window.MobileVideoApp) {
+                window.app = new MobileVideoApp(config);
+            }
+        });
+    </script>
+    
+</body>
+</html>

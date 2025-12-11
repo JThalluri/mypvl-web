@@ -1,0 +1,584 @@
+/* mobile_hybrid/core.css - Phase 1 */
+:root {
+  --primary-color: #F79C19;
+  --background-color: #1a1a1a;
+  --surface-color: #2a2a2a;
+  --text-primary: #ffffff;
+  --text-secondary: #cccccc;
+}
+
+/* Mobile-first base styles */
+body.mobile-first-app {
+  margin: 0;
+  padding: 0;
+  font-family: 'Noto Sans Telugu', sans-serif;
+  background: var(--background-color);
+  color: var(--text-primary);
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* App header */
+.app-header {
+  background: var(--primary-color);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.menu-toggle {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+/* Video grid */
+.video-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  padding: 16px;
+}
+
+/* Loading indicator */
+.loading-indicator {
+  text-align: center;
+  padding: 40px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-secondary);
+}
+
+/* Category Tree Styles */
+.category-tree {
+    padding: 8px 0;
+}
+
+.category-item {
+    margin: 2px 0;
+}
+
+.category-header {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background-color 0.2s;
+    user-select: none;
+}
+
+.category-header:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.category-header.active {
+    background-color: var(--primary-color);
+    color: #000;
+}
+
+.category-header i.fas {
+    margin-right: 10px;
+    width: 20px;
+    text-align: center;
+}
+
+.category-name {
+    flex: 1;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.category-count {
+    margin: 0 8px;
+    font-size: 12px;
+    opacity: 0.7;
+}
+
+.chevron {
+    transition: transform 0.2s;
+    font-size: 12px;
+    opacity: 0.6;
+}
+
+/* Indentation */
+.category-item.level-1 .category-header {
+    padding-left: 32px;
+}
+
+.category-item.level-2 .category-header {
+    padding-left: 48px;
+}
+
+/* Collapsible lists */
+.subcategory-list,
+.subsubcategory-list {
+    display: none;
+}
+
+.category-item.expanded > .subcategory-list,
+.category-item.level-1.expanded > .subsubcategory-list {
+    display: block;
+}
+
+/* Mobile sidebar specific */
+.app-sidebar.collapsed .category-tree {
+    display: none;
+}
+
+/* Video Grid Styles */
+.video-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    padding: 16px;
+}
+
+/* Video Card */
+.video-card {
+    background: var(--surface-color);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+}
+
+.video-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.video-thumbnail {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%; /* 16:9 aspect ratio */
+    background: #000;
+    overflow: hidden;
+}
+
+.video-thumbnail img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.3s ease;
+    opacity: 0.8;
+}
+
+.video-thumbnail img.loaded {
+    opacity: 1;
+}
+
+.video-card:hover .video-thumbnail img {
+    opacity: 1;
+    transform: scale(1.05);
+    transition: transform 0.5s ease;
+}
+
+.play-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.video-card:hover .play-overlay {
+    opacity: 1;
+}
+
+.play-overlay i {
+    font-size: 48px;
+    color: white;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.video-info {
+    padding: 16px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.video-title {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
+    margin: 0 0 12px 0;
+    color: var(--text-primary);
+    display: -webkit-box;
+    line-clamp: 2;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    flex: 1;
+}
+
+.video-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+}
+
+.video-category {
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    background: rgba(247, 156, 25, 0.1);
+    color: var(--primary-color);
+    font-weight: 500;
+}
+
+.watch-button {
+    background: var(--primary-color);
+    color: #000;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.2s;
+}
+
+.watch-button:hover {
+    background: #e68c19;
+}
+
+/* Loading indicator */
+.video-grid-loader {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 40px;
+}
+
+.spinner {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(247, 156, 25, 0.3);
+    border-radius: 50%;
+    border-top-color: var(--primary-color);
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Empty state */
+.video-grid-empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-secondary);
+}
+
+.video-grid-empty i {
+    font-size: 48px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+}
+
+/* Category color coding */
+.category-హోమియోపతి { background: rgba(247, 156, 25, 0.15); color: #F79C19; }
+.category-ఇతర-వీడియోలు { background: rgba(66, 133, 244, 0.15); color: #4285F4; }
+
+/* Add more category colors as needed */
+/* Responsive adjustments */
+@media (max-width: 639px) {
+    .category-header {
+        padding: 10px 12px;
+    }
+
+    .video-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        padding: 12px;
+    }
+}
+
+/* Tablet optimization */
+@media (min-width: 640px) and (max-width: 1023px) {
+    .video-grid {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 14px;
+    }
+}
+
+/* MOBILE SIDEBAR TOGGLE */
+@media (max-width: 767px) {
+    /* Sidebar */
+    .app-sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 280px;
+        max-width: 85%;
+        height: 100vh;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        z-index: 1000;
+        background: rgb(26, 25, 25);
+        box-shadow: none;
+        overflow-y: auto;
+    }
+    
+    .app-sidebar.active {
+        transform: translateX(0);
+        box-shadow: 2px 0 15px rgba(0,0,0,0.2);
+    }
+    
+    /* Overlay */
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 999;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .sidebar-overlay.active {
+        display: block;
+        opacity: 1;
+    }
+    
+    /* Prevent body scroll when sidebar is open */
+    body.sidebar-open {
+        overflow: hidden;
+    }
+}
+
+/* DESKTOP: Always visible */
+@media (min-width: 768px) {
+    .app-sidebar {
+        display: block !important;
+        transform: none !important;
+        position: relative;
+        width: auto;
+        height: auto;
+    }
+    
+    .sidebar-overlay {
+        display: none !important;
+    }
+}
+
+/* ===== DESKTOP LAYOUT (≥ 768px) ===== */
+@media (min-width: 768px) {
+    /* Main layout - sidebar + content side by side */
+    .app-layout {
+        display: flex;
+        height: calc(100vh - 120px);
+        overflow: hidden;
+    }
+    
+    /* Sidebar - always visible, collapsible */
+    .app-sidebar {
+        width: 280px;
+        min-width: 280px;
+        max-width: 280px;
+        height: 100%;
+        background: var(--surface-color);
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
+        overflow-y: auto;
+        transition: all 0.3s ease;
+        position: relative;
+        z-index: 1;
+    }
+    
+    /* Collapsed sidebar state */
+    .app-sidebar.collapsed {
+        width: 60px !important;
+        min-width: 60px !important;
+        max-width: 60px !important;
+    }
+    
+    /* Hide text when collapsed */
+    .app-sidebar.collapsed .category-name,
+    .app-sidebar.collapsed .category-count,
+    .app-sidebar.collapsed h2 {
+        display: none !important;
+    }
+    
+    /* Center icons when collapsed */
+    .app-sidebar.collapsed .category-header {
+        justify-content: center;
+        padding: 12px 8px !important;
+    }
+    
+    .app-sidebar.collapsed .category-header i.fas {
+        margin-right: 0;
+        font-size: 18px;
+    }
+    
+    /* Hide chevrons and subcategories when collapsed */
+    .app-sidebar.collapsed .chevron,
+    .app-sidebar.collapsed .subcategory-list,
+    .app-sidebar.collapsed .subsubcategory-list {
+        display: none !important;
+    }
+    
+    /* Main content */
+    .app-content {
+        flex: 1;
+        height: 100%;
+        overflow-y: auto;
+        padding: 20px;
+        transition: margin-left 0.3s ease;
+    }
+    
+    /* Expand content when sidebar is collapsed */
+    .app-sidebar.collapsed + .app-content {
+        margin-left: -220px;
+    }
+    
+    /* Hide mobile overlay and close button on desktop */
+    .sidebar-overlay,
+    .close-sidebar {
+        display: none !important;
+    }
+}
+
+/* ===== MOBILE (< 768px) ===== */
+@media (max-width: 767px) {
+    /* Mobile sidebar - slides in/out */
+    .app-sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 280px;
+        height: 100vh;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        z-index: 1000;
+        background: var(--surface-color);
+    }
+    
+    .app-sidebar.active {
+        transform: translateX(0);
+    }
+    
+    /* Mobile overlay */
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+    }
+    
+    .sidebar-overlay.active {
+        display: block;
+    }
+    
+    /* Mobile close button inside sidebar */
+    .close-sidebar {
+        display: block;
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        background: none;
+        border: none;
+        color: var(--text-secondary);
+        font-size: 20px;
+        cursor: pointer;
+        z-index: 1001;
+    }
+    
+    /* Regular layout for mobile */
+    .app-layout {
+        display: block;
+    }
+}
+
+/* MOBILE SCROLL FIX */
+@media (max-width: 767px) {
+    /* Fix viewport height for mobile */
+    .mobile-first-app {
+        height: 100vh;
+        height: -webkit-fill-available;
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        overflow: hidden;
+    }
+    
+    /* App layout takes remaining space */
+    .app-layout {
+        flex: 1;
+        display: flex;
+        overflow: hidden;
+        min-height: 0; /* Critical for flex child scrolling */
+    }
+    
+    /* Content area should scroll */
+    .app-content {
+        flex: 1;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        position: relative;
+        height: 100%;
+        max-height: 100vh;
+        padding-bottom: 60px; /* Space for footer */
+    }
+    
+    /* Ensure video grid can exceed content height */
+    .video-grid {
+        min-height: 100%;
+        overflow: visible;
+    }
+    
+    /* When sidebar is open on mobile, prevent body scroll */
+    body.sidebar-open .app-content {
+        overflow: hidden;
+    }
+}
+
+/* iOS Safari specific fixes */
+@supports (-webkit-touch-callout: none) {
+    .mobile-first-app {
+        height: -webkit-fill-available;
+    }
+    
+    .app-content {
+        height: -webkit-fill-available;
+    }
+}
+
+/* Ensure header/footer don't affect scroll */
+.app-header, .app-footer {
+    flex-shrink: 0;
+}

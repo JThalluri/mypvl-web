@@ -1,0 +1,28 @@
+/* mobile_hybrid/core.css - Phase 1 - Hybrid Structure */
+/* Mobile-First Approach with Component-Based Organization */
+
+/* Variables FIRST */
+@import url('variables.css');
+
+/* Base styles */
+@import url('base/reset.css');
+@import url('base/utilities.css');
+
+/* Layout components */
+@import url('layout/app-layout.css');
+@import url('layout/header.css');
+@import url('layout/sidebar.css');
+@import url('layout/footer.css');
+
+/* UI Components */
+@import url('components/buttons.css');
+@import url('components/search.css');
+@import url('components/category-tree.css');
+@import url('components/modals.css');
+@import url('components/counters.css');
+@import url('components/playlist.css');
+
+/* Page Sections - MUST BE LAST */
+@import url('sections/video-grid.css');
+@import url('components/video-player.css');
+@import url('sections/branding.css');

@@ -1,0 +1,148 @@
+/* Main App Layout Structure - Mobile First */
+
+/* ===== BASE LAYOUT ===== */
+body.mobile-first-app {
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-family-base);
+    background: var(--background-color);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding-top: var(--safe-area-inset-top);
+    padding-bottom: var(--safe-area-inset-bottom);
+    overflow-x: hidden;
+}
+
+/* Main container */
+.app-layout {
+    flex: 1;
+    display: flex;
+    min-height: 0; /* Critical for flex scrolling */
+    position: relative;
+}
+
+/* Content area */
+.app-content {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    position: relative;
+    padding-bottom: var(--footer-safe-padding); /* Prevent overlap */
+}
+
+/* Video grid padding */
+.video-grid {
+    padding-bottom: calc(var(--footer-safe-padding) * 2); /* Extra space */
+}
+
+/* Category tree padding */
+.category-tree {
+    padding-bottom: var(--footer-safe-padding);
+}
+
+/* ===== FOOTER FIXES ===== */
+.modern-footer {
+    background: var(--background-color);
+    color: white;
+    padding: var(--space-2);
+    position: relative;
+    z-index: 1000;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    border-top: 1px solid var(--primary-color);
+    flex-shrink: 0;
+    margin-top: auto; /* Push to bottom */
+}
+
+/* Add safe area padding for mobile */
+.modern-footer {
+    padding-bottom: calc(var(--space-2) + var(--safe-area-inset-bottom));
+}
+
+/* ===== SIDEBAR HEIGHT FIX ===== */
+.app-sidebar {
+    height: 100%;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-content {
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: var(--footer-safe-padding);
+}
+
+/* ===== DESKTOP LAYOUT (≥ 768px) ===== */
+@media (min-width: 768px) {
+    .app-layout {
+        height: calc(100vh - var(--header-height) - var(--safe-area-inset-top) - var(--safe-area-inset-bottom));
+    }
+    
+    .app-sidebar {
+        height: calc(100vh - var(--header-height) - var(--safe-area-inset-top) - var(--safe-area-inset-bottom));
+    }
+    
+    .modern-footer {
+        padding: var(--space-1) var(--space-2);
+    }
+}
+
+/* ===== MOBILE (< 768px) ===== */
+@media (max-width: 767px) {
+    .mobile-first-app {
+        height: 100vh;
+        height: -webkit-fill-available;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        overflow: hidden;
+    }
+    
+    .app-layout {
+        flex: 1;
+        height: 100%;
+    }
+    
+    .app-content {
+        height: 100%;
+        max-height: 100vh;
+    }
+    
+    .modern-footer {
+        padding: var(--space-2) var(--space-2) calc(var(--space-2) + var(--safe-area-inset-bottom));
+    }
+    
+    /* Mobile sidebar overlay fix */
+    .app-sidebar.active {
+        height: 100vh;
+        height: -webkit-fill-available;
+    }
+}
+
+/* ===== iOS SAFARI FIXES ===== */
+@supports (-webkit-touch-callout: none) {
+    .mobile-first-app {
+        height: -webkit-fill-available;
+    }
+    
+    .app-content {
+        height: -webkit-fill-available;
+    }
+    
+    .app-sidebar.active {
+        height: -webkit-fill-available;
+    }
+}
+
+/* ===== SIDEBAR OPEN STATE ===== */
+body.sidebar-open {
+    overflow: hidden;
+}
+
+body.sidebar-open .app-content {
+    overflow: hidden;
+}

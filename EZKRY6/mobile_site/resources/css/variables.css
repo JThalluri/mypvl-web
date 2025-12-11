@@ -1,0 +1,108 @@
+/* CSS Custom Properties - Mobile First */
+:root {
+    /* Color System */
+    --primary-color: #F79C19;
+    --primary-dark: #d8850a;
+    --primary-light: #FFB74D;
+    --secondary-color: #1a1a1a;
+    --background-color: #1a1a1a;
+    --surface-color: #2a2a2a;
+    --text-primary: #ffffff;
+    --text-secondary: #cccccc;
+    --text-tertiary: #999999;
+    --text-on-primary: #1a1a1a;
+    --border-color: #444;
+
+    /* Sizing */
+    --header-height: 100px;
+    --sidebar-width: 280px;
+    --card-min-width: 240px;
+
+    /* Category dimensions */
+    --category-header-height: 44px;
+    --subcategory-item-height: 40px;
+    --subsubcategory-item-height: 36px;
+    --category-gap: 6px;
+    --chevron-size: 20px;
+
+    /* Active states */
+    --active-category-bg: rgba(247, 156, 25, 0.15);
+    --active-category-border: rgba(247, 156, 25, 0.3);
+
+    /* Spacing System - Mobile First */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 20px;
+    --space-6: 24px;
+    --space-7: 28px;
+    --space-8: 32px;
+    --space-9: 36px;
+    --space-10: 40px;
+    --space-11: 44px;
+    --space-16: 64px;
+
+    /* Typography */
+    --font-family-base: "Noto Sans Telugu", "Segoe UI", sans-serif;
+    --font-size-2xs: 9px;
+    --font-size-xs: 11px;
+    --font-size-sm: 13px;
+    --font-size-md: 14px;
+    --font-size-lg: 16px;
+    --font-size-xl: 20px;
+
+    /* Border radius */
+    --radius-xs: 6px;
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+
+    /* Transitions */
+    --transition-fast: 150ms;
+    --transition-base: 300ms;
+    --transition-slow: 500ms;
+
+    /* Component Specific */
+    --sidebar-bg: var(--surface-color);
+    --sidebar-border: var(--border-color);
+    --category-bg: rgba(255, 255, 255, 0.03);
+    --category-hover-bg: rgba(255, 255, 255, 0.06);
+
+    /* Breakpoints (for reference in media queries) */
+    --bp-sm: 480px;
+    --bp-md: 576px;
+    --bp-lg: 768px;
+    --bp-xl: 992px;
+
+    /* Icon sizes */
+    --icon-size-sm: 16px;
+    --icon-size-md: 24px;
+    --icon-size-lg: 32px;
+    --icon-size-xl: 48px;
+
+    /* Component sizes */
+    --spinner-size: 40px;
+    --thumbnail-aspect-ratio: 56.25%;
+    /* 16:9 */
+
+    /* Colors (optional) */
+    --background-black: #000;
+    --overlay-black: rgba(0, 0, 0, 0.3);
+    --overlay-dark: rgba(0, 0, 0, 0.5);
+
+    --footer-height: auto;
+    --footer-height-sidebar: 80px;
+    --footer-safe-padding: 20px;
+    --sidebar-mobile-bottom-padding: calc(var(--footer-height-sidebar) + env(safe-area-inset-bottom, 0px));
+
+    /* Safe area insets */
+    --safe-area-inset-top: env(safe-area-inset-top, 0px);
+    --safe-area-inset-right: env(safe-area-inset-right, 0px);
+    --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-area-inset-left: env(safe-area-inset-left, 0px);
+
+    --shadow-card-hover: 0 8px 25px color-mix(in srgb, var(--primary-color), transparent 65%);
+    --border-card-hover: color-mix(in srgb, var(--primary-color), transparent 85%);
+
+}

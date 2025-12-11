@@ -1,0 +1,169 @@
+/* Button Components - Mobile First */
+
+/* Base header action button style */
+.header-action-button {
+    will-change: transform, background-color, border-color;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--text-secondary);
+    padding: 6px 8px;
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all var(--transition-base) ease;
+    white-space: nowrap;
+}
+
+.header-action-button:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: var(--text-primary);
+    border-color: var(--primary-color);
+    transform: translateY(-1px);
+}
+
+.header-action-button i {
+    font-size: var(--font-size-xl);
+}
+
+/* Menu toggle specific */
+.menu-toggle {
+    margin-right: auto;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+/* Clear search button */
+.clear-search {
+    position: absolute;
+    right: 8px;
+    background: none;
+    border: none;
+    color: var(--text-tertiary);
+    font-size: var(--font-size-xl);
+    cursor: pointer;
+    padding: 4px;
+}
+
+.clear-search:hover {
+    color: var(--text-secondary);
+}
+
+/* Clear filters button */
+.clear-filters {
+    opacity: 0;
+    transform: translateX(-10px);
+    pointer-events: none;
+}
+
+.clear-filters.visible {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: all;
+}
+
+/* Watch button */
+/* .watch-button {
+    background: var(--primary-color);
+    color: #000;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.2s;
+} */
+
+.watch-button:hover,
+.add-to-playlist-button:hover {
+    background: #e68c19;
+    border: solid 1px var(--text-secondary);
+}
+
+/* Modal close button */
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: var(--primary-color);
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.modal-close:hover {
+    background: var(--primary-light);
+    color: white;
+}
+
+/* DESKTOP (≥ 768px) */
+@media (min-width: 768px) {
+    .header-action-button {
+        padding: 8px 12px;
+    }
+}
+
+/* Bulk favorite button */
+.header-action-button.batch-favorite {
+    background: linear-gradient(135deg, #f59e0b, #ef4444);
+    color: white;
+    border: none;
+    margin-left: auto;
+    transition: all var(--transition-base);
+    position: relative;
+    overflow: hidden;
+}
+
+.header-action-button.batch-favorite:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+    background: linear-gradient(135deg, #eab308, #dc2626);
+}
+
+.header-action-button.batch-favorite:active {
+    transform: translateY(0);
+}
+
+.header-action-button.batch-favorite::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.7s;
+}
+
+.header-action-button.batch-favorite:hover::after {
+    left: 100%;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+    .header-action-button.batch-favorite {
+        margin-left: 0;
+        margin-top: 0.5rem;
+        width: 100%;
+        order: 3; /* Move to bottom of header actions */
+    }
+    
+    .header-actions {
+        flex-wrap: wrap;
+    }
+}

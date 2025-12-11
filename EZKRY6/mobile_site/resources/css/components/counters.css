@@ -1,0 +1,44 @@
+/* Counter and Badge Components - Mobile First */
+
+/* Video count in header */
+.video-count-display.header-count {
+    font-size: var(--font-size-xs);
+    color: var(--text-secondary);
+    background: rgba(255, 255, 255, 0.05);
+    padding: 3px 6px;
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    white-space: nowrap;
+    margin: 0 var(--space-1);
+    transition: all var(--transition-base) ease;
+}
+
+.video-count-display.header-count:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-primary);
+}
+
+#visibleCount {
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+#totalCount {
+    font-weight: 500;
+}
+
+/* DESKTOP (≥ 768px) */
+@media (min-width: 768px) {
+    .video-count-display.header-count {
+        font-size: var(--font-size-sm);
+        padding: 4px 8px;
+        margin: 0 var(--space-2);
+    }
+}
+
+@media (min-width: 1024px) {
+    .video-count-display.header-count {
+        font-size: var(--font-size-md);
+        padding: 6px 10px;
+    }
+}
