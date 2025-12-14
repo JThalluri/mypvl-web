@@ -1,0 +1,26 @@
+Alias name: mypvl
+Creation date: Nov 28, 2025
+Entry type: PrivateKeyEntry
+Certificate chain length: 1
+Certificate[1]:
+Owner: CN=Jay Thalluri, OU=my-pvl.com, O=my-pvl.com, L=Hyderabad, ST=Telangana, C=IN
+Issuer: CN=Jay Thalluri, OU=my-pvl.com, O=my-pvl.com, L=Hyderabad, ST=Telangana, C=IN
+Serial number: a5715ba867de5486
+Valid from: Fri Nov 28 12:11:25 MST 2025 until: Tue Apr 15 12:11:25 MST 2053
+Certificate fingerprints:
+	 SHA1: E7:3A:E7:73:96:D7:01:EF:4D:F1:69:5D:56:BF:49:29:20:ED:EC:B7
+	 SHA256: 15:94:37:E7:E5:B3:9E:D0:30:C0:F6:6C:54:00:D5:B0:09:8B:0A:39:7F:3C:95:A2:25:96:9E:EA:DE:63:09:8E
+Signature algorithm name: SHA256withRSA
+Subject Public Key Algorithm: 2048-bit RSA key
+Version: 3
+
+Extensions: 
+
+#1: ObjectId: 2.5.29.14 Criticality=false
+SubjectKeyIdentifier [
+KeyIdentifier [
+0000: F8 30 D2 CC 46 D3 E5 6C   F4 59 DE 15 25 A2 88 01  .0..F..l.Y..%...
+0010: 0A B1 50 91                                        ..P.
+]
+]
+

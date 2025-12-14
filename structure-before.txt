@@ -1,0 +1,89 @@
+.
+├── android-app
+│   ├── app
+│   │   └── build
+│   └── mypvl.keystore
+├── CNAME
+├── contact_us.html
+├── cookies_policy.html
+├── css
+│   ├── base
+│   │   ├── reset.css
+│   │   ├── typography.css
+│   │   └── variables.css
+│   ├── components
+│   │   ├── cards.css
+│   │   ├── carousels.css
+│   │   ├── footer.css
+│   │   ├── forms.css
+│   │   ├── header.css
+│   │   ├── modal.css
+│   │   ├── navigation.css
+│   │   └── sections.css
+│   ├── layout
+│   │   └── responsive.css
+│   ├── main.css
+│   ├── policy-pages.css
+│   ├── pwa-injected-styles.css
+│   ├── themes
+│   │   ├── dark.css
+│   │   └── light.css
+│   └── wrapper.css
+├── dmca_policy.html
+├── EZKRY6
+│   ├── index.html
+│   ├── index_unobfuscated.html
+│   ├── mobile_site
+│   │   ├── data
+│   │   ├── index.html
+│   │   └── resources
+│   ├── obfuscation-manifest.json
+│   └── resources
+│       └── images
+├── icons
+│   ├── app-logo.png
+│   ├── icon-192.png
+│   ├── icon-512.png
+│   └── low_res_app-logo.png
+├── index.html
+├── js
+│   ├── librarySearch.js
+│   ├── styleInjector.js
+│   ├── sw.js
+│   ├── uiExtractor.js
+│   └── wrapper.js
+├── library
+│   └── library_metadata.json
+├── manifest.json
+├── privacy_policy.html
+├── QKNK9F
+│   ├── BT9R66
+│   │   ├── index.html
+│   │   ├── index_unobfuscated.html
+│   │   ├── mobile_site
+│   │   ├── obfuscation-manifest.json
+│   │   └── resources
+│   ├── index.html
+│   ├── index_unobfuscated.html
+│   ├── K8AM96
+│   │   ├── index.html
+│   │   ├── index_unobfuscated.html
+│   │   ├── obfuscation-manifest.json
+│   │   └── resources
+│   ├── obfuscation-manifest.json
+│   └── resources
+│       ├── css
+│       └── images
+├── resources
+│   ├── admin_logo.png
+│   ├── banner.png
+│   └── favicon.ico
+├── SHA-256_fingerprint.txt
+├── structure-before.txt
+├── styles.css.bak
+├── sw.js
+├── terms_of_use.html
+├── thirdparty_attributions.html
+└── wrapper.html
+
+28 directories, 59 files
