@@ -814,6 +814,18 @@ class PWAWrapper {
         }
     }
 
+    handleBackNavigation() {
+        if (this.clientFrame && this.historyPointer > -1) {
+            this.clientFrame.src = this.iframeHistory[this.historyPointer];
+            this.historyPointer--;
+            // Update library display after navigation
+            this.updateLibraryDisplay();
+        } else {
+            // Fallback: reload default library
+            this.loadRecentLibrary();
+        }
+    }
+
     showShareFallback(url, title, text) {
         // Try Android native share one more time as fallback
         if (typeof Android !== 'undefined' && Android && typeof Android.shareLibrary === 'function') {
@@ -830,41 +842,67 @@ class PWAWrapper {
         const shareMenu = document.createElement('div');
         shareMenu.style.cssText = `
             position: fixed;
-            try {
-                // Push current src to history before navigating
-                if (this.clientFrame.src) {
-                    if (this.historyPointer === -1 || this.clientFrame.src !== this.iframeHistory[this.historyPointer]) {
-                        this.iframeHistory.push(this.clientFrame.src);
-                        this.historyPointer = this.iframeHistory.length - 1;
-                    }
-                }
-                this.clientFrame.src = url;
-                // Wait for frame to load
-                await new Promise((resolve) => {
-                    this.clientFrame.onload = () => {
-                        this.hideLoading();
-                        this.saveRecentLibrary(url);
-                        resolve();
-                    };
-                    this.clientFrame.onerror = () => {
-                        this.hideLoading();
-                        console.error('PWA: Failed to load URL:', url);
-                        resolve();
-                    };
-                });
-            } catch (error) {
-                console.error('PWA: Error loading client:', error);
-                this.hideLoading();
-            }
-            handleBackNavigation() {
-                if (this.clientFrame && this.historyPointer > -1) {
-                    this.clientFrame.src = this.iframeHistory[this.historyPointer];
-                    this.historyPointer--;
-                } else {
-                    // Fallback: reload default library
-                    this.loadRecentLibrary();
-                }
-            }
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            z-index: 10000;
+            min-width: 280px;
+            animation: slideUp 0.3s ease-out;
+        `;
+        
+        const overlay = document.createElement('div');
+        overlay.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 9999;
+        `;
+        }
+
+    showShareFallback(url, title, text) {
+        // Try Android native share one more time as fallback
+        if (typeof Android !== 'undefined' && Android && typeof Android.shareLibrary === 'function') {
+            console.log('PWA: Fallback using Android native share');
+            Android.shareLibrary(url, title, text);
+            return;
+        }
+        
+        // Create WhatsApp, Email, and copy options
+        const whatsappLink = `https://wa.me/?text=${encodeURIComponent(text + '\n' + url)}`;
+        const emailLink = `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(text + '\n\n' + url)}`;
+        
+        // Create a simple share menu
+        const shareMenu = document.createElement('div');
+        shareMenu.style.cssText = `
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            z-index: 10000;
+            min-width: 280px;
+            animation: slideUp 0.3s ease-out;
+        `;
+        
+        const overlay = document.createElement('div');
+        overlay.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 9999;
         `;
         
         const title_el = document.createElement('h3');
