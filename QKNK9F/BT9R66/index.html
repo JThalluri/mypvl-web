@@ -3,21 +3,21 @@
     <head>
         <meta charset="UTF-8">
         <title>Mobile Video Library</title>
-        
+
         <!-- MOBILE-FIRST VIEWPORT -->
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, 
+        <meta name="viewport" content="width=device-width, initial-scale=1.0,
             maximum-scale=5.0, minimum-scale=1.0, user-scalable=yes,
             viewport-fit=cover">
-        
+
         <!-- THEME & PWA -->
         <meta name="theme-color" content="#F79C19">
         <meta name="mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="format-detection" content="telephone=no">
-        
+
         <!-- FAVICON -->
         <link rel="icon" type="image/x-icon" href="/shared/branding/favicon.ico">
-        
+
         <!-- FONTS -->
         <!-- Font preloading (en - latin) -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -26,15 +26,15 @@
         <link rel="preconnect" href="https://img.youtube.com">
 
         <!-- Preload critical fonts -->
-        <link rel="preload" 
-            href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap&subset=latin" 
-            as="style" 
+        <link rel="preload"
+            href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap&subset=latin"
+            as="style"
             onload="this.onload=null;this.rel='stylesheet'">
-        
+
         <!-- Self-hosted Font Awesome -->
-        <link rel="preload" 
+        <link rel="preload"
             href="/shared/fonts/fontawesome/css/all.min.css"
-            as="style" 
+            as="style"
             onload="this.onload=null;this.rel='stylesheet'">
 
         <!-- Fallback for non-JS -->
@@ -86,7 +86,7 @@
             font-family: 'Font Awesome 6 Free';
             src: url('/shared/fonts/fontawesome/webfonts/fa-solid-900.woff2') format('woff2');
             font-display: optional; /* Prevents layout shift */
-        }    
+        }
         /* Font fallbacks to prevent CLS */
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -106,37 +106,37 @@
         </style>
 
         <!-- APP CSS -->
-        <link rel="preload" href="/framework/mhv1/css/bundle.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="/framework/mhv1/css/bundle.min.css"></noscript>
+        <link rel="preload" href="/templates/mobile_hybrid/resources/css/bundle.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/templates/mobile_hybrid/resources/css/bundle.min.css"></noscript>
         <!-- DNS Prefetch for faster external resource loading -->
         <link rel="preconnect" href="https://i.ytimg.com" crossorigin>
-        <link rel="dns-prefetch" href="https://i.ytimg.com">      
-        <link rel="preload" href="./data/videos.json?v=ac016e7b" as="fetch" crossorigin>
-        <link rel="preload" href="./data/categories.json?v=ac016e7b" as="fetch" crossorigin>
+        <link rel="dns-prefetch" href="https://i.ytimg.com">
+        <link rel="preload" href="./site/data/videos.json?v=a5387ada" as="fetch" crossorigin>
+        <link rel="preload" href="./site/data/categories.json?v=a5387ada" as="fetch" crossorigin>
     </head>
-    <body class="mobile-first-app" data-client="BT9R66" data-video-count="11">
-        
+    <body class="mobile-first-app" data-client="BT9R66" data-video-count="10">
+
         <!-- SKIP LINK -->
         <a href="#main-content" class="skip-link">Skip to main content</a>
-        
+
         
         <!-- BRANDING AREA (Desktop/Tablet only) -->
         <div class="branding-area" id="brandingArea">
             <!-- Banner Image -->
             <div class="site-banner">
                 <div class="banner-content">
-                    <img src="./resources/images/banner.png" alt="Mobile Video Library" class="banner-image" loading="lazy" height="100">
+                    <img src="./site/resources/images/banner.png" alt="Mobile Video Library" class="banner-image" loading="lazy" height="100">
                 </div>
             </div>
-            
+
             <!-- Branding Container (Social + Logo) -->
             <div class="branding-container">
                 <!-- Social Links -->
                 
-                
+
                 <!-- Brand Logo -->
                 <div class="brand-logo">
-                    <a href="https://my-pvl.com/index.html" 
+                    <a href="https://my-pvl.com/index.html"
                     target="_blank" rel="noopener noreferrer"
                     class="brand-link" aria-label="Powered by PVL">
                         <span class="powered-by">Powered By</span>
@@ -146,7 +146,7 @@
             </div>
         </div>
         
-    
+
     <!-- APP HEADER -->
     <header class="app-header" role="banner">
         <div class="header-content">
@@ -155,7 +155,7 @@
                 <button id="menuToggle" class="header-action-button menu-toggle" aria-label="Toggle menu">
                     <i class="fas fa-bars"></i>
                 </button>
-                
+
                 <!-- Search area -->
                 <div class="search-container">
                     <input type="search" id="searchBox" placeholder="Search videos..." aria-label="Search">
@@ -163,7 +163,7 @@
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
-                
+
                 <!-- Clear filters button -->
                 <button id="clearFilters" class="header-action-button clear-filters">
                     <i class="fas fa-times-circle"></i>
@@ -173,14 +173,14 @@
                 <!-- Video Count Display (moved to header) -->
                 <div class="video-count-display header-count">
                     <span id="visibleCount">0</span>/<span id="totalCount">1031</span>
-                </div>                
+                </div>
             </div>
         </div>
     </header>
-    
+
     <!-- MAIN LAYOUT -->
     <div class="app-layout">
-        
+
         <!-- SIDEBAR -->
         <aside class="app-sidebar" id="sidebar" role="navigation" aria-label="Categories">
             <div class="sidebar-header">
@@ -193,24 +193,24 @@
                 <!-- Categories loaded from categories.json -->
             </div>
         </aside>
-        
+
         <!-- OVERLAY (MOBILE) -->
         <div class="sidebar-overlay" id="sidebarOverlay"></div>
-        
+
         <!-- MAIN CONTENT -->
         <main class="app-content" id="main-content" role="main">
-            
+
             <!-- VIDEO GRID -->
             <div class="video-grid" id="videoGrid">
                 <!-- Videos loaded from videos.json -->
             </div>
-            
+
             <!-- LOADING -->
             <div class="loading-indicator" id="loadingIndicator">
                 <div class="spinner"></div>
                 <p>Loading videos...</p>
             </div>
-            
+
             <!-- EMPTY STATE -->
             <div class="empty-state" id="emptyState">
                 <i class="fas fa-search"></i>
@@ -218,12 +218,12 @@
                 <p>Try adjusting your search or filter</p>
                 <button id="resetFilters">Reset Filters</button>
             </div>
-            
+
             <!-- PAGINATION -->
             <div class="pagination" id="pagination"></div>
         </main>
     </div>
-    
+
     <!-- FOOTER -->
     <footer class="modern-footer" id="modernFooter">
         <div class="footer-content">
@@ -247,7 +247,7 @@
             </div>
         </div>
     </footer>
-    
+
     <!-- DISCLAIMER MODAL -->
     <div class="disclaimer-modal" id="disclaimerModal">
         <div class="modal-content">
@@ -257,14 +257,14 @@
             </div>
             <div class="modal-body">
                 <p>This site organizes and distributes embedded video content from platforms such as YouTube and Vimeo for ease of access. We do not host or upload any videos directly, and we are not responsible for the accuracy, legality, or compliance of embedded content. All responsibility for video content lies with the original creators and hosting platforms.</p>
-                
+
                 <p>If you believe that any embedded video on this site infringes your copyright, please notify us in accordance with our <a href="/dmca_policy.html" style="color: var(--primary-color); font-weight: 600;">DMCA Policy</a>. Upon receiving a valid complaint, we will promptly review the claim and, if appropriate, remove the infringing content from our platform.</p>
-                
+
                 <p>We may earn a commission at no extra cost to you from affiliate links displayed on this site.</p>
             </div>
         </div>
     </div>
-    
+
     <!-- Video Player Modal -->
     <div class="video-modal" id="videoModal">
         <div class="modal-backdrop"></div>
@@ -303,7 +303,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="playlist-view" id="playlistView">
         <div class="playlist-header">
             <h3>Playlists</h3>
@@ -343,20 +343,20 @@
             </div>
         </div>
     </div>
-    
+
     <!-- APP DATA -->
     <script type="application/json" id="appConfig">
     {
         "clientId": "BT9R66",
-        "dataBaseUrl": "./data/",
-        "dataVersion": "ac016e7b",
-        "totalVideos": 11
+        "dataBaseUrl": "./site/data/",
+        "dataVersion": "a5387ada",
+        "totalVideos": 10
     }
     </script>
-    
+
     <!-- APP JS -->
-    <script src="/framework/mhv1/js/bundle.min.js" defer></script>
-    
+    <script src="/templates/mobile_hybrid/resources/js/bundle.min.js" defer></script>
+
     <!-- INIT SCRIPT -->
     <script defer>
         // Initialize app
