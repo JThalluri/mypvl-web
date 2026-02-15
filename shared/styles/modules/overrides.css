@@ -74,6 +74,26 @@ main {
   z-index: 1000 !important;
 }
 
+@media (hover: hover) and (pointer: fine) {
+  .grecaptcha-badge {
+    width: 70px !important;
+    overflow: hidden !important;
+    transition: width 180ms ease !important;
+  }
+
+  .grecaptcha-badge:hover,
+  .grecaptcha-badge:focus-within {
+    width: 256px !important;
+  }
+}
+
+@media (hover: none) {
+  .grecaptcha-badge {
+    width: auto !important;
+    overflow: visible !important;
+  }
+}
+
 .policy-content {
   display: grid;
   gap: 1rem;

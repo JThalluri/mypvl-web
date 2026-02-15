@@ -20,3 +20,6 @@ dist/
 
 # Python bytecode
 __pycache__/
+
+# Resource bundler logs
+utilities/resource_bundler/logs/
