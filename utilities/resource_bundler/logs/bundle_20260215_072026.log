@@ -1,9 +1,0 @@
-2026-02-15 07:20:26,971 - INFO - Starting bundler for: PVL Web Site
-2026-02-15 07:20:26,971 - INFO - Base directory: /home/jay/Development/pvl-web/utilities/resource_bundler
-2026-02-15 07:20:26,972 - INFO - Building pvl_web_js bundle...
-2026-02-15 07:20:26,972 - INFO - Processing 1 JS entry file(s)...
-2026-02-15 07:20:26,972 - INFO - Downloading esbuild binary...
-2026-02-15 07:20:27,419 - ERROR - Failed to download esbuild: HTTP Error 404: Not Found
-2026-02-15 07:20:27,419 - INFO - Please download manually:
-2026-02-15 07:20:27,419 - INFO -   curl -fsSL https://github.com/evanw/esbuild/releases/download/v0.19.11/esbuild-linux-64 -o /home/jay/Development/pvl-web/utilities/resource_bundler/esbuild
-2026-02-15 07:20:27,419 - INFO -   chmod +x /home/jay/Development/pvl-web/utilities/resource_bundler/esbuild
