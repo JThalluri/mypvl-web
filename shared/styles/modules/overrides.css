@@ -87,9 +87,16 @@ main {
   }
 }
 
-@media (hover: none) {
+@media (hover: none), (pointer: coarse) {
   .grecaptcha-badge {
-    width: auto !important;
+    width: 70px !important;
+    overflow: hidden !important;
+    transition: width 180ms ease !important;
+  }
+
+  .grecaptcha-badge.is-expanded,
+  .grecaptcha-badge:focus-within {
+    width: 256px !important;
     overflow: visible !important;
   }
 }
