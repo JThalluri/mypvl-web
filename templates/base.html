@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' https://www.youtube.com https://www.google.com https://www.gstatic.com https://scripts.clarity.ms https://www.clarity.ms https://embed.tawk.to https://cdnjs.cloudflare.com https://static.cloudflareinsights.com 'unsafe-inline'; style-src 'self' https://cdnjs.cloudflare.com https://embed.tawk.to 'unsafe-inline'; img-src 'self' https: data:; font-src 'self' https://cdnjs.cloudflare.com https://embed.tawk.to data:; connect-src 'self' https://www.google.com https://va.tawk.to https://embed.tawk.to https://www.clarity.ms https://q.clarity.ms https://formspree.io wss:; frame-src https://www.youtube.com https://www.google.com;"
+    />
+    <meta name="description" content="{{ page.description }}" />
+    <meta name="robots" content="index,follow" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="{{ page.title }}" />
+    <meta property="og:description" content="{{ page.description }}" />
+    <meta property="og:image" content="shared/branding/banner.png" />
+    <meta name="theme-color" content="{{ page.theme_color }}" />
+    <title>{{ page.title }}</title>
+    <link rel="icon" href="shared/branding/favicon.ico" type="image/x-icon" />
+    <link rel="preload" href="assets/css/pvl-web.min.css" as="style" />
+    <link rel="stylesheet" href="assets/css/pvl-web.min.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    {% include "templates/includes/integrations.html" %}
+  </head>
+  <body class="{{ page.body_class }}">
+    {% block body %}{% endblock %}
+    <script type="module" src="assets/js/pvl-web.min.js"></script>
+  </body>
+</html>

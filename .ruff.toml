@@ -1,0 +1,19 @@
+# .ruff.toml
+
+line-length = 100
+target-version = "py310"
+
+[lint]
+# E, W  = pycodestyle
+# F     = pyflakes (actual errors)
+# I     = isort (import sorting)
+# B     = flake8-bugbear
+# UP    = pyupgrade
+# SIM   = flake8-simplify
+select = ["E", "F", "W", "I", "B", "UP", "SIM"]
+
+# Ignore long-line warnings (Black handles this)
+ignore = ["E501"]
+
+[lint.per-file-ignores]
+"**/__init__.py" = ["F401"]

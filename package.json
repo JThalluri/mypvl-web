@@ -1,0 +1,17 @@
+{
+  "name": "pvl-web",
+  "private": true,
+  "scripts": {
+    "bundle": "python3 ${PVL_BUNDLER_PY:-/home/jay/Development/VideoLibraryManager/utilities/resource_bundler/bundler.py} --config \"$PWD/utilities/resource_bundler/config-pvl-web.json\"",
+    "generate": ".venv/bin/python generate_html.py --targets deploy",
+    "generate:build": ".venv/bin/python generate_html.py --targets build",
+    "generate:dist": ".venv/bin/python generate_html.py --targets dist",
+    "generate:deploy": ".venv/bin/python generate_html.py --targets deploy",
+    "lint": "npm run lint:js && npm run lint:py",
+    "lint:js": "eslint \"shared/scripts/**/*.js\"",
+    "lint:py": ".venv/bin/python -m py_compile generate_html.py"
+  },
+  "devDependencies": {
+    "eslint": "^10.0.0"
+  }
+}

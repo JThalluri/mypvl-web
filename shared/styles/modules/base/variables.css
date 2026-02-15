@@ -1,0 +1,55 @@
+/* ===== CSS VARIABLES ===== */
+:root {
+    /* Core Brand Colors */
+    --primary-color: #F79C19;
+    --primary-dark: #d8850a;
+    --primary-light: #FFB74D;
+    --primary-bg: #FFF3E0;
+    
+    /* Neutral Palette */
+    --secondary-color: #1a1a1a;
+    --background-color: #2d2d2d;
+    --surface-color: #3a3a3a;
+    --surface-light: #4a4a4a;
+    --surface-dark: #222;
+    
+    /* Text Colors */
+    --text-primary: #ffffff;
+    --text-secondary: #cccccc;
+    --text-tertiary: #999999;
+    --text-on-primary: #1a1a1a;
+    
+    /* UI Elements */
+    --border-color: #444444;
+    --shadow: 0 4px 12px rgba(0,0,0,0.25);
+    --border-radius: 12px;
+
+    /* Semantic Design Tokens */
+    --theme-color: #F79C19;
+    --success-color: #2ecc71;
+    --text-muted: #939393;
+    --badge-border-color: #3f2121;
+
+    /* Overlay and alpha colors */
+    --overlay-strong: rgb(0 0 0 / 85%);
+    --overlay-medium: rgb(0 0 0 / 80%);
+    --overlay-soft: rgb(0 0 0 / 30%);
+    --overlay-soft-strong: rgb(0 0 0 / 50%);
+    --tagline-bg: rgb(20 0 0);
+    --tagline-border: rgb(121 69 69 / 20%);
+    --spinner-border: rgb(255 255 255 / 30%);
+
+    /* Accent shadows */
+    --shadow-accent-sm: 0 5px 15px rgb(247 156 25 / 20%);
+    --shadow-accent-md: 0 6px 20px rgb(247 156 25 / 40%);
+    --shadow-accent-lg: 0 10px 30px rgb(247 156 25 / 30%);
+    --shadow-accent-float: 0 4px 20px rgb(247 156 25 / 40%);
+    --shadow-accent-float-hover: 0 6px 25px rgb(247 156 25 / 60%);
+    --shadow-accent-float-pulse: 0 4px 25px rgb(247 156 25 / 80%);
+
+    /* Warning badge shadows */
+    --shadow-warn-md: 0 -5px 8px rgb(220 38 38 / 30%);
+    --shadow-warn-hover: 0 4px 12px rgb(220 38 38 / 40%);
+    --shadow-warn-mobile: 0 1px 4px rgb(220 38 38 / 30%);
+    --shadow-warn-mobile-hover: 0 2px 6px rgb(220 38 38 / 40%);
+}

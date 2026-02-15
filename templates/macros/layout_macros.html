@@ -1,0 +1,20 @@
+{% macro render_layout(sections, nav_key, footer_key='footer') -%}
+{{ sections.header | safe }}
+{{ sections[nav_key] | safe }}
+<main>
+  {{ caller() }}
+</main>
+{{ sections[footer_key] | safe }}
+{%- endmacro %}
+
+{% macro render_home_overlays(sections) -%}
+<button class="floating-contact-btn" id="floatingContactBtn" type="button" aria-label="Open contact form">
+  <i class="fas fa-envelope" aria-hidden="true"></i>
+  Contact
+</button>
+
+{{ sections.contact_modal | safe }}
+{{ sections.quick_contact_modal | safe }}
+{{ sections.exit_intent_popup | safe }}
+{{ sections.contact_success_modal | safe }}
+{%- endmacro %}

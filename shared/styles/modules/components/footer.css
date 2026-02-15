@@ -1,0 +1,59 @@
+/* ===== FOOTER ===== */
+footer {
+    background: var(--surface-dark);
+    color: var(--text-primary);
+    text-align: center;
+    padding: 2rem 0;
+    margin-top: 3rem;
+    border-top: 3px solid var(--primary-color);
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.social-links {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin: 1rem 0;
+}
+
+.social-link {
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    transition: all 0.3s ease;
+    padding: 0.5rem;
+    border-radius: 50%;
+    background: var(--surface-color);
+}
+
+.social-link:hover {
+    transform: translateY(-3px);
+    background: var(--primary-color);
+    color: var(--text-on-primary);
+}
+
+/* ADD THIS - Footer Links Styling */
+.footer-links {
+    margin: 1rem 0;
+}
+
+.footer-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    margin: 0 0.5rem;
+    transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: var(--primary-color);
+}
+
+/* Footer Current Page Highlighting */
+.footer-links a.current-page {
+    font-weight: bold;
+    color: var(--primary-color) !important;
+}

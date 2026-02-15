@@ -1,0 +1,48 @@
+{
+  "esbuild": {
+    "binary_path": "../../../VideoLibraryManager/utilities/resource_bundler/esbuild",
+    "download_if_missing": true,
+    "version": "0.19.11"
+  },
+  "project": {
+    "name": "PVL Web Site",
+    "js_root": "../../shared/scripts",
+    "css_root": "../../shared/styles",
+    "output_root": "../../assets"
+  },
+  "bundles": {
+    "pvl_web_js": {
+      "type": "js",
+      "enabled": true,
+      "entry_files": ["site.js"],
+      "output": "js/pvl-web.min.js",
+      "options": {
+        "bundle": true,
+        "minify": true,
+        "sourcemap": false,
+        "target": "es2020",
+        "format": "esm"
+      }
+    },
+    "pvl_web_css": {
+      "type": "css",
+      "enabled": true,
+      "entry_files": ["site.css"],
+      "output": "css/pvl-web.min.css",
+      "options": {
+        "bundle": true,
+        "minify": true,
+        "sourcemap": false
+      }
+    }
+  },
+  "global_options": {
+    "log_level": "info",
+    "clean_output": false
+  },
+  "inspection": {
+    "emit_dot": false,
+    "emit_multi_view": false,
+    "fanin_hotspots_count": 10
+  }
+}

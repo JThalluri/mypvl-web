@@ -1,0 +1,180 @@
+/* ===== HEADER ===== */
+header {
+    background-color: var(--primary-color);
+    color: var(--text-on-primary);
+    padding: 0.9rem 0 1.95rem;
+    text-align: center;
+    box-shadow: var(--shadow);
+    position: relative;
+    min-height: 154px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.header-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+/* Floating Icons */
+.floating-icon {
+    position: absolute;
+    z-index: 2;
+    opacity: 0.2;
+    transition: all 0.3s ease;
+    pointer-events: none;
+}
+
+.floating-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 4px var(--overlay-soft));
+}
+
+/* Individual Icon Positioning */
+.icon-1 { /* camera-solid-full.svg */
+    width: 85px; height: 85px;
+    top: 15%; left: 12%;
+    transform: rotate(-12deg);
+    filter: brightness(0) invert(1);
+    opacity: 0.25;
+}
+
+.icon-2 { /* radio-solid-full.svg */
+    width: 65px; height: 65px;
+    top: 10%; right: 3%;
+    transform: rotate(8deg);
+    filter: brightness(0) invert(0.8);
+    opacity: 0.18;
+}
+
+.icon-3 { /* photo-film-solid-full.svg */
+    width: 95px; height: 95px;
+    bottom: 10%; left: 3%;
+    transform: rotate(15deg);
+    filter: brightness(0) invert(1);
+    opacity: 0.22;
+}
+
+.icon-4 { /* closed-captioning-solid-full.svg */
+    width: 55px; height: 55px;
+    bottom: 10%; right: 5%;
+    transform: rotate(-18deg);
+    filter: sepia(1) saturate(5) hue-rotate(300deg);
+    opacity: 0.2;
+}
+
+.icon-5 { /* clapperboard-solid-full.svg */
+    width: 75px; height: 75px;
+    top: 55%; left: 65%;
+    transform: rotate(25deg);
+    filter: brightness(0) invert(0.6);
+    opacity: 0.2;
+}
+
+.icon-6 { /* podcast-solid-full.svg */
+    width: 70px; height: 70px;
+    top: 40%; left: 85%;
+    transform: rotate(-10deg);
+    filter: brightness(0) invert(1);
+    opacity: 0.2;
+}
+
+.icon-7 { /* microphone-lines-solid-full.svg */
+    width: 60px; height: 60px;
+    top: 55%; left: 15%;
+    transform: rotate(5deg);
+    filter: sepia(1) saturate(5) hue-rotate(300deg);
+    opacity: 0.18;
+}
+
+.icon-8 { /* video-solid-full.svg */
+    width: 80px; height: 80px;
+    top: 18%; left: 70%;
+    transform: rotate(-22deg);
+    filter: brightness(0) invert(0.9);
+    opacity: 0.16;
+}
+
+.icon-9 { /* headphones-solid-full.svg */
+    width: 45px; height: 45px;
+    bottom: 25%; left: 45%;
+    transform: rotate(12deg);
+    filter: brightness(0) invert(1);
+    opacity: 0.22;
+}
+
+.icon-10 { /* play-solid-full.svg */
+    width: 75px; height: 75px;
+    top: 35%; left: 25%;
+    transform: rotate(-10deg);
+    filter: sepia(1) saturate(5) hue-rotate(300deg);
+    opacity: 0.3;
+}
+
+.icon-11 { /* film-solid-full.svg */
+    width: 90px; height: 90px;
+    bottom: 15%; right: 20%;
+    transform: rotate(18deg);
+    filter: brightness(1) invert(0.7);
+    opacity: 0.18;
+}
+
+/* Banner & Header Content */
+.banner-img {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 500px;
+    max-height: 190px;
+    width: auto;
+    height: auto;
+    z-index: 3;
+    object-fit: contain;
+}
+
+.tagline {
+    position: relative;
+    z-index: 5;
+    text-shadow: 2px 2px 4px var(--overlay-soft);
+}
+
+.tagline {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+    background: var(--tagline-bg);
+    backdrop-filter: blur(10px);
+    border-radius: 0;
+    border: 2px solid var(--tagline-border);
+    box-shadow: -1px -4px 20px var(--overlay-soft);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-width: 100%;
+    padding: 0.28rem 1rem;
+    transform: none;
+    white-space: normal;
+    text-align: center;
+    line-height: 1.3;
+    z-index: 10;
+    color: var(--text-muted);
+    text-shadow: 1px 1px 3px var(--overlay-soft-strong);
+    border-left: 0;
+    border-right: 0;
+    border-bottom: 0;
+}
+
+.tagline-short {
+    display: none;
+}

@@ -1,0 +1,136 @@
+name: Deploy Dry Run (gh-pages Safe Merge from deploy/)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  dry-run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source (main)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Checkout gh-pages branch
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+          path: gh-pages-target
+
+      - name: Merge-copy artifacts into gh-pages working tree (dry-run)
+        run: |
+          set -euo pipefail
+
+          SOURCE_DIR="deploy"
+          TARGET_DIR="gh-pages-target"
+
+          if [ ! -d "$SOURCE_DIR" ]; then
+            echo "Expected build output '$SOURCE_DIR' not found"
+            exit 1
+          fi
+
+          shopt -s nullglob
+
+          echo "=== Copying root HTML pages and manifest ==="
+          for file in "$SOURCE_DIR"/*.html "$SOURCE_DIR"/manifest.json; do
+            if [ -f "$file" ]; then
+              cp -f "$file" "$TARGET_DIR/$(basename "$file")"
+              echo "Updated $(basename "$file")"
+            fi
+          done
+
+          echo "=== Merging shared folders (non-destructive) ==="
+          for folder in assets shared icons resources css js library framework; do
+            if [ -d "$SOURCE_DIR/$folder" ]; then
+              mkdir -p "$TARGET_DIR/$folder"
+              rsync -a "$SOURCE_DIR/$folder/" "$TARGET_DIR/$folder/"
+              echo "Merged $folder/ from $SOURCE_DIR"
+            fi
+          done
+
+          if [ -d ".well-known" ]; then
+            mkdir -p "$TARGET_DIR/.well-known"
+            rsync -a ".well-known/" "$TARGET_DIR/.well-known/"
+            echo "Merged .well-known/"
+          fi
+
+          if [ -f "sw.js" ]; then
+            cp -f "sw.js" "$TARGET_DIR/sw.js"
+            echo "Updated sw.js"
+          fi
+
+          if [ -f "wrapper.html" ]; then
+            cp -f "wrapper.html" "$TARGET_DIR/wrapper.html"
+            echo "Updated wrapper.html"
+          fi
+
+      - name: Stage deploy scope and print change report
+        run: |
+          set -euo pipefail
+          cd gh-pages-target
+
+          for path in \
+            index.html \
+            privacy_policy.html \
+            cookies_policy.html \
+            terms_of_use.html \
+            thirdparty_attributions.html \
+            contact_us.html \
+            dmca_policy.html \
+            manifest.json \
+            wrapper.html \
+            sw.js \
+            assets \
+            shared \
+            icons \
+            resources \
+            css \
+            js \
+            library \
+            framework \
+            .well-known
+          do
+            if [ -e "$path" ]; then
+              git add -A "$path"
+            fi
+          done
+
+          echo "=== DRY RUN: Candidate changes ==="
+          git status --short
+
+          if git diff --staged --quiet; then
+            echo "No deployment changes detected"
+            echo "no_changes=true" >> "$GITHUB_ENV"
+          else
+            echo "no_changes=false" >> "$GITHUB_ENV"
+            echo "=== DRY RUN: Diff stat ==="
+            git diff --staged --stat
+            echo "=== DRY RUN: Name-status ==="
+            git diff --staged --name-status
+          fi
+
+      - name: Save dry-run report
+        if: env.no_changes == 'false'
+        run: |
+          cd gh-pages-target
+          {
+            echo "# Deploy Dry Run Report"
+            echo
+            echo "## Status"
+            git status --short
+            echo
+            echo "## Diff Stat"
+            git diff --staged --stat
+            echo
+            echo "## Name Status"
+            git diff --staged --name-status
+          } > ../deploy-dry-run-report.txt
+
+      - name: Upload dry-run report artifact
+        if: env.no_changes == 'false'
+        uses: actions/upload-artifact@v4
+        with:
+          name: deploy-dry-run-report
+          path: deploy-dry-run-report.txt

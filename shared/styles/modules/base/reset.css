@@ -1,0 +1,20 @@
+/* ===== RESET & BASE STYLES ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+html {
+    scroll-padding-top: 80px;
+}
+
+section {
+    scroll-margin-top: 80px;
+}

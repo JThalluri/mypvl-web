@@ -8,5 +8,16 @@
     "contact_us": true,
     "dmca_policy": true
   },
-  "theme": "dark"
+  "theme": "dark",
+  "output_targets": {
+    "build": false,
+    "dist": false,
+    "deploy": true
+  },
+  "clean_outputs": true,
+  "integrations": {
+    "recaptcha_enabled": true,
+    "tawk_enabled": true,
+    "clarity_enabled": true
+  }
 }

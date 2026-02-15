@@ -1,103 +1,122 @@
-name: Deploy to GitHub Pages - SAFE
+name: Deploy to gh-pages (Safe Merge from deploy/)
 
 on:
-  workflow_dispatch:  # Manual trigger only
+  workflow_dispatch:
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout source (main branch)
-        uses: actions/checkout@v3
+      - name: Checkout source (main)
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Checkout AND PRESERVE gh-pages branch
-        uses: actions/checkout@v3
+      - name: Checkout gh-pages branch
+        uses: actions/checkout@v4
         with:
           ref: gh-pages
           path: gh-pages-target
 
-      - name: Copy website files (non-destructive)
+      - name: Merge-copy deploy artifacts (non-destructive)
         run: |
-          echo "=== SAFELY COPYING FILES ==="
-          echo "Current gh-pages content:"
-          ls -la gh-pages-target/
-          
-          # Copy main site files
-          cp -f index.html gh-pages-target/index.html
-          echo "✅ Updated index.html"
-          
-          # Copy all policy pages
-          cp -f privacy_policy.html gh-pages-target/
-          cp -f cookies_policy.html gh-pages-target/
-          cp -f terms_of_use.html gh-pages-target/
-          cp -f thirdparty_attributions.html gh-pages-target/
-          cp -f contact_us.html gh-pages-target/
-          cp -f dmca_policy.html gh-pages-target/
-          cp -f wrapper.html gh-pages-target/
-          cp -f manifest.json gh-pages-target/
-          echo "✅ Updated policy pages"
-          
-          # Remove and replace ONLY the resources folder
-          rm -rf gh-pages-target/resources
-          rm -rf gh-pages-target/css  # Remove old css if exists
-          rm -rf gh-pages-target/js  # Remove old js if exists
-          rm -rf gh-pages-target/library  # Remove old library file if exists
-          rm -rf gh-pages-target/icons
-          rm -rf gh-pages-target/.well-known
-          cp -r resources gh-pages-target/
-          cp -r css gh-pages-target/  # Add css folder for policy pages and wpa
-          cp -r js gh-pages-target/  # Add js folder for policy pages and wpa
-          cp -r library gh-pages-target/  # Add library folder for wpa
-          cp -r icons gh-pages-target/
-          cp -r .well-known gh-pages-target/
-          echo "✅ Updated resources and css folders"
-          
-          echo "Final gh-pages content:"
-          ls -la gh-pages-target/
+          set -euo pipefail
 
-      - name: Commit and push website files
-        run: |
-          cd gh-pages-target
-          
-          # Set Git identity for THIS repository
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          
-          # Add ALL website files we explicitly changed
-          git add index.html
-          git add privacy_policy.html
-          git add cookies_policy.html
-          git add terms_of_use.html
-          git add thirdparty_attributions.html
-          git add contact_us.html
-          git add dmca_policy.html
-          git add wrapper.html
-          git add manifest.json
-          git add resources/
-          git add css/
-          git add icons/ 
-          git add js/
-          git add library/
-          git add .well-known/
-          
-          echo "=== FILES BEING COMMITTED ==="
-          git status --short
-          
-          # Check if there are changes to commit
-          if git diff --staged --quiet; then
-            echo "No changes to commit"
-          else
-            git commit -m "Update website: main site, policy pages, and assets [$(date +'%Y-%m-%d %H:%M:%S')]"
-            git push origin gh-pages
-            echo "✅ Successfully updated website files"
+          SOURCE_DIR="deploy"
+          TARGET_DIR="gh-pages-target"
+
+          if [ ! -d "$SOURCE_DIR" ]; then
+            echo "Expected build output '$SOURCE_DIR' not found"
+            exit 1
           fi
 
-      - name: Verify preservation
+          echo "=== Copying root HTML pages and manifest ==="
+          shopt -s nullglob
+          for file in "$SOURCE_DIR"/*.html "$SOURCE_DIR"/manifest.json; do
+            if [ -f "$file" ]; then
+              cp -f "$file" "$TARGET_DIR/$(basename "$file")"
+              echo "Updated $(basename "$file")"
+            fi
+          done
+
+          echo "=== Merging shared folders without deleting existing tenant content ==="
+          for folder in assets shared icons resources css js library framework; do
+            if [ -d "$SOURCE_DIR/$folder" ]; then
+              mkdir -p "$TARGET_DIR/$folder"
+              rsync -a "$SOURCE_DIR/$folder/" "$TARGET_DIR/$folder/"
+              echo "Merged $folder/ from $SOURCE_DIR"
+            fi
+          done
+
+          echo "=== Merging repo-level shared files when present ==="
+          if [ -d ".well-known" ]; then
+            mkdir -p "$TARGET_DIR/.well-known"
+            rsync -a ".well-known/" "$TARGET_DIR/.well-known/"
+            echo "Merged .well-known/"
+          fi
+
+          if [ -f "sw.js" ]; then
+            cp -f "sw.js" "$TARGET_DIR/sw.js"
+            echo "Updated sw.js"
+          fi
+
+          if [ -f "wrapper.html" ]; then
+            cp -f "wrapper.html" "$TARGET_DIR/wrapper.html"
+            echo "Updated wrapper.html"
+          fi
+
+          echo "=== Safety check: tenant folders still present ==="
+          ls -1 "$TARGET_DIR" | head -n 50
+
+      - name: Commit and push deployment changes
+        run: |
+          set -euo pipefail
+          cd gh-pages-target
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Stage only known site/root/shared paths; do not blanket-add repository.
+          for path in \
+            index.html \
+            privacy_policy.html \
+            cookies_policy.html \
+            terms_of_use.html \
+            thirdparty_attributions.html \
+            contact_us.html \
+            dmca_policy.html \
+            manifest.json \
+            wrapper.html \
+            sw.js \
+            assets \
+            shared \
+            icons \
+            resources \
+            css \
+            js \
+            library \
+            framework \
+            .well-known
+          do
+            if [ -e "$path" ]; then
+              git add -A "$path"
+            fi
+          done
+
+          echo "=== Candidate changes ==="
+          git status --short
+
+          if git diff --staged --quiet; then
+            echo "No deployment changes to commit"
+            exit 0
+          fi
+
+          git commit -m "Deploy site update (safe merge) [$(date +'%Y-%m-%d %H:%M:%S')]"
+          git push origin gh-pages
+
+      - name: Post-deploy verification
         run: |
           cd gh-pages-target
-          echo "=== FINAL VERIFICATION ==="
-          echo "All files in gh-pages after deployment:"
-          find . -type f -not -path "./.git/*" | sort
+          echo "=== Deployed files (sample) ==="
+          find . -maxdepth 3 -type f | sort | head -n 200

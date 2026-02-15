@@ -1,0 +1,12 @@
+{% extends "templates/base.html" %}
+{% from "templates/macros/layout_macros.html" import render_layout %}
+
+{% block body %}
+{% call render_layout(sections, "policy_navigation") %}
+  {{ sections[content_section] | safe }}
+{% endcall %}
+
+{% if include_success_modal %}
+{{ sections.contact_success_modal | safe }}
+{% endif %}
+{% endblock %}

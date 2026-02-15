@@ -1,0 +1,26 @@
+{
+    "name": "My Personal Video Library",
+    "short_name": "My PVL",
+    "description": "Curated video libraries made simple — discover, create, and share across platforms",
+    "start_url": "/wrapper.html",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#1a1a1a",
+    "orientation": "any",
+    "scope": "/",
+    "categories": ["talkshows", "entertainment", "music", "video"],
+    "icons": [
+        {
+            "src": "/icons/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/icons/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ]
+}

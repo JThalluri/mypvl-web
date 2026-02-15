@@ -1,0 +1,11 @@
+{% extends "templates/base.html" %}
+{% from "templates/macros/layout_macros.html" import render_layout, render_home_overlays %}
+
+{% block body %}
+{% call render_layout(sections, "navigation") %}
+  {% for section_name in home_sections %}
+  {{ sections[section_name] | safe }}
+  {% endfor %}
+{% endcall %}
+{{ render_home_overlays(sections) }}
+{% endblock %}

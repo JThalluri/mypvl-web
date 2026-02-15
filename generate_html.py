@@ -1,710 +1,373 @@
 #!/usr/bin/env python3
-"""
-HTML Generator for Personal Video Library Website
-Generates a standalone HTML file with embedded resources
-Updated for modular CSS structure with theme support
-Now includes policy page generation with config system
+"""Generate static website pages using Jinja2 templates.
+
+This generator renders the primary site and policy pages into configurable
+output targets (build/dist/deploy) using bundled assets and shared branding.
 """
 
-import base64
-import os
+from __future__ import annotations
+
+import argparse
 import json
+import re
+import shutil
+import sys
+from dataclasses import dataclass
 from pathlib import Path
+from typing import Any
 
-def read_file(file_path):
-    """Read a file and return its content"""
-    if not os.path.exists(file_path):
-        print(f"Warning: File {file_path} not found.")
-        return ""
-    
-    with open(file_path, 'r', encoding='utf-8') as file:
-        return file.read()
+from jinja2 import Environment, FileSystemLoader, select_autoescape
 
-def read_config():
-    """Read and parse the config.json file"""
-    config_path = "config.json"
-    if not os.path.exists(config_path):
-        # Create default config if it doesn't exist
-        default_config = {
-            "generate_main_page": True,
-            "generate_policy_pages": {
-                "privacy_policy": False,
-                "cookies_policy": False,
-                "terms_of_use": False,
-                "thirdparty_attributions": False
-            },
-            "theme": "dark"
+DEFAULT_CONFIG: dict[str, Any] = {
+    "theme": "dark",
+    "generate_main_page": True,
+    "generate_policy_pages": {
+        "privacy_policy": True,
+        "cookies_policy": True,
+        "terms_of_use": True,
+        "dmca_policy": True,
+        "thirdparty_attributions": True,
+        "contact_us": True,
+    },
+    "output_targets": {
+        "build": False,
+        "dist": False,
+        "deploy": True,
+    },
+    "clean_outputs": True,
+    "integrations": {
+        "recaptcha_enabled": True,
+        "tawk_enabled": True,
+        "clarity_enabled": True,
+    },
+}
+
+HOME_SECTIONS: list[str] = [
+    "about",
+    "features",
+    "categories",
+    "testimonials",
+    "implementations",
+    "pricing",
+    "contact_us",
+]
+
+CONTENT_PAGES: dict[str, dict[str, str]] = {
+    "privacy_policy": {
+        "title": "Privacy Policy - My PVL Services",
+        "description": "Privacy policy for My PVL Services, including collection, usage, and protection of data.",
+    },
+    "cookies_policy": {
+        "title": "Cookie Policy - My PVL Services",
+        "description": "Cookie usage policy and controls for My PVL Services.",
+    },
+    "terms_of_use": {
+        "title": "Terms of Use - My PVL Services",
+        "description": "Terms and conditions governing use of My PVL Services.",
+    },
+    "dmca_policy": {
+        "title": "DMCA Notice - My PVL Services",
+        "description": "DMCA notice and takedown process for My PVL Services.",
+    },
+    "thirdparty_attributions": {
+        "title": "Third-Party Attributions - My PVL Services",
+        "description": "Third-party services, libraries, and attribution details used by My PVL Services.",
+    },
+    "contact_us": {
+        "title": "Contact Us - My PVL Services",
+        "description": "Contact My PVL Services for demos, support, and collaboration.",
+    },
+}
+
+TEXT_FIXES: dict[str, str] = {
+    "and morse": "and more",
+    "visual raio": "visual radio",
+    "Sub Sub Category": "Subcategory",
+    "Sub sub category": "Subcategory",
+    "Artefact options": "Artifact options",
+    "standalone html": "standalone HTML",
+    "talkshow": "talk show",
+}
+
+
+@dataclass(frozen=True)
+class PageContext:
+    title: str
+    description: str
+    body_class: str = ""
+    include_recaptcha: bool = False
+    theme_color: str = "#F79C19"
+
+
+def load_config(config_path: Path) -> dict[str, Any]:
+    if not config_path.exists():
+        config_path.write_text(json.dumps(DEFAULT_CONFIG, indent=2), encoding="utf-8")
+        return dict(DEFAULT_CONFIG)
+
+    loaded = json.loads(config_path.read_text(encoding="utf-8"))
+
+    merged = dict(DEFAULT_CONFIG)
+    merged.update(
+        {
+            k: v
+            for k, v in loaded.items()
+            if k not in {"generate_policy_pages", "output_targets", "integrations"}
         }
-        with open(config_path, 'w', encoding='utf-8') as f:
-            json.dump(default_config, f, indent=2)
-        print("📝 Created default config.json")
-        return default_config
-    
-    with open(config_path, 'r', encoding='utf-8') as file:
-        return json.load(file)
-
-def encode_file_to_base64(file_path):
-    """Encode a file to base64 string"""
-    if not os.path.exists(file_path):
-        print(f"Warning: File {file_path} not found. Using placeholder.")
-        return None
-    
-    with open(file_path, 'rb') as file:
-        encoded_string = base64.b64encode(file.read()).decode('utf-8')
-    return encoded_string
-
-def get_mime_type(file_path):
-    """Get MIME type based on file extension"""
-    ext = Path(file_path).suffix.lower()
-    mime_types = {
-        '.ico': 'image/x-icon',
-        '.png': 'image/png',
-        '.jpg': 'image/jpeg',
-        '.jpeg': 'image/jpeg',
-        '.svg': 'image/svg+xml',
-        '.gif': 'image/gif'
-    }
-    return mime_types.get(ext, 'application/octet-stream')
-
-def combine_css_files(css_dir="css", theme="dark"):
-    """Combine all modular CSS files into one string"""
-    css_content = ""
-    
-    # Define the order of CSS imports to maintain proper cascade
-    css_files = [
-        # Base styles
-        "base/reset.css",
-        "base/variables.css",
-        "base/typography.css",
-        
-        # Theme (load only one)
-        f"themes/{theme}.css",
-        
-        # Components
-        "components/header.css",
-        "components/navigation.css",
-        "components/sections.css",
-        "components/cards.css",
-        "components/carousels.css",
-        "components/forms.css",
-        "components/modal.css",
-        "components/footer.css",
-        
-        # Layout & Responsive
-        "layout/responsive.css"
-    ]
-    
-    for css_file in css_files:
-        file_path = os.path.join(css_dir, css_file)
-        if os.path.exists(file_path):
-            print(f"📦 Including CSS: {css_file}")
-            css_content += f"\n\n/* === {css_file} === */\n"
-            css_content += read_file(file_path)
-        else:
-            print(f"⚠️  CSS file not found: {file_path}")
-    
-    return css_content
-
-def generate_html(theme="dark"):
-    """Generate the main HTML file with embedded resources"""
-    
-    # Resource paths
-    resources_dir = "resources"
-    favicon_path = os.path.join(resources_dir, "favicon.ico")
-    banner_path = os.path.join(resources_dir, "banner.png")
-    logo_path = os.path.join(resources_dir, "logo.png")
-    
-    # Encode resources to base64
-    favicon_b64 = encode_file_to_base64(favicon_path)
-    banner_b64 = encode_file_to_base64(banner_path)
-    logo_b64 = encode_file_to_base64(logo_path)
-    
-    # Read all CSS modules and combine them
-    css_content = combine_css_files(theme=theme)
-    js_content = read_file("scripts.js")
-    
-    # Read all sections
-    sections_dir = "sections"
-    header_content = read_file(os.path.join(sections_dir, "header.html"))
-    navigation_content = read_file(os.path.join(sections_dir, "navigation.html"))
-    about_content = read_file(os.path.join(sections_dir, "about.html"))
-    features_content = read_file(os.path.join(sections_dir, "features.html"))
-    categories_content = read_file(os.path.join(sections_dir, "categories.html"))
-    testimonials_content = read_file(os.path.join(sections_dir, "testimonials.html"))
-    implementations_content = read_file(os.path.join(sections_dir, "implementations.html"))
-    pricing_content = read_file(os.path.join(sections_dir, "pricing.html"))
-    contact_content = read_file(os.path.join(sections_dir, "contact.html"))
-    footer_content = read_file(os.path.join(sections_dir, "footer.html"))
-
-    contact_modal_content = read_file(os.path.join(sections_dir, "contact_modal.html"))
-    quick_contact_modal_content = read_file(os.path.join(sections_dir, "quick_contact_modal.html"))
-    exit_intent_popup_content = read_file(os.path.join(sections_dir, "exit_intent_popup.html"))
-    success_modal_content = read_file(os.path.join(sections_dir, "contact_success_modal.html"))
-
-    # Replace placeholders in header with actual images
-    if banner_b64:
-        header_content = header_content.replace('{{BANNER_IMAGE}}', f'data:image/png;base64,{banner_b64}')
-    else:
-        header_content = header_content.replace('{{BANNER_IMAGE}}', '')
-    
-    if logo_b64:
-        logo_html = f'<img src="data:image/png;base64,{logo_b64}" alt="PVL Logo" class="logo-img">'
-        header_content = header_content.replace('{{LOGO_IMAGE}}', logo_html)
-    else:
-        header_content = header_content.replace('{{LOGO_IMAGE}}', '<div class="logo">PVL</div>')
-    
-    # HTML Template
-    html_content = f"""<!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.youtube.com https://www.google.com https://www.gstatic.com https://scripts.clarity.ms https://www.clarity.ms https://embed.tawk.to https://cdnjs.cloudflare.com https://static.cloudflareinsights.com 'unsafe-inline'; style-src 'self' https://cdnjs.cloudflare.com https://embed.tawk.to 'unsafe-inline'; img-src 'self' https: data:; font-src 'self' https://cdnjs.cloudflare.com https://embed.tawk.to data:; connect-src 'self' https://www.google.com https://va.tawk.to https://embed.tawk.to https://www.clarity.ms https://q.clarity.ms https://formspree.io wss:; frame-src https://www.youtube.com https://www.google.com;">
-        <title>My PVL - Personal Video Library</title>
-        {f'<link rel="icon" href="data:{get_mime_type(favicon_path)};base64,{favicon_b64}" type="{get_mime_type(favicon_path)}">' if favicon_b64 else '<!-- Favicon not found -->'}
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-        <style>
-            {css_content}
-        </style>
-        <!-- reCAPTCHA v3 -->
-        <script src="https://www.google.com/recaptcha/api.js?render=6Lf49g0sAAAAAOLKadjqtuRVxlONX9d7v7ENr3pm"></script>
-        <!--Start of Tawk.to Script-->
-        <script type="text/javascript">
-        //<![CDATA[
-        var Tawk_API=Tawk_API||{{}}, Tawk_LoadStart=new Date();
-        (function(){{
-        var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-        s1.async=true;
-        s1.src='https://embed.tawk.to/69193bbcf0cd89195c96cea0/1ja592m87';
-        s1.charset='UTF-8';
-        s1.setAttribute('crossorigin','*');
-        s0.parentNode.insertBefore(s1,s0);
-        }})();
-        //]]>
-        </script>
-        <!--End of Tawk.to Script-->
-        <!-- Microsoft Clarity Analytics -->
-        <script type="text/javascript">
-            (function(c,l,a,r,i,t,y){{
-                c[a]=c[a]||function(){{(c[a].q=c[a].q||[]).push(arguments)}};
-                t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-                y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-            }})(window, document, "clarity", "script", "u71fendq3r");
-        </script>
-    </head>
-<body>
-    {header_content}
-    {navigation_content}
-    
-    <main>
-        {about_content}
-        {features_content}
-        {categories_content}
-        {testimonials_content}
-        {implementations_content}
-        {pricing_content}
-        {contact_content}
-    </main>
-    
-    {footer_content}
-    
-    <script>
-        {js_content}
-    </script>
-    <!-- Floating Contact Button -->
-    <button class="floating-contact-btn" id="floatingContactBtn">
-        <i class="fas fa-envelope"></i>
-        Contact
-    </button>
-
-    {contact_modal_content}
-    {quick_contact_modal_content}
-    {exit_intent_popup_content}
-    {success_modal_content}
-    
-</body>
-</html>"""
-    
-    return html_content
-
-def generate_policy_page(policy_name, title, theme="dark"):
-    """Generate individual policy pages with external CSS"""
-    
-    # Resource paths
-    resources_dir = "resources"
-    favicon_path = os.path.join(resources_dir, "favicon.ico")
-    banner_path = os.path.join(resources_dir, "banner.png")
-    logo_path = os.path.join(resources_dir, "logo.png")
-    
-    # Encode resources to base64
-    favicon_b64 = encode_file_to_base64(favicon_path)
-    banner_b64 = encode_file_to_base64(banner_path)
-    logo_b64 = encode_file_to_base64(logo_path)
-    
-    # Read policy content
-    policy_content = read_file(f"sections/{policy_name}.html")
-    
-    # Read header, navigation, footer
-    header_content = read_file("sections/header.html")
-    navigation_content = read_file("sections/policy_navigation.html")
-    footer_content = read_file("sections/footer.html")
-    
-    # SPECIAL HANDLING FOR CONTACT PAGES
-    success_modal_content = ""
-    contact_javascript = ""
-    
-    if policy_name == "contact_us":
-        # Include success modal for contact pages
-        success_modal_content = read_file("sections/contact_success_modal.html")
-        
-        # Add contact-specific JavaScript
-        contact_javascript = """
-        <script>
-            // Contact form handling for standalone page
-            document.addEventListener('DOMContentLoaded', function() {
-                const contactForm = document.getElementById('contactForm');
-                const successModal = document.getElementById('successModal');
-                const closeModalBtn = document.getElementById('closeModalBtn');
-                
-                if (contactForm) {
-                    contactForm.addEventListener('submit', async function(e) {
-                        e.preventDefault();
-                        
-                        const submitBtn = contactForm.querySelector('button[type="submit"]');
-                        if (!submitBtn) return;
-                        
-                        // Show loading state
-                        const originalText = submitBtn.textContent;
-                        submitBtn.textContent = 'Sending...';
-                        submitBtn.disabled = true;
-                        
-                        try {
-                            // Get reCAPTCHA token
-                            const recaptchaToken = await grecaptcha.execute('6Lf49g0sAAAAAOLKadjqtuRVxlONX9d7v7ENr3pm', {action: 'submit'});
-                            
-                            // Get form data
-                            const formData = new FormData(contactForm);
-                            formData.append('g-recaptcha-response', recaptchaToken);
-                            
-                            // Submit to Formspree
-                            const response = await fetch('https://formspree.io/f/xldallkz', {
-                                method: 'POST',
-                                body: formData,
-                                headers: {
-                                    'Accept': 'application/json'
-                                }
-                            });
-                            
-                            if (response.ok) {
-                                contactForm.reset();
-                                if (successModal) {
-                                    successModal.style.display = 'flex';
-                                }
-                            } else {
-                                throw new Error('Form submission failed');
-                            }
-                            
-                        } catch (error) {
-                            console.error('Contact form submission error:', error);
-                            // Fallback - still show success to user
-                            contactForm.reset();
-                            if (successModal) {
-                                successModal.style.display = 'flex';
-                            }
-                        } finally {
-                            submitBtn.textContent = originalText;
-                            submitBtn.disabled = false;
-                        }
-                    });
-                }
-                
-                // Success modal close handlers
-                if (closeModalBtn && successModal) {
-                    closeModalBtn.addEventListener('click', function() {
-                        successModal.style.display = 'none';
-                    });
-                    
-                    successModal.addEventListener('click', function(e) {
-                        if (e.target === successModal) {
-                            successModal.style.display = 'none';
-                        }
-                    });
-                }
-            });
-        </script>
-        """
-    
-    # Replace image placeholders
-    if banner_b64:
-        header_content = header_content.replace('{{BANNER_IMAGE}}', f'data:image/png;base64,{banner_b64}')
-    else:
-        header_content = header_content.replace('{{BANNER_IMAGE}}', '')
-    
-    if logo_b64:
-        logo_html = f'<img src="data:image/png;base64,{logo_b64}" alt="PVL Logo" class="logo-img">'
-        header_content = header_content.replace('{{LOGO_IMAGE}}', logo_html)
-    else:
-        header_content = header_content.replace('{{LOGO_IMAGE}}', '<div class="logo">PVL</div>')
-    
-    # FIX: Use relative paths in navigation and footer
-    navigation_content = navigation_content.replace('href="/', 'href="')
-    footer_content = footer_content.replace('href="/', 'href="')
-    
-    # Highlight current page in navigation
-    navigation_content = navigation_content.replace(
-        f'href="{policy_name}.html" class="nav-link"',
-        f'href="{policy_name}.html" class="nav-link active"'
     )
-    
-    # Highlight current page in footer
-    footer_content = footer_content.replace(
-        f'href="{policy_name}.html" class="footer-link"',
-        f'href="{policy_name}.html" class="footer-link current-page"'
+
+    merged["generate_policy_pages"] = dict(DEFAULT_CONFIG["generate_policy_pages"])
+    merged["generate_policy_pages"].update(loaded.get("generate_policy_pages", {}))
+
+    merged["output_targets"] = dict(DEFAULT_CONFIG["output_targets"])
+    merged["output_targets"].update(loaded.get("output_targets", {}))
+
+    merged["integrations"] = dict(DEFAULT_CONFIG["integrations"])
+    merged["integrations"].update(loaded.get("integrations", {}))
+
+    return merged
+
+
+def read_sections(sections_dir: Path) -> dict[str, str]:
+    sections: dict[str, str] = {}
+
+    for section_file in sorted(sections_dir.glob("*.html")):
+        key = section_file.stem
+        sections[key] = normalize_html(section_file.read_text(encoding="utf-8"))
+
+    return sections
+
+
+def normalize_html(content: str) -> str:
+    for old, new in TEXT_FIXES.items():
+        content = content.replace(old, new)
+
+    # Ensure links are relative in generated static outputs.
+    content = re.sub(r'(href|src)="/+', r'\1="', content)
+
+    # Add rel attributes for safe new-tab links.
+    content = re.sub(
+        r'<a([^>]*?)target="_blank"(?![^>]*rel=)([^>]*)>',
+        r'<a\1target="_blank" rel="noopener noreferrer"\2>',
+        content,
+        flags=re.IGNORECASE,
     )
-    
-    # HTML Template for Policy Pages
-    html_content = f"""<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.youtube.com https://www.google.com https://www.gstatic.com https://scripts.clarity.ms https://www.clarity.ms https://embed.tawk.to https://cdnjs.cloudflare.com https://static.cloudflareinsights.com 'unsafe-inline'; style-src 'self' https://cdnjs.cloudflare.com https://embed.tawk.to 'unsafe-inline'; img-src 'self' https: data:; font-src 'self' https://cdnjs.cloudflare.com https://embed.tawk.to data:; connect-src 'self' https://www.google.com https://va.tawk.to https://embed.tawk.to https://www.clarity.ms https://q.clarity.ms https://formspree.io wss:; frame-src https://www.youtube.com https://www.google.com;">
-    <title>{title} - My PVL Services</title>
-    {f'<link rel="icon" href="data:{get_mime_type(favicon_path)};base64,{favicon_b64}" type="{get_mime_type(favicon_path)}">' if favicon_b64 else '<!-- Favicon not found -->'}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    {'<!-- reCAPTCHA v3 --><script src="https://www.google.com/recaptcha/api.js?render=6Lf49g0sAAAAAOLKadjqtuRVxlONX9d7v7ENr3pm"></script>' if policy_name == "contact_us" else ''}
-    <link rel="stylesheet" href="css/policy-pages.css">  
-</head>
-<body>
-    {header_content}
-    {navigation_content}
-    
-    <main>
-        {policy_content}
-    </main>
-    
-    {footer_content}
-    
-    {success_modal_content}
-    
-    <!-- Mobile Navigation JavaScript -->
-    <script>
-        // Mobile Navigation - Consistent with main site
-        document.addEventListener('DOMContentLoaded', function() {{
-            const mobileNavToggle = document.getElementById('mobileNavToggle');
-            const navContainer = document.getElementById('navContainer');
-            
-            if (mobileNavToggle && navContainer) {{
-                mobileNavToggle.addEventListener('click', function() {{
-                    navContainer.classList.toggle('active');
-                    const icon = this.querySelector('i');
-                    if (navContainer.classList.contains('active')) {{
-                        icon.classList.remove('fa-bars');
-                        icon.classList.add('fa-times');
-                    }} else {{
-                        icon.classList.remove('fa-times');
-                        icon.classList.add('fa-bars');
-                    }}
-                }});
-                
-                // Close mobile menu when clicking on a link (optional enhancement)
-                document.querySelectorAll('.nav-link').forEach(link => {{
-                    link.addEventListener('click', function() {{
-                        navContainer.classList.remove('active');
-                        const icon = mobileNavToggle.querySelector('i');
-                        icon.classList.remove('fa-times');
-                        icon.classList.add('fa-bars');
-                    }});
-                }});
-            }}
-        }});
-    </script>
-    {contact_javascript if policy_name == "contact_us" else ''}
-</body>
-</html>"""
-    
-    return html_content
 
-def create_directories():
-    """Create necessary directories for modular CSS structure"""
-    # Create main directories
-    os.makedirs("resources", exist_ok=True)
-    os.makedirs("sections", exist_ok=True)
-    os.makedirs("css", exist_ok=True)  # Ensure css directory exists
-    
-    # Create CSS directory structure
-    css_dirs = [
-        "css/base",
-        "css/components", 
-        "css/themes",
-        "css/layout"
-    ]
-    
-    for css_dir in css_dirs:
-        os.makedirs(css_dir, exist_ok=True)
-    
-    # Create placeholder CSS files if they don't exist
-    css_files = {
-        "css/base/reset.css": """/* ===== RESET & BASE STYLES ===== */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+    content = content.replace("{{BANNER_IMAGE}}", "shared/branding/banner.png")
+    content = content.replace(
+        "{{LOGO_IMAGE}}",
+        '<img src="shared/branding/logo.png" alt="My PVL logo" class="logo-img" />',
+    )
 
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    line-height: 1.6;
-    min-height: 100vh;
-}
+    return content
 
-html {
-    scroll-padding-top: 80px;
-}
 
-section {
-    scroll-margin-top: 80px;
-}""",
+def mark_page_active(
+    navigation_html: str, footer_html: str, page_file: str
+) -> tuple[str, str]:
+    nav_pattern = re.compile(
+        rf'(href="{re.escape(page_file)}"\s+class=")([^"]*)"',
+        flags=re.IGNORECASE,
+    )
+    footer_pattern = re.compile(
+        rf'(href="{re.escape(page_file)}"\s+class=")([^"]*)"',
+        flags=re.IGNORECASE,
+    )
 
-        "css/base/variables.css": """/* ===== CSS VARIABLES ===== */
-:root {
-    /* Core Brand Colors */
-    --primary-color: #F79C19;
-    --primary-dark: #d8850a;
-    --primary-light: #FFB74D;
-    --primary-bg: #FFF3E0;
-    
-    /* Neutral Palette */
-    --secondary-color: #1a1a1a;
-    --background-color: #2d2d2d;
-    --surface-color: #3a3a3a;
-    --surface-light: #4a4a4a;
-    --surface-dark: #222;
-    
-    /* Text Colors */
-    --text-primary: #ffffff;
-    --text-secondary: #cccccc;
-    --text-tertiary: #999999;
-    --text-on-primary: #1a1a1a;
-    
-    /* UI Elements */
-    --border-color: #444444;
-    --shadow: 0 4px 12px rgba(0,0,0,0.25);
-    --border-radius: 12px;
-}""",
+    def _append_active(match: re.Match[str]) -> str:
+        class_list = match.group(2).split()
+        if "active" not in class_list:
+            class_list.append("active")
+        return f'{match.group(1)}{" ".join(class_list)}"'
 
-        "css/base/typography.css": """/* ===== ANIMATIONS ===== */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
+    def _append_current(match: re.Match[str]) -> str:
+        class_list = match.group(2).split()
+        if "current-page" not in class_list:
+            class_list.append("current-page")
+        return f'{match.group(1)}{" ".join(class_list)}"'
 
-.section {
-    animation: fadeIn 0.6s ease-out;
-}""",
+    return nav_pattern.sub(_append_active, navigation_html), footer_pattern.sub(
+        _append_current, footer_html
+    )
 
-        "css/themes/dark.css": """/* ===== DARK THEME ===== */
-:root {
-    /* Core Brand Colors */
-    --primary-color: #F79C19;
-    --primary-dark: #d8850a;
-    --primary-light: #FFB74D;
-    --primary-bg: #FFF3E0;
-    
-    /* Neutral Palette */
-    --secondary-color: #1a1a1a;
-    --background-color: #2d2d2d;
-    --surface-color: #3a3a3a;
-    --surface-light: #4a4a4a;
-    --surface-dark: #222;
-    
-    /* Text Colors */
-    --text-primary: #ffffff;
-    --text-secondary: #cccccc;
-    --text-tertiary: #999999;
-    --text-on-primary: #1a1a1a;
-    
-    /* UI Elements */
-    --border-color: #444444;
-    --shadow: 0 4px 12px rgba(0,0,0,0.25);
-    --border-radius: 12px;
-}
 
-body {
-    color: var(--text-primary);
-    background: var(--background-color);
-}""",
+def render_site(
+    env: Environment,
+    config: dict[str, Any],
+    sections: dict[str, str],
+    target_dir: Path,
+) -> None:
+    integrations = config["integrations"]
+    theme_color = "#F79C19"
 
-        "css/themes/light.css": """/* ===== LIGHT THEME ===== */
-:root {
-    /* Core Brand Colors */
-    --primary-color: #F79C19;
-    --primary-dark: #d8850a;
-    --primary-light: #FFB74D;
-    --primary-bg: #FFF3E0;
-    
-    /* Neutral Palette */
-    --secondary-color: #f8f9fa;
-    --background-color: #ffffff;
-    --surface-color: #f5f5f5;
-    --surface-light: #e9ecef;
-    --surface-dark: #e0e0e0;
-    
-    /* Text Colors */
-    --text-primary: #333333;
-    --text-secondary: #666666;
-    --text-tertiary: #999999;
-    --text-on-primary: #1a1a1a;
-    
-    /* UI Elements */
-    --border-color: #dddddd;
-    --shadow: 0 4px 12px rgba(0,0,0,0.1);
-    --border-radius: 12px;
-}
+    home_template = env.get_template("templates/pages/home.html")
+    content_template = env.get_template("templates/pages/content_page.html")
 
-body {
-    color: var(--text-primary);
-    background: var(--background-color);
-}""",
+    if config.get("generate_main_page", True):
+        home_html = home_template.render(
+            page=PageContext(
+                title="My PVL - Personal Video Library",
+                description=(
+                    "Organize, present, and grow your video library with a responsive, searchable, "
+                    "mobile-first website experience."
+                ),
+                body_class="page-home",
+                include_recaptcha=bool(integrations["recaptcha_enabled"]),
+                theme_color=theme_color,
+            ),
+            sections=sections,
+            home_sections=HOME_SECTIONS,
+            integrations=integrations,
+        )
+        write_html(target_dir / "index.html", home_html)
 
-        "css/components/header.css": "/* ===== HEADER COMPONENT STYLES ===== */\n/* Header styles will be added here */",
-        "css/components/navigation.css": "/* ===== NAVIGATION COMPONENT STYLES ===== */\n/* Navigation styles will be added here */",
-        "css/components/sections.css": "/* ===== SECTIONS COMPONENT STYLES ===== */\n/* Section styles will be added here */",
-        "css/components/cards.css": "/* ===== CARDS COMPONENT STYLES ===== */\n/* Card styles will be added here */",
-        "css/components/carousels.css": "/* ===== CAROUSELS COMPONENT STYLES ===== */\n/* Carousel styles will be added here */",
-        "css/components/forms.css": "/* ===== FORMS COMPONENT STYLES ===== */\n/* Form styles will be added here */",
-        "css/components/footer.css": "/* ===== FOOTER COMPONENT STYLES ===== */\n/* Footer styles will be added here */",
-        
-        "css/layout/responsive.css": "/* ===== RESPONSIVE LAYOUT STYLES ===== */\n/* Responsive styles will be added here */"
-    }
-    
-    for file_path, content in css_files.items():
-        if not os.path.exists(file_path):
-            print(f"Creating placeholder {file_path}...")
-            with open(file_path, "w", encoding="utf-8") as f:
-                f.write(content)
-    
-    # Create main.css file
-    main_css_content = """/* ===== MAIN CSS FILE - IMPORTS ALL MODULES ===== */
+    for page_name, meta in CONTENT_PAGES.items():
+        if not config["generate_policy_pages"].get(page_name, False):
+            continue
 
-/* Base Styles */
-@import url('base/reset.css');
-@import url('base/variables.css');
-@import url('base/typography.css');
+        nav_html, footer_html = mark_page_active(
+            sections["policy_navigation"],
+            sections["footer"],
+            f"{page_name}.html",
+        )
 
-/* Theme (load only one) */
-/* @import url('themes/light.css'); */ /* Uncomment for light theme */
-@import url('themes/dark.css'); /* Default dark theme */
+        page_sections = dict(sections)
+        page_sections["policy_navigation"] = nav_html
+        page_sections["footer"] = footer_html
 
-/* Components */
-@import url('components/header.css');
-@import url('components/navigation.css');
-@import url('components/sections.css');
-@import url('components/cards.css');
-@import url('components/carousels.css');
-@import url('components/forms.css');
-@import url('components/footer.css');
+        html = content_template.render(
+            page=PageContext(
+                title=meta["title"],
+                description=meta["description"],
+                body_class=f"page-{page_name}",
+                include_recaptcha=bool(
+                    integrations["recaptcha_enabled"] and page_name == "contact_us"
+                ),
+                theme_color=theme_color,
+            ),
+            sections=page_sections,
+            content_section=page_name,
+            include_success_modal=(page_name == "contact_us"),
+            integrations=integrations,
+        )
+        write_html(target_dir / f"{page_name}.html", html)
 
-/* Layout & Responsive */
-@import url('layout/responsive.css');
-"""
-    
-    if not os.path.exists("css/main.css"):
-        print("Creating css/main.css...")
-        with open("css/main.css", "w", encoding="utf-8") as f:
-            f.write(main_css_content)
-    
-    # Create policy-pages.css if it doesn't exist
-    if not os.path.exists("css/policy-pages.css"):
-        print("Creating css/policy-pages.css...")
-        # We'll use the policy-pages.css content provided earlier
-        policy_css_content = read_file("policy-pages.css")  # This will be empty if file doesn't exist yet
-        if not policy_css_content:
-            # Fallback content
-            policy_css_content = "/* Policy Pages CSS - will be generated */"
-        with open("css/policy-pages.css", "w", encoding="utf-8") as f:
-            f.write(policy_css_content)
-    
-    if not os.path.exists("scripts.js"):
-        print("Creating placeholder scripts.js...")
-        with open("scripts.js", "w") as f:
-            f.write("// JavaScript will be added here")
-    
-    # Create sections directory and placeholder files
-    sections = [
-        "header.html", "navigation.html", "about.html", "features.html",
-        "categories.html", "testimonials.html", "implementations.html",
-        "pricing.html", "contact.html", "footer.html",
-        # Policy page sections
-        "privacy_policy.html", "cookies_policy.html", "terms_of_use.html", 
-        "dmca_policy.html", "thirdparty_attributions.html", "policy_navigation.html"
-    ]
-    
-    for section in sections:
-        section_path = os.path.join("sections", section)
-        if not os.path.exists(section_path):
-            print(f"Creating placeholder {section}...")
-            with open(section_path, "w") as f:
-                f.write(f"<!-- {section.replace('.html', '').title()} section -->")
 
-def main():
-    """Main function to generate and save the HTML files"""
-    import argparse
-    
-    parser = argparse.ArgumentParser(description='Generate HTML with modular CSS')
-    parser.add_argument('--theme', choices=['dark', 'light'], default='dark',
-                       help='Choose theme: dark or light (default: dark)')
-    
+def write_html(path: Path, content: str) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(content.strip() + "\n", encoding="utf-8")
+
+
+def copy_static_assets(project_root: Path, target_dir: Path) -> None:
+    shared_branding = project_root / "shared" / "branding"
+    if shared_branding.exists():
+        target_shared = target_dir / "shared"
+        target_branding = target_shared / "branding"
+        if target_branding.exists():
+            shutil.rmtree(target_branding)
+        target_branding.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copytree(shared_branding, target_branding)
+
+    manifest = project_root / "manifest.json"
+    if manifest.exists():
+        shutil.copy2(manifest, target_dir / "manifest.json")
+
+    icons_dir = project_root / "icons"
+    if icons_dir.exists():
+        target_icons = target_dir / "icons"
+        if target_icons.exists():
+            shutil.rmtree(target_icons)
+        shutil.copytree(icons_dir, target_icons)
+
+    assets_dir = project_root / "assets"
+    if assets_dir.exists():
+        target_assets = target_dir / "assets"
+        if target_assets.exists():
+            shutil.rmtree(target_assets)
+        shutil.copytree(assets_dir, target_assets)
+
+
+def prepare_target(target_dir: Path, clean: bool) -> None:
+    if clean and target_dir.exists():
+        shutil.rmtree(target_dir)
+    target_dir.mkdir(parents=True, exist_ok=True)
+
+
+def parse_targets(
+    args_targets: list[str] | None, config_targets: dict[str, bool]
+) -> list[str]:
+    if args_targets:
+        return args_targets
+
+    return [name for name, enabled in config_targets.items() if enabled]
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(
+        description="Generate static pages using Jinja2 templates"
+    )
+    parser.add_argument(
+        "--config", default="config.json", help="Path to config JSON file"
+    )
+    parser.add_argument(
+        "--targets",
+        nargs="+",
+        choices=["build", "dist", "deploy"],
+        help="Output targets to generate (default: enabled targets in config)",
+    )
+    parser.add_argument(
+        "--no-clean",
+        action="store_true",
+        help="Do not clean output targets before generation",
+    )
     args = parser.parse_args()
-    
-    create_directories()
-    
-    # Read configuration
-    config = read_config()
-    
-    # Generate main page if enabled
-    if config.get('generate_main_page', True):
-        print(f"🎨 Generating main HTML with {args.theme} theme...")
-        html_content = generate_html(theme=args.theme)
-        
-        # Save to file
-        with open("index.html", "w", encoding="utf-8") as f:
-            f.write(html_content)
-        print("✅ Main HTML file generated successfully: index.html")
-    else:
-        print("⏭️  Skipping main page generation (disabled in config)")
-    
-    # Generate policy pages if enabled
-    policy_pages_config = config.get('generate_policy_pages', {})
-    policy_pages = [
-        ("privacy_policy", "Privacy Policy"),
-        ("cookies_policy", "Cookie Policy"), 
-        ("terms_of_use", "Terms of Use"),
-        ("dmca_policy", "DMCA Notice"),
-        ("thirdparty_attributions", "Third-Party Credits"),
-        ("contact_us", "Contact Us")
-    ]
-    
-    for policy_file, title in policy_pages:
-        if policy_pages_config.get(policy_file, False):
-            print(f"📄 Generating {title}...")
-            policy_html = generate_policy_page(policy_file, title, theme=args.theme)
-            with open(f"{policy_file}.html", "w", encoding="utf-8") as f:
-                f.write(policy_html)
-            print(f"✅ Generated: {policy_file}.html")
-        else:
-            print(f"⏭️  Skipping {title} (disabled in config)")
-    
-    print("\n📁 Generation complete!")
-    print("🎨 Current theme:", args.theme)
-    print("⚙️  To enable policy pages, edit config.json and set flags to true")
-    print("🔄 Run this script again after updating config.json")
+
+    project_root = Path(__file__).resolve().parent
+    config = load_config(project_root / args.config)
+    targets = parse_targets(args.targets, config["output_targets"])
+
+    if not targets:
+        print(
+            "No output targets enabled. Set output_targets in config.json or pass --targets."
+        )
+        return 1
+
+    env = Environment(
+        loader=FileSystemLoader(str(project_root)),
+        autoescape=select_autoescape(enabled_extensions=("html", "xml")),
+        trim_blocks=True,
+        lstrip_blocks=True,
+    )
+
+    sections = read_sections(project_root / "sections")
+    required = {
+        "header",
+        "navigation",
+        "policy_navigation",
+        "footer",
+        "contact_modal",
+        "quick_contact_modal",
+        "exit_intent_popup",
+        "contact_success_modal",
+        "contact_us",
+    }
+    missing = sorted(required - sections.keys())
+    if missing:
+        print(f"Missing required section files: {', '.join(missing)}")
+        return 1
+
+    for target in targets:
+        target_dir = project_root / target
+        prepare_target(
+            target_dir,
+            clean=(not args.no_clean and bool(config.get("clean_outputs", True))),
+        )
+        render_site(env, config, sections, target_dir)
+        copy_static_assets(project_root, target_dir)
+        print(f"Generated site output: {target_dir}")
+
+    print("Generation complete.")
+    return 0
+
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
